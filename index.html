@@ -3,95 +3,770 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Laya F&B Knowledge Hub</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Laya F&B Knowledge Hub Pro</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: rgba(255,255,255,0.92);
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #0f766e;
+      --primary-2: #14b8a6;
+      --gold: #c89b3c;
+      --danger: #dc2626;
+      --success: #15803d;
+      --shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: Inter, Arial, Helvetica, sans-serif; background: linear-gradient(180deg, #eef3f7 0%, #f7f8fb 100%); color: var(--text); }
+    body { min-height: 100vh; }
+    .app { display: grid; grid-template-columns: 290px 1fr; min-height: 100vh; }
+    .sidebar {
+      background: linear-gradient(180deg, #0f172a 0%, #0b3141 100%);
+      color: #fff;
+      padding: 24px 18px;
+      position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    }
+    .brand {
+      display: flex; gap: 12px; align-items: center; margin-bottom: 24px;
+      padding: 12px; border: 1px solid rgba(255,255,255,0.12); border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+    }
+    .brand-badge {
+      width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--gold), #f3d38f); color: #18212f; font-weight: 800;
+    }
+    .brand h1 { font-size: 18px; margin: 0; }
+    .brand p { margin: 4px 0 0; font-size: 12px; color: rgba(255,255,255,0.75); }
+    .user-card {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px; padding: 16px; margin-bottom: 20px;
+    }
+    .user-card input, .user-card select {
+      width: 100%; padding: 11px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08); color: #fff; margin-top: 8px;
+    }
+    .user-card input::placeholder { color: rgba(255,255,255,0.6); }
+    .menu-title { font-size: 12px; letter-spacing: 0.08em; color: rgba(255,255,255,0.58); text-transform: uppercase; margin: 18px 10px 10px; }
+    .nav-btn, .action-btn, .chip, button {
+      cursor: pointer; transition: 0.2s ease;
+    }
+    .nav-btn {
+      width: 100%; text-align: left; border: 0; color: #fff; padding: 12px 14px; border-radius: 14px;
+      background: transparent; font-size: 14px; margin-bottom: 8px;
+    }
+    .nav-btn:hover, .nav-btn.active { background: rgba(255,255,255,0.11); }
+    .sidebar-footer {
+      margin-top: 26px; padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.06);
+      font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.55;
+    }
+    .main { padding: 28px; }
+    .topbar {
+      display: flex; gap: 16px; align-items: center; justify-content: space-between; margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+    .hero {
+      display: flex; justify-content: space-between; gap: 20px; align-items: stretch; flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .hero-card {
+      flex: 1 1 520px; background: linear-gradient(135deg, #0f766e 0%, #0b5f6d 100%);
+      color: #fff; border-radius: 30px; padding: 26px; box-shadow: var(--shadow);
+      min-height: 220px; position: relative; overflow: hidden;
+    }
+    .hero-card::after {
+      content: ''; position: absolute; right: -70px; top: -50px; width: 220px; height: 220px; border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+    .hero-card h2 { margin: 0 0 10px; font-size: 30px; }
+    .hero-card p { margin: 0 0 14px; color: rgba(255,255,255,0.9); max-width: 700px; line-height: 1.6; }
+    .stats-row, .grid, .article-grid { display: grid; gap: 18px; }
+    .stats-row { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    .card {
+      background: var(--card); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.8);
+      border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px;
+    }
+    .stat-card .label { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+    .stat-card .value { font-size: 28px; font-weight: 800; }
+    .stat-card .sub { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .grid { grid-template-columns: 1.4fr 1fr; margin-top: 22px; }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .toolbar input, .toolbar select, .toolbar textarea, .field {
+      padding: 12px 13px; border: 1px solid var(--line); border-radius: 14px; background: #fff; color: var(--text);
+      font-size: 14px;
+    }
+    .toolbar input { flex: 1 1 280px; }
+    .primary, .secondary, .danger {
+      border: 0; padding: 12px 15px; border-radius: 14px; font-weight: 700;
+    }
+    .primary { background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: #fff; }
+    .secondary { background: #eef2f7; color: var(--text); }
+    .danger { background: #fee2e2; color: #991b1b; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px;
+      background: #edf6f4; color: var(--primary); border: 1px solid #cde7e3; font-size: 13px; margin-right: 8px; margin-bottom: 8px;
+    }
+    .article-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .article-card {
+      border: 1px solid var(--line); border-radius: 20px; padding: 18px; background: #fff;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .article-card h3 { margin: 0; font-size: 18px; }
+    .meta { color: var(--muted); font-size: 12px; }
+    .article-card p { margin: 0; color: #334155; line-height: 1.55; font-size: 14px; }
+    .article-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+    .tag { font-size: 11px; color: #0f766e; background: #ecfdf5; padding: 5px 9px; border-radius: 999px; border: 1px solid #bbf7d0; }
+    .progress-bar { height: 12px; width: 100%; background: #e5edf3; border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), #f0cb74); width: 0%; }
+    .lesson-view h3 { margin-top: 0; }
+    .lesson-body { line-height: 1.8; color: #334155; font-size: 15px; white-space: pre-line; }
+    .list { display: grid; gap: 12px; }
+    .list-item {
+      display: flex; justify-content: space-between; gap: 12px; align-items: center; border: 1px solid var(--line);
+      border-radius: 16px; padding: 12px 14px; background: #fff;
+    }
+    .list-item small { color: var(--muted); display: block; margin-top: 3px; }
+    .note-box textarea {
+      width: 100%; min-height: 120px; resize: vertical; padding: 14px; border: 1px solid var(--line); border-radius: 16px;
+    }
+    .quiz-box .question { font-weight: 700; margin-bottom: 12px; }
+    .option { display: block; width: 100%; text-align: left; margin-bottom: 10px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; }
+    .option.correct { border-color: #86efac; background: #f0fdf4; }
+    .option.wrong { border-color: #fca5a5; background: #fef2f2; }
+    .muted { color: var(--muted); }
+    .hidden { display: none !important; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 999px; background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.18); font-size: 12px;
+    }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .section-head h3 { margin: 0; }
+    .small { font-size: 12px; color: var(--muted); }
+    .firebase-box code {
+      display: block; background: #0f172a; color: #d1fae5; padding: 12px; border-radius: 14px; overflow-x: auto;
+    }
+    .footer-note { margin-top: 18px; color: var(--muted); font-size: 12px; }
+    @media (max-width: 1080px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; }
+      .stats-row { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .main { padding: 16px; }
+      .stats-row { grid-template-columns: 1fr; }
+      .hero-card h2 { font-size: 24px; }
+    }
+  </style>
 </head>
 <body>
-  <div class="app-shell">
+  <div class="app">
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-badge">F&B</div>
         <div>
-          <h1>Laya F&B Knowledge Hub</h1>
-          <p>คลังความรู้สำหรับทีมอาหารและเครื่องดื่ม</p>
+          <h1>Laya F&B Academy</h1>
+          <p>Knowledge • Training • Quiz • Progress</p>
         </div>
       </div>
 
-      <div class="search-box">
-        <input id="searchInput" type="text" placeholder="ค้นหาหัวข้อ เช่น ไวน์, service, cocktail" />
+      <div class="user-card">
+        <div style="font-weight:700; margin-bottom:6px;">ข้อมูลผู้ใช้งาน</div>
+        <label class="small">ชื่อพนักงาน</label>
+        <input id="staffName" placeholder="เช่น Noi / Somchai" />
+        <label class="small" style="display:block; margin-top:10px;">แผนก</label>
+        <select id="staffDept">
+          <option>Service</option>
+          <option>Bar</option>
+          <option>Restaurant</option>
+          <option>Banquet</option>
+          <option>Room Service</option>
+          <option>Management</option>
+        </select>
+        <button class="primary" id="saveProfileBtn" style="width:100%; margin-top:12px;">บันทึกโปรไฟล์</button>
       </div>
 
-      <div class="quick-stats">
-        <div class="stat-card">
-          <span>บทความทั้งหมด</span>
-          <strong id="totalArticles">0</strong>
-        </div>
-        <div class="stat-card">
-          <span>รายการโปรด</span>
-          <strong id="favoriteCount">0</strong>
-        </div>
-      </div>
+      <div class="menu-title">เมนูหลัก</div>
+      <button class="nav-btn active" data-view="dashboard">แดชบอร์ด</button>
+      <button class="nav-btn" data-view="library">คลังความรู้</button>
+      <button class="nav-btn" data-view="quiz">Quiz & คะแนน</button>
+      <button class="nav-btn" data-view="favorites">รายการโปรด</button>
+      <button class="nav-btn" data-view="notes">โน้ตส่วนตัว</button>
+      <button class="nav-btn" data-view="firebase">Firebase Setup</button>
 
-      <div class="section-label">หมวดหมู่</div>
-      <div id="categoryFilters" class="chip-wrap"></div>
-
-      <div class="section-label">ฟิลเตอร์</div>
-      <div class="chip-wrap">
-        <button class="chip active" data-filter="all">ทั้งหมด</button>
-        <button class="chip" data-filter="favorites">เฉพาะรายการโปรด</button>
-      </div>
-
-      <div class="section-label">วิธีใช้</div>
-      <div class="tips-box">
-        <p>• ใช้ช่องค้นหาเพื่อหาเรื่องที่ต้องการ</p>
-        <p>• กด ★ เพื่อเก็บเป็นรายการโปรด</p>
-        <p>• พิมพ์โน้ตส่วนตัวไว้ด้านขวา ระบบจะจำในเครื่อง</p>
+      <div class="sidebar-footer">
+        ใช้งานได้ทันทีแบบ offline จากไฟล์เดียว<br>
+        ข้อมูล progress / favorite / note จะถูกเก็บในเครื่องด้วย LocalStorage
       </div>
     </aside>
 
-    <main class="main-area">
-      <section class="content-panel">
-        <div class="panel-header">
-          <div>
-            <h2>หัวข้อความรู้</h2>
-            <p id="resultInfo">กำลังโหลดข้อมูล...</p>
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="small">F&B Training Program</div>
+          <h2 style="margin: 4px 0 0;">ระบบอ่านความรู้สายอาหารและเครื่องดื่ม</h2>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="secondary" id="exportBtn">Export Progress</button>
+          <button class="secondary" id="importBtn">Import Progress</button>
+          <input type="file" id="importFile" class="hidden" accept="application/json" />
+          <button class="danger" id="resetBtn">ล้างข้อมูลในเครื่อง</button>
+        </div>
+      </div>
+
+      <section id="view-dashboard" class="view-section">
+        <div class="hero">
+          <div class="hero-card">
+            <div class="badge">Training Mode พร้อมใช้งาน</div>
+            <h2>ฝึกทีม F&B ให้เก่งขึ้นแบบเป็นระบบ</h2>
+            <p>รวมความรู้สำคัญเรื่อง service standard, wine basics, bar operation, coffee, hygiene, upselling และ banquet service ไว้ในที่เดียว พร้อม quiz และระบบติดตามความคืบหน้า</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+              <button class="primary" onclick="goView('library')">เริ่มอ่านบทเรียน</button>
+              <button class="secondary" onclick="goView('quiz')">ทำแบบทดสอบ</button>
+            </div>
           </div>
         </div>
-        <div id="articleList" class="article-list"></div>
+
+        <div class="stats-row">
+          <div class="card stat-card">
+            <div class="label">บทเรียนทั้งหมด</div>
+            <div class="value" id="statLessons">0</div>
+            <div class="sub">หัวข้อความรู้ F&B ที่พร้อมอ่าน</div>
+          </div>
+          <div class="card stat-card">
+            <div class="label">อ่านจบแล้ว</div>
+            <div class="value" id="statCompleted">0</div>
+            <div class="sub">จำนวนบทเรียนที่กดอ่านจบ</div>
+          </div>
+          <div class="card stat-card">
+            <div class="label">คะแนน Quiz</div>
+            <div class="value" id="statScore">0</div>
+            <div class="sub">คะแนนเฉลี่ยล่าสุด</div>
+          </div>
+          <div class="card stat-card">
+            <div class="label">รายการโปรด</div>
+            <div class="value" id="statFavorites">0</div>
+            <div class="sub">หัวข้อที่บันทึกไว้ทบทวน</div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="section-head">
+              <h3>หมวดความรู้แนะนำ</h3>
+              <span class="small">คลิกเพื่อกรองบทเรียน</span>
+            </div>
+            <div id="categoryChips"></div>
+          </div>
+          <div class="card">
+            <div class="section-head">
+              <h3>ความคืบหน้าของคุณ</h3>
+              <span id="profileSummary" class="small">ยังไม่ได้บันทึกชื่อพนักงาน</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="overallProgress"></div></div>
+            <div class="small" id="progressText" style="margin-top:10px;">0%</div>
+            <div class="footer-note">แนะนำให้พนักงานเริ่มจาก Service Standard → Hygiene → Upselling → Wine / Bar / Banquet</div>
+          </div>
+        </div>
       </section>
 
-      <section class="reader-panel">
-        <div id="readerEmpty" class="empty-state">
-          <div class="empty-icon">📚</div>
-          <h3>เลือกหัวข้อเพื่อเริ่มอ่าน</h3>
-          <p>เหมาะสำหรับใช้เป็นคู่มือสั้น ๆ, training note หรือเปิดอ่านหน้างาน</p>
+      <section id="view-library" class="view-section hidden">
+        <div class="card">
+          <div class="section-head">
+            <h3>คลังความรู้ F&B</h3>
+            <span class="small">ค้นหา / เลือกหมวด / เปิดอ่านทีละบท</span>
+          </div>
+          <div class="toolbar">
+            <input id="searchInput" placeholder="ค้นหาหัวข้อ เช่น wine, service, upselling, banquet" />
+            <select id="categoryFilter"><option value="all">ทุกหมวด</option></select>
+          </div>
+          <div class="article-grid" id="articleGrid"></div>
         </div>
 
-        <article id="readerArticle" class="reader hidden">
-          <div class="reader-head">
-            <div>
-              <span id="readerCategory" class="category-pill"></span>
-              <h2 id="readerTitle"></h2>
-              <p id="readerMeta" class="reader-meta"></p>
-            </div>
-            <button id="readerFavoriteBtn" class="favorite-btn large">☆</button>
+        <div class="card" style="margin-top:18px;">
+          <div class="section-head">
+            <h3 id="lessonTitle">เลือกบทเรียนเพื่ออ่าน</h3>
+            <span class="small" id="lessonMeta">-</span>
           </div>
+          <div class="lesson-view">
+            <div class="lesson-body" id="lessonBody">เมื่อคลิกปุ่ม “อ่านบทเรียน” เนื้อหาจะมาแสดงตรงนี้</div>
+            <div class="article-actions" style="margin-top:18px;">
+              <button class="primary" id="completeLessonBtn">อ่านจบแล้ว</button>
+              <button class="secondary" id="favoriteLessonBtn">บันทึกเป็นรายการโปรด</button>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          <div id="readerContent" class="reader-content"></div>
+      <section id="view-quiz" class="view-section hidden">
+        <div class="grid">
+          <div class="card quiz-box">
+            <div class="section-head">
+              <h3>แบบทดสอบความรู้</h3>
+              <span class="small">สุ่มคำถามจากฐานความรู้</span>
+            </div>
+            <div id="quizArea"></div>
+            <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="primary" id="startQuizBtn">เริ่ม Quiz ใหม่</button>
+              <button class="secondary" id="nextQuestionBtn">คำถามถัดไป</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-head">
+              <h3>สรุปคะแนน</h3>
+              <span class="small">เก็บไว้ในเครื่อง</span>
+            </div>
+            <div class="list" id="quizHistoryList"></div>
+          </div>
+        </div>
+      </section>
 
-          <div class="notes-box">
-            <div class="notes-head">
+      <section id="view-favorites" class="view-section hidden">
+        <div class="card">
+          <div class="section-head">
+            <h3>รายการโปรด</h3>
+            <span class="small">หัวข้อที่อยากทบทวนบ่อย ๆ</span>
+          </div>
+          <div class="list" id="favoritesList"></div>
+        </div>
+      </section>
+
+      <section id="view-notes" class="view-section hidden">
+        <div class="grid">
+          <div class="card note-box">
+            <div class="section-head">
               <h3>โน้ตส่วนตัว</h3>
-              <button id="saveNoteBtn" class="primary-btn">บันทึกโน้ต</button>
+              <span class="small">ใช้จด key points จากการเทรน</span>
             </div>
-            <textarea id="articleNote" placeholder="พิมพ์สรุป หรือประเด็นที่อยากใช้สอนทีม..."></textarea>
+            <select id="noteLessonSelect" class="field" style="width:100%; margin-bottom:12px;"></select>
+            <textarea id="noteArea" placeholder="จดสรุป เช่น วิธีถือไวน์, ขั้นตอน service, คำพูด upsell, allergen reminder..."></textarea>
+            <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+              <button class="primary" id="saveNoteBtn">บันทึกโน้ต</button>
+              <button class="secondary" id="loadNoteBtn">โหลดโน้ต</button>
+            </div>
           </div>
-        </article>
+          <div class="card">
+            <div class="section-head">
+              <h3>คำแนะนำการใช้งาน</h3>
+              <span class="small">สำหรับ training ภายใน</span>
+            </div>
+            <div class="lesson-body">1. ให้พนักงานกรอกชื่อก่อนใช้งาน
+2. เปิดอ่านหัวข้อที่จำเป็นของ outlet ตัวเอง
+3. ทำ quiz หลังจบการเทรนแต่ละหมวด
+4. ใช้ notes บันทึก script การพูดกับแขก, wine pairing, allergy info และ service standard
+5. ถ้าจะทำเป็นระบบออนไลน์ต่อ ให้ใช้หน้า Firebase Setup เป็นจุดเริ่มต้น</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-firebase" class="view-section hidden">
+        <div class="card firebase-box">
+          <div class="section-head">
+            <h3>Firebase Setup (เตรียมต่อออนไลน์)</h3>
+            <span class="small">เวอร์ชันนี้ยังใช้งานได้แบบ local ก่อน</span>
+          </div>
+          <p class="lesson-body">หากต้องการให้หลายเครื่องเห็น progress เดียวกัน ให้เชื่อม Firebase โดยเพิ่มไฟล์ config แล้วแก้จุดบันทึกข้อมูลจาก localStorage ไป Firestore/Realtime Database ภายหลังได้ทันที</p>
+          <p class="small">ตัวอย่าง object ที่ต้องใส่:</p>
+          <code>{
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "...",
+  appId: "..."
+}</code>
+          <div class="lesson-body" style="margin-top:14px;">ข้อมูลที่ควรเก็บใน Firebase:
+- staffProfiles
+- lessonProgress
+- quizHistory
+- personalNotes
+- favorites
+
+หากต้องการ ฉันสามารถทำเวอร์ชันถัดไปที่เชื่อม Firebase จริงให้เลยได้</div>
+        </div>
       </section>
     </main>
   </div>
 
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script>
+    const lessons = [
+      {
+        id: 'service-standard',
+        title: 'Service Standard พื้นฐานในห้องอาหาร',
+        category: 'Service',
+        level: 'Beginner',
+        summary: 'หลักการต้อนรับแขก การเดินเข้าโต๊ะ การเสิร์ฟอาหาร และการปิดการขายอย่างมืออาชีพ',
+        body: `Service Standard พื้นฐาน\n\n1) Greeting: ทักทายภายใน 30 วินาทีแรกด้วยรอยยิ้ม สบตา และใช้คำพูดสุภาพ\n2) Seating: พาแขกไปที่โต๊ะอย่างมั่นใจ ตรวจสอบจำนวนคน เด็ก เก้าอี้เด็ก และ special request\n3) Menu Introduction: แนะนำ signature dish, promotion และรายการที่หมดให้ครบ\n4) Order Taking: ทวนออเดอร์ทุกครั้ง ระบุระดับความสุก side dish และข้อจำกัดด้านอาหาร\n5) Sequence of Service: เสิร์ฟเครื่องดื่มก่อน ตามด้วย appetizer, soup, main course และ clearing อย่างถูกจังหวะ\n6) Check Back: กลับไปเช็กโต๊ะภายใน 2–3 นาทีหลังเสิร์ฟอาหาร\n7) Bill Presentation: เสนอของหวานหรือเครื่องดื่มปิดท้ายก่อนยื่นบิลอย่างสุภาพ\n8) Farewell: ขอบคุณและเชิญกลับมาใช้บริการอีกครั้ง`
+      },
+      {
+        id: 'upselling',
+        title: 'Upselling & Suggestive Selling สำหรับทีม F&B',
+        category: 'Sales',
+        level: 'Intermediate',
+        summary: 'วิธีเพิ่มยอดขายแบบไม่กดดันแขก เช่น pairing, add-on และ premium recommendation',
+        body: `Upselling ที่ดีคือการเพิ่มคุณค่า ไม่ใช่แค่เพิ่มราคา\n\nเทคนิคสำคัญ:\n- ใช้คำถามเปิด: “วันนี้อยากได้อะไรเบา ๆ หรือจัดเต็มดีคะ?”\n- เสนอ add-on ที่สัมพันธ์กับเมนูหลัก\n- แนะนำไวน์หรือค็อกเทลที่เข้ากับจานอาหาร\n- ใช้คำบรรยายรสชาติให้น่ารับประทาน\n- เลือกช่วงเวลาที่เหมาะสม เช่น หลังรับออเดอร์ main course สามารถแนะนำ sparkling water, wine pairing หรือ dessert ล่วงหน้าได้\n\nตัวอย่างประโยค:\n- เมนูนี้เข้ากับไวน์ขาวตัวนี้มากค่ะ\n- ถ้าชอบรสเข้ม ขอแนะนำเวอร์ชัน premium เพิ่มอีกนิดแต่คุ้มมากค่ะ\n- วันนี้เชฟมีของหวานพิเศษ ถ้าสนใจเดี๋ยวหนูแนะนำให้ค่ะ`
+      },
+      {
+        id: 'wine-basics',
+        title: 'Wine Basics สำหรับพนักงานเสิร์ฟ',
+        category: 'Wine',
+        level: 'Intermediate',
+        summary: 'เข้าใจประเภทไวน์ body, sweetness, serving temperature และการแนะนำไวน์เบื้องต้น',
+        body: `Wine Basics\n\n1) ประเภทหลัก: Sparkling, White, Rosé, Red, Dessert\n2) Body: Light, Medium, Full\n3) Sweetness: Dry, Off-dry, Medium Sweet, Sweet\n4) เสิร์ฟอุณหภูมิ: White และ Sparkling เย็นกว่า Red\n5) Pairing เบื้องต้น:\n- Seafood → White / Sparkling\n- Cream Sauce → Rich White\n- Beef / Lamb → Medium to Full Body Red\n- Spicy Thai Food → Off-dry White หรือ Fruity Rosé\n6) การเปิดขวด: แสดงฉลาก, เปิดอย่างนุ่มนวล, ให้ host ชิมก่อน\n7) ห้ามจับขอบแก้ว และควรถือก้านแก้วไวน์`
+      },
+      {
+        id: 'bar-basics',
+        title: 'Bar Basics และมาตรฐานการชงเครื่องดื่ม',
+        category: 'Bar',
+        level: 'Intermediate',
+        summary: 'รู้จัก spirit หลัก วิธีวัด pour, garnish และการควบคุมต้นทุนเบื้องต้น',
+        body: `Bar Basics\n\nSpirit หลักประกอบด้วย Vodka, Gin, Rum, Tequila, Whisky, Brandy\n\nสิ่งที่บาร์เทนเดอร์และทีมเสิร์ฟควรรู้:\n- สูตรมาตรฐานต้องชัดเจน\n- ใช้ jigger ทุกครั้งเพื่อลด overpour\n- Garnish มีผลต่อภาพลักษณ์และกลิ่น\n- ควรแยก classic cocktail ออกจาก signature cocktail\n- ต้องรู้ว่ารายการไหนขายเป็น shot ได้ รายการไหนเป็น mixer\n- ตรวจสอบ stock opening / closing ทุกวัน\n\nตัวอย่างคลาสสิกที่ควรรู้: Mojito, Margarita, Martini, Old Fashioned, Negroni`
+      },
+      {
+        id: 'coffee-basics',
+        title: 'Coffee Basics สำหรับร้านอาหารและเลานจ์',
+        category: 'Coffee',
+        level: 'Beginner',
+        summary: 'ความต่างของ espresso, americano, latte, cappuccino และ service note',
+        body: `Coffee Basics\n\n- Espresso: ช็อตเข้มข้นเป็นฐานหลัก\n- Americano: Espresso + Hot Water\n- Latte: Espresso + Milk มากกว่า foam\n- Cappuccino: Espresso + Steamed Milk + Foam หนา\n- Flat White: Microfoam เนียนกว่าและ milk texture ละเอียด\n\nService Note:\n- ทวนความหวานและชนิดนม\n- เสิร์ฟพร้อมน้ำเปล่าหรือช้อนตามมาตรฐาน outlet\n- หากเครื่องเสียหรือช้าควรแจ้งแขกก่อน`
+      },
+      {
+        id: 'hygiene',
+        title: 'Food Safety & Hygiene สำหรับทีมหน้าบ้าน',
+        category: 'Hygiene',
+        level: 'Mandatory',
+        summary: 'สุขลักษณะส่วนบุคคล การจับอุปกรณ์ และข้อควรระวังเรื่อง allergen',
+        body: `Food Safety & Hygiene\n\n- ล้างมือก่อนเริ่มงาน หลังจับเงิน หลังจับของดิบ และหลังเข้าห้องน้ำ\n- ไม่ใช้มือสัมผัสปากแก้ว ขอบจาน หรืออุปกรณ์สัมผัสอาหาร\n- ระวัง cross contamination\n- รู้ allergen สำคัญ เช่น dairy, nuts, shellfish, gluten\n- หากไม่แน่ใจเรื่องส่วนผสม ต้องเช็กกับครัวก่อนตอบแขก\n- พนักงานไม่ควรใส่น้ำหอมแรงเกินไปในพื้นที่บริการอาหาร`
+      },
+      {
+        id: 'banquet',
+        title: 'Banquet & Event Service Essentials',
+        category: 'Banquet',
+        level: 'Intermediate',
+        summary: 'ขั้นตอนก่อนงาน ระหว่างงาน และหลังงานสำหรับงานจัดเลี้ยง',
+        body: `Banquet Service Essentials\n\nก่อนงาน:\n- ตรวจ BEO ให้ครบ\n- เช็ก set up โต๊ะ, ผ้า, แก้ว, cutlery, station และ flow แขก\n- รู้เวลาเริ่ม VIP arrival, speech, buffet opening\n\nระหว่างงาน:\n- เติมน้ำและ clearing อย่างเงียบที่สุด\n- สื่อสารกับครัวและ AV อย่างต่อเนื่อง\n- รักษาภาพลักษณ์และยืนประจำจุด\n\nหลังงาน:\n- เก็บ breakdown เป็นระบบ\n- สรุปของเสียและของคงเหลือ\n- จดปัญหาที่เกิดขึ้นเพื่อปรับปรุงงานครั้งถัดไป`
+      },
+      {
+        id: 'complaint-handling',
+        title: 'Complaint Handling อย่างมืออาชีพ',
+        category: 'Service',
+        level: 'Mandatory',
+        summary: 'รับมือคำร้องเรียนอย่างสงบ รวดเร็ว และรักษาความรู้สึกของแขก',
+        body: `Complaint Handling\n\nหลัก L.A.S.T.\n- Listen: ฟังจนจบ ไม่แทรก\n- Apologize: ขอโทษอย่างจริงใจ\n- Solve: เสนอทางแก้ที่เป็นไปได้ทันที\n- Thank: ขอบคุณที่แจ้งให้ทราบ\n\nข้อควรจำ:\n- อย่าโต้เถียงกับแขก\n- อย่าโยนความผิดให้ฝ่ายอื่นต่อหน้าแขก\n- หากเรื่องเกินอำนาจ ให้เรียกหัวหน้าทันที`
+      }
+    ];
+
+    const questionBank = [
+      { q: 'ไวน์ประเภทใดมักเข้ากับอาหารทะเลได้ดี?', choices: ['Red Full Body', 'White หรือ Sparkling', 'Dessert Wine', 'Fortified Wine'], a: 1 },
+      { q: 'หลัก L.A.S.T. ใช้สำหรับเรื่องใด?', choices: ['เปิดไวน์', 'รับคำร้องเรียน', 'ทำความสะอาดบาร์', 'จัดโต๊ะ banquet'], a: 1 },
+      { q: 'การกลับไปเช็กโต๊ะหลังเสิร์ฟอาหารควรทำประมาณเมื่อใด?', choices: ['ทันทีภายใน 10 วินาที', '2–3 นาทีหลังเสิร์ฟ', 'หลังแขกเรียกเท่านั้น', 'ตอนเก็บจาน'], a: 1 },
+      { q: 'เครื่องมือมาตรฐานที่ช่วยลด overpour ในบาร์คืออะไร?', choices: ['Shaker', 'Jigger', 'Strainer', 'Blender'], a: 1 },
+      { q: 'ถ้าไม่แน่ใจเรื่อง allergen ควรทำอย่างไร?', choices: ['ตอบไปก่อน', 'ถามพนักงานคนอื่นแบบเดา', 'เช็กกับครัวก่อนตอบแขก', 'บอกว่าไม่มีทุกเมนู'], a: 2 },
+      { q: 'ข้อใดคือการ upsell ที่ดี?', choices: ['กดดันให้ซื้อราคาแพง', 'เสนอสิ่งที่เข้ากับเมนูและเพิ่มคุณค่า', 'บอกว่าเมนูธรรมดาไม่อร่อย', 'เสนอเฉพาะของแพงสุด'], a: 1 },
+      { q: 'Cappuccino ต่างจาก Latte อย่างไรโดยทั่วไป?', choices: ['ไม่มีนม', 'ใช้ชาแทนกาแฟ', 'มีโฟมหนากว่า', 'เย็นเสมอ'], a: 2 },
+      { q: 'ก่อนงาน banquet ควรเช็กเอกสารใด?', choices: ['Payslip', 'BEO', 'Invoice ลูกค้าอย่างเดียว', 'Stock card บาร์เท่านั้น'], a: 1 }
+    ];
+
+    const state = {
+      currentView: 'dashboard',
+      currentLessonId: null,
+      currentQuestion: null,
+      profile: JSON.parse(localStorage.getItem('fnb_profile') || '{"name":"","dept":"Service"}'),
+      completed: JSON.parse(localStorage.getItem('fnb_completed') || '[]'),
+      favorites: JSON.parse(localStorage.getItem('fnb_favorites') || '[]'),
+      notes: JSON.parse(localStorage.getItem('fnb_notes') || '{}'),
+      quizHistory: JSON.parse(localStorage.getItem('fnb_quiz_history') || '[]')
+    };
+
+    const byId = (id) => document.getElementById(id);
+
+    function persist() {
+      localStorage.setItem('fnb_profile', JSON.stringify(state.profile));
+      localStorage.setItem('fnb_completed', JSON.stringify(state.completed));
+      localStorage.setItem('fnb_favorites', JSON.stringify(state.favorites));
+      localStorage.setItem('fnb_notes', JSON.stringify(state.notes));
+      localStorage.setItem('fnb_quiz_history', JSON.stringify(state.quizHistory));
+      renderAll();
+    }
+
+    function goView(view) {
+      state.currentView = view;
+      document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+      byId(`view-${view}`).classList.remove('hidden');
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.view === view));
+      if (view === 'favorites') renderFavorites();
+      if (view === 'quiz') renderQuizHistory();
+    }
+    window.goView = goView;
+
+    function renderDashboard() {
+      byId('statLessons').textContent = lessons.length;
+      byId('statCompleted').textContent = state.completed.length;
+      const latestScore = state.quizHistory.length ? state.quizHistory[0].score : 0;
+      byId('statScore').textContent = latestScore;
+      byId('statFavorites').textContent = state.favorites.length;
+
+      const pct = Math.round((state.completed.length / lessons.length) * 100) || 0;
+      byId('overallProgress').style.width = pct + '%';
+      byId('progressText').textContent = `${pct}% (${state.completed.length}/${lessons.length} บท)`;
+      byId('profileSummary').textContent = state.profile.name
+        ? `${state.profile.name} • ${state.profile.dept}`
+        : 'ยังไม่ได้บันทึกชื่อพนักงาน';
+
+      const categories = [...new Set(lessons.map(l => l.category))];
+      byId('categoryChips').innerHTML = categories.map(cat => `<button class="chip" onclick="filterByCategory('${cat}')">${cat}</button>`).join('');
+    }
+    window.filterByCategory = function(cat) {
+      goView('library');
+      byId('categoryFilter').value = cat;
+      renderLibrary();
+    }
+
+    function renderCategoryFilter() {
+      const select = byId('categoryFilter');
+      const cats = [...new Set(lessons.map(l => l.category))];
+      select.innerHTML = '<option value="all">ทุกหมวด</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    function renderLibrary() {
+      const q = byId('searchInput').value.trim().toLowerCase();
+      const cat = byId('categoryFilter').value;
+      const filtered = lessons.filter(l => {
+        const hitText = [l.title, l.summary, l.body, l.category].join(' ').toLowerCase();
+        return (cat === 'all' || l.category === cat) && (!q || hitText.includes(q));
+      });
+
+      byId('articleGrid').innerHTML = filtered.map(lesson => {
+        const isCompleted = state.completed.includes(lesson.id);
+        const isFav = state.favorites.includes(lesson.id);
+        return `
+          <div class="article-card">
+            <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
+              <div>
+                <h3>${lesson.title}</h3>
+                <div class="meta">${lesson.category} • ${lesson.level}</div>
+              </div>
+              <span class="tag">${isCompleted ? 'อ่านแล้ว' : 'ยังไม่อ่าน'}</span>
+            </div>
+            <p>${lesson.summary}</p>
+            <div>
+              <span class="tag">${lesson.category}</span>
+              ${isFav ? '<span class="tag">โปรด</span>' : ''}
+            </div>
+            <div class="article-actions">
+              <button class="primary" onclick="openLesson('${lesson.id}')">อ่านบทเรียน</button>
+              <button class="secondary" onclick="toggleFavorite('${lesson.id}')">${isFav ? 'เอาออกจากโปรด' : 'เพิ่มโปรด'}</button>
+            </div>
+          </div>
+        `;
+      }).join('') || '<div class="muted">ไม่พบบทเรียนที่ตรงกับคำค้นหา</div>';
+    }
+
+    function openLesson(id) {
+      const lesson = lessons.find(l => l.id === id);
+      if (!lesson) return;
+      state.currentLessonId = id;
+      byId('lessonTitle').textContent = lesson.title;
+      byId('lessonMeta').textContent = `${lesson.category} • ${lesson.level}`;
+      byId('lessonBody').textContent = lesson.body;
+      byId('favoriteLessonBtn').textContent = state.favorites.includes(id) ? 'เอาออกจากรายการโปรด' : 'บันทึกเป็นรายการโปรด';
+      goView('library');
+    }
+    window.openLesson = openLesson;
+
+    function toggleFavorite(id = state.currentLessonId) {
+      if (!id) return;
+      if (state.favorites.includes(id)) {
+        state.favorites = state.favorites.filter(x => x !== id);
+      } else {
+        state.favorites.unshift(id);
+      }
+      persist();
+      renderLibrary();
+      if (state.currentLessonId === id) {
+        byId('favoriteLessonBtn').textContent = state.favorites.includes(id) ? 'เอาออกจากรายการโปรด' : 'บันทึกเป็นรายการโปรด';
+      }
+    }
+    window.toggleFavorite = toggleFavorite;
+
+    function completeCurrentLesson() {
+      if (!state.currentLessonId) return alert('กรุณาเลือกบทเรียนก่อน');
+      if (!state.completed.includes(state.currentLessonId)) state.completed.push(state.currentLessonId);
+      persist();
+      alert('บันทึกว่าอ่านจบแล้ว');
+    }
+
+    function renderFavorites() {
+      const list = state.favorites.map(id => lessons.find(l => l.id === id)).filter(Boolean);
+      byId('favoritesList').innerHTML = list.length ? list.map(lesson => `
+        <div class="list-item">
+          <div>
+            <strong>${lesson.title}</strong>
+            <small>${lesson.category} • ${lesson.level}</small>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="secondary" onclick="openLesson('${lesson.id}')">เปิดอ่าน</button>
+            <button class="danger" onclick="toggleFavorite('${lesson.id}')">ลบ</button>
+          </div>
+        </div>
+      `).join('') : '<div class="muted">ยังไม่มีรายการโปรด</div>';
+    }
+
+    function populateNotesSelect() {
+      byId('noteLessonSelect').innerHTML = lessons.map(l => `<option value="${l.id}">${l.title}</option>`).join('');
+    }
+
+    function loadNote() {
+      const id = byId('noteLessonSelect').value;
+      byId('noteArea').value = state.notes[id] || '';
+    }
+
+    function saveNote() {
+      const id = byId('noteLessonSelect').value;
+      state.notes[id] = byId('noteArea').value;
+      persist();
+      alert('บันทึกโน้ตแล้ว');
+    }
+
+    function randomQuestion() {
+      return questionBank[Math.floor(Math.random() * questionBank.length)];
+    }
+
+    function renderQuestion() {
+      if (!state.currentQuestion) {
+        byId('quizArea').innerHTML = '<div class="muted">กด “เริ่ม Quiz ใหม่” เพื่อเริ่มทำแบบทดสอบ</div>';
+        return;
+      }
+      const q = state.currentQuestion;
+      byId('quizArea').innerHTML = `
+        <div class="question">${q.q}</div>
+        ${q.choices.map((c, i) => `<button class="option" onclick="answerQuestion(${i})">${i+1}. ${c}</button>`).join('')}
+      `;
+    }
+
+    function startQuiz() {
+      state.currentQuestion = randomQuestion();
+      renderQuestion();
+    }
+
+    function answerQuestion(index) {
+      const q = state.currentQuestion;
+      if (!q) return;
+      const correct = index === q.a;
+      const score = correct ? 100 : 0;
+      state.quizHistory.unshift({
+        at: new Date().toLocaleString('th-TH'),
+        question: q.q,
+        score,
+        result: correct ? 'Correct' : 'Wrong'
+      });
+      state.quizHistory = state.quizHistory.slice(0, 20);
+      persist();
+      const buttons = [...document.querySelectorAll('.option')];
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === q.a) btn.classList.add('correct');
+        if (i === index && i !== q.a) btn.classList.add('wrong');
+      });
+    }
+    window.answerQuestion = answerQuestion;
+
+    function renderQuizHistory() {
+      byId('quizHistoryList').innerHTML = state.quizHistory.length ? state.quizHistory.map(item => `
+        <div class="list-item">
+          <div>
+            <strong>${item.score} คะแนน • ${item.result}</strong>
+            <small>${item.question}<br>${item.at}</small>
+          </div>
+        </div>
+      `).join('') : '<div class="muted">ยังไม่มีประวัติการทำแบบทดสอบ</div>';
+    }
+
+    function saveProfile() {
+      state.profile.name = byId('staffName').value.trim();
+      state.profile.dept = byId('staffDept').value;
+      persist();
+      alert('บันทึกโปรไฟล์แล้ว');
+    }
+
+    function exportProgress() {
+      const data = {
+        profile: state.profile,
+        completed: state.completed,
+        favorites: state.favorites,
+        notes: state.notes,
+        quizHistory: state.quizHistory
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'fnb_training_progress.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function importProgress(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          state.profile = data.profile || state.profile;
+          state.completed = data.completed || [];
+          state.favorites = data.favorites || [];
+          state.notes = data.notes || {};
+          state.quizHistory = data.quizHistory || [];
+          persist();
+          alert('นำเข้าข้อมูลเรียบร้อย');
+        } catch (e) {
+          alert('ไฟล์ไม่ถูกต้อง');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetAll() {
+      if (!confirm('ต้องการล้างข้อมูลในเครื่องทั้งหมดใช่หรือไม่?')) return;
+      localStorage.removeItem('fnb_profile');
+      localStorage.removeItem('fnb_completed');
+      localStorage.removeItem('fnb_favorites');
+      localStorage.removeItem('fnb_notes');
+      localStorage.removeItem('fnb_quiz_history');
+      location.reload();
+    }
+
+    function renderAll() {
+      byId('staffName').value = state.profile.name || '';
+      byId('staffDept').value = state.profile.dept || 'Service';
+      renderDashboard();
+      renderLibrary();
+      renderFavorites();
+      renderQuizHistory();
+      populateNotesSelect();
+      loadNote();
+      if (state.currentLessonId) openLesson(state.currentLessonId);
+    }
+
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', () => goView(btn.dataset.view)));
+    byId('searchInput').addEventListener('input', renderLibrary);
+    byId('categoryFilter').addEventListener('change', renderLibrary);
+    byId('completeLessonBtn').addEventListener('click', completeCurrentLesson);
+    byId('favoriteLessonBtn').addEventListener('click', () => toggleFavorite());
+    byId('saveProfileBtn').addEventListener('click', saveProfile);
+    byId('saveNoteBtn').addEventListener('click', saveNote);
+    byId('loadNoteBtn').addEventListener('click', loadNote);
+    byId('noteLessonSelect').addEventListener('change', loadNote);
+    byId('startQuizBtn').addEventListener('click', startQuiz);
+    byId('nextQuestionBtn').addEventListener('click', startQuiz);
+    byId('exportBtn').addEventListener('click', exportProgress);
+    byId('importBtn').addEventListener('click', () => byId('importFile').click());
+    byId('importFile').addEventListener('change', (e) => { if (e.target.files[0]) importProgress(e.target.files[0]); });
+    byId('resetBtn').addEventListener('click', resetAll);
+
+    renderCategoryFilter();
+    renderAll();
+    renderQuestion();
+  </script>
 </body>
 </html>
