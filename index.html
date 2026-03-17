@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laya F&B Knowledge Hub</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">F&B</div>
+        <div>
+          <h1>Laya F&B Knowledge Hub</h1>
+          <p>คลังความรู้สำหรับทีมอาหารและเครื่องดื่ม</p>
+        </div>
+      </div>
+
+      <div class="search-box">
+        <input id="searchInput" type="text" placeholder="ค้นหาหัวข้อ เช่น ไวน์, service, cocktail" />
+      </div>
+
+      <div class="quick-stats">
+        <div class="stat-card">
+          <span>บทความทั้งหมด</span>
+          <strong id="totalArticles">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>รายการโปรด</span>
+          <strong id="favoriteCount">0</strong>
+        </div>
+      </div>
+
+      <div class="section-label">หมวดหมู่</div>
+      <div id="categoryFilters" class="chip-wrap"></div>
+
+      <div class="section-label">ฟิลเตอร์</div>
+      <div class="chip-wrap">
+        <button class="chip active" data-filter="all">ทั้งหมด</button>
+        <button class="chip" data-filter="favorites">เฉพาะรายการโปรด</button>
+      </div>
+
+      <div class="section-label">วิธีใช้</div>
+      <div class="tips-box">
+        <p>• ใช้ช่องค้นหาเพื่อหาเรื่องที่ต้องการ</p>
+        <p>• กด ★ เพื่อเก็บเป็นรายการโปรด</p>
+        <p>• พิมพ์โน้ตส่วนตัวไว้ด้านขวา ระบบจะจำในเครื่อง</p>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <section class="content-panel">
+        <div class="panel-header">
+          <div>
+            <h2>หัวข้อความรู้</h2>
+            <p id="resultInfo">กำลังโหลดข้อมูล...</p>
+          </div>
+        </div>
+        <div id="articleList" class="article-list"></div>
+      </section>
+
+      <section class="reader-panel">
+        <div id="readerEmpty" class="empty-state">
+          <div class="empty-icon">📚</div>
+          <h3>เลือกหัวข้อเพื่อเริ่มอ่าน</h3>
+          <p>เหมาะสำหรับใช้เป็นคู่มือสั้น ๆ, training note หรือเปิดอ่านหน้างาน</p>
+        </div>
+
+        <article id="readerArticle" class="reader hidden">
+          <div class="reader-head">
+            <div>
+              <span id="readerCategory" class="category-pill"></span>
+              <h2 id="readerTitle"></h2>
+              <p id="readerMeta" class="reader-meta"></p>
+            </div>
+            <button id="readerFavoriteBtn" class="favorite-btn large">☆</button>
+          </div>
+
+          <div id="readerContent" class="reader-content"></div>
+
+          <div class="notes-box">
+            <div class="notes-head">
+              <h3>โน้ตส่วนตัว</h3>
+              <button id="saveNoteBtn" class="primary-btn">บันทึกโน้ต</button>
+            </div>
+            <textarea id="articleNote" placeholder="พิมพ์สรุป หรือประเด็นที่อยากใช้สอนทีม..."></textarea>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
