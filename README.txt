@@ -1,30 +1,14 @@
-Laya F&B Academy v2.2 — English for F&B Edition
+Laya F&B Academy v2.3 Reader Mode
 
-เวอร์ชันนี้เพิ่มหมวดบทเรียนภาษาอังกฤษสำหรับงานห้องอาหารและโรงแรม เช่น:
-- Core Restaurant Vocabulary
-- Service Phrases
-- Tableware / Cutlery / Equipment
-- Food Allergy & Dietary Terms
-- Hygiene / Cleaning / Safety
-- Food Descriptions & Cooking Terms
-- Breakfast & Buffet Vocabulary
-- Bar & Beverage Vocabulary
-- Wine Vocabulary
-- Room Service / Billing / Payment
-- Complaint Handling & Apology Phrases
-
-ยังคงมีบทเรียนเดิมด้าน:
-- Food Allergy
-- Hygiene
-- Service Standards
-- Buffet / Breakfast
-- Wine / Bar / Coffee
-- Room Service / Banquet / Operations
-พร้อมระบบ Quiz, Favorite, Note และ Progress
+จุดเปลี่ยนของเวอร์ชันนี้:
+- เปลี่ยนจากกดบทเรียนแล้วโชว์เนื้อหาสั้น ๆ ใต้ลิสต์
+- เป็นระบบ Learning Packs + Reader Mode เต็มหน้า
+- English for F&B ถูกจัดรวมอยู่ในปุ่มเดียวแล้ว
+- เมื่อกดเปิดชุดการเรียน จะเลือกหัวข้อย่อยด้านซ้ายและอ่านเต็มหน้าได้
 
 วิธีใช้:
-1. แตกไฟล์ ZIP
-2. เปิดไฟล์ index.html
-3. ใช้งานได้ทันทีแบบ offline
-
-ข้อมูลจะถูกเก็บใน LocalStorage ของเครื่องที่ใช้งาน
+1) แตกไฟล์ ZIP
+2) เปิดไฟล์ index.html
+3) ไปที่หน้า Learning Packs
+4) กดเปิดชุดการเรียนที่ต้องการ
+5) อ่านแบบเต็มหน้าใน Reader Mode

@@ -3,161 +3,153 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Laya F&B Knowledge Hub Pro</title>
+  <title>Laya F&B Academy v2.3 Reader Mode</title>
   <style>
     :root {
-      --bg: #f5f7fb;
-      --card: rgba(255,255,255,0.92);
+      --bg: #f4f7fb;
+      --card: rgba(255,255,255,0.96);
       --text: #1f2937;
-      --muted: #6b7280;
+      --muted: #667085;
       --line: #e5e7eb;
       --primary: #0f766e;
       --primary-2: #14b8a6;
-      --gold: #c89b3c;
-      --danger: #dc2626;
-      --success: #15803d;
+      --navy: #0f172a;
+      --navy-2: #12263a;
+      --gold: #d3a84b;
+      --success: #166534;
+      --danger: #b91c1c;
       --shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
-      --radius: 22px;
+      --radius: 24px;
     }
     * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; font-family: Inter, Arial, Helvetica, sans-serif; background: linear-gradient(180deg, #eef3f7 0%, #f7f8fb 100%); color: var(--text); }
+    html, body { margin: 0; padding: 0; font-family: Inter, Arial, Helvetica, sans-serif; background: linear-gradient(180deg, #eef4f8 0%, #f7f9fc 100%); color: var(--text); }
     body { min-height: 100vh; }
-    .app { display: grid; grid-template-columns: 290px 1fr; min-height: 100vh; }
+    button, input, select, textarea { font: inherit; }
+    .app { display: grid; grid-template-columns: 300px minmax(0, 1fr); min-height: 100vh; }
     .sidebar {
-      background: linear-gradient(180deg, #0f172a 0%, #0b3141 100%);
-      color: #fff;
-      padding: 24px 18px;
-      position: sticky; top: 0; height: 100vh; overflow-y: auto;
+      background: linear-gradient(180deg, var(--navy) 0%, #0f2d41 100%);
+      color: #fff; padding: 24px 18px; position: sticky; top: 0; height: 100vh; overflow-y: auto;
     }
-    .brand {
-      display: flex; gap: 12px; align-items: center; margin-bottom: 24px;
-      padding: 12px; border: 1px solid rgba(255,255,255,0.12); border-radius: 18px;
-      background: rgba(255,255,255,0.04);
-    }
-    .brand-badge {
-      width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center;
-      background: linear-gradient(135deg, var(--gold), #f3d38f); color: #18212f; font-weight: 800;
-    }
-    .brand h1 { font-size: 18px; margin: 0; }
+    .brand { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 22px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); margin-bottom: 22px; }
+    .brand-badge { width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center; background: linear-gradient(135deg, var(--gold), #f3d791); color: #18212f; font-weight: 900; }
+    .brand h1 { margin: 0; font-size: 18px; }
     .brand p { margin: 4px 0 0; font-size: 12px; color: rgba(255,255,255,0.75); }
-    .user-card {
-      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px; padding: 16px; margin-bottom: 20px;
-    }
-    .user-card input, .user-card select {
-      width: 100%; padding: 11px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.08); color: #fff; margin-top: 8px;
-    }
-    .user-card input::placeholder { color: rgba(255,255,255,0.6); }
-    .menu-title { font-size: 12px; letter-spacing: 0.08em; color: rgba(255,255,255,0.58); text-transform: uppercase; margin: 18px 10px 10px; }
-    .nav-btn, .action-btn, .chip, button {
-      cursor: pointer; transition: 0.2s ease;
-    }
-    .nav-btn {
-      width: 100%; text-align: left; border: 0; color: #fff; padding: 12px 14px; border-radius: 14px;
-      background: transparent; font-size: 14px; margin-bottom: 8px;
-    }
-    .nav-btn:hover, .nav-btn.active { background: rgba(255,255,255,0.11); }
-    .sidebar-footer {
-      margin-top: 26px; padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.06);
-      font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.55;
-    }
-    .main { padding: 28px; }
-    .topbar {
-      display: flex; gap: 16px; align-items: center; justify-content: space-between; margin-bottom: 22px;
-      flex-wrap: wrap;
-    }
-    .hero {
-      display: flex; justify-content: space-between; gap: 20px; align-items: stretch; flex-wrap: wrap;
-      margin-bottom: 24px;
-    }
-    .hero-card {
-      flex: 1 1 520px; background: linear-gradient(135deg, #0f766e 0%, #0b5f6d 100%);
-      color: #fff; border-radius: 30px; padding: 26px; box-shadow: var(--shadow);
-      min-height: 220px; position: relative; overflow: hidden;
-    }
-    .hero-card::after {
-      content: ''; position: absolute; right: -70px; top: -50px; width: 220px; height: 220px; border-radius: 50%;
-      background: rgba(255,255,255,0.08);
-    }
-    .hero-card h2 { margin: 0 0 10px; font-size: 30px; }
-    .hero-card p { margin: 0 0 14px; color: rgba(255,255,255,0.9); max-width: 700px; line-height: 1.6; }
-    .stats-row, .grid, .article-grid { display: grid; gap: 18px; }
-    .stats-row { grid-template-columns: repeat(4, minmax(0,1fr)); }
-    .card {
-      background: var(--card); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.8);
-      border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px;
-    }
-    .stat-card .label { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
-    .stat-card .value { font-size: 28px; font-weight: 800; }
-    .stat-card .sub { color: var(--muted); font-size: 12px; margin-top: 6px; }
-    .grid { grid-template-columns: 1.4fr 1fr; margin-top: 22px; }
-    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-    .toolbar input, .toolbar select, .toolbar textarea, .field {
-      padding: 12px 13px; border: 1px solid var(--line); border-radius: 14px; background: #fff; color: var(--text);
-      font-size: 14px;
-    }
-    .toolbar input { flex: 1 1 280px; }
-    .primary, .secondary, .danger {
-      border: 0; padding: 12px 15px; border-radius: 14px; font-weight: 700;
-    }
-    .primary { background: linear-gradient(135deg, var(--primary), var(--primary-2)); color: #fff; }
-    .secondary { background: #eef2f7; color: var(--text); }
-    .danger { background: #fee2e2; color: #991b1b; }
-    .chip {
-      display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px;
-      background: #edf6f4; color: var(--primary); border: 1px solid #cde7e3; font-size: 13px; margin-right: 8px; margin-bottom: 8px;
-    }
-    .article-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-    .article-card {
-      border: 1px solid var(--line); border-radius: 20px; padding: 18px; background: #fff;
-      display: flex; flex-direction: column; gap: 12px;
-    }
-    .article-card h3 { margin: 0; font-size: 18px; }
-    .meta { color: var(--muted); font-size: 12px; }
-    .article-card p { margin: 0; color: #334155; line-height: 1.55; font-size: 14px; }
-    .article-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
-    .tag { font-size: 11px; color: #0f766e; background: #ecfdf5; padding: 5px 9px; border-radius: 999px; border: 1px solid #bbf7d0; }
-    .progress-bar { height: 12px; width: 100%; background: #e5edf3; border-radius: 999px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), #f0cb74); width: 0%; }
-    .lesson-view h3 { margin-top: 0; }
-    .lesson-body { line-height: 1.8; color: #334155; font-size: 15px; white-space: pre-line; }
-    .list { display: grid; gap: 12px; }
-    .list-item {
-      display: flex; justify-content: space-between; gap: 12px; align-items: center; border: 1px solid var(--line);
-      border-radius: 16px; padding: 12px 14px; background: #fff;
-    }
-    .list-item small { color: var(--muted); display: block; margin-top: 3px; }
-    .note-box textarea {
-      width: 100%; min-height: 120px; resize: vertical; padding: 14px; border: 1px solid var(--line); border-radius: 16px;
-    }
-    .quiz-box .question { font-weight: 700; margin-bottom: 12px; }
-    .option { display: block; width: 100%; text-align: left; margin-bottom: 10px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; }
-    .option.correct { border-color: #86efac; background: #f0fdf4; }
-    .option.wrong { border-color: #fca5a5; background: #fef2f2; }
-    .muted { color: var(--muted); }
-    .hidden { display: none !important; }
-    .badge {
-      display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 999px; background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.18); font-size: 12px;
-    }
-    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-    .section-head h3 { margin: 0; }
+    .user-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 16px; margin-bottom: 18px; }
+    .user-card input, .user-card select { width: 100%; margin-top: 8px; padding: 11px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.08); color: #fff; }
+    .user-card input::placeholder { color: rgba(255,255,255,0.58); }
     .small { font-size: 12px; color: var(--muted); }
-    .firebase-box code {
-      display: block; background: #0f172a; color: #d1fae5; padding: 12px; border-radius: 14px; overflow-x: auto;
+    .sidebar .small { color: rgba(255,255,255,0.7); }
+    .menu-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.55); margin: 18px 10px 10px; }
+    .nav-btn {
+      width: 100%; border: 0; border-radius: 14px; background: transparent; color: #fff; text-align: left;
+      padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: .18s ease;
     }
-    .footer-note { margin-top: 18px; color: var(--muted); font-size: 12px; }
-    @media (max-width: 1080px) {
+    .nav-btn:hover, .nav-btn.active { background: rgba(255,255,255,0.12); }
+    .primary, .secondary, .ghost, .danger {
+      border: 0; border-radius: 14px; padding: 12px 15px; cursor: pointer; transition: .18s ease; font-weight: 700;
+    }
+    .primary { color: #fff; background: linear-gradient(135deg, var(--primary), var(--primary-2)); }
+    .secondary { background: #edf2f7; color: var(--text); }
+    .ghost { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.08); }
+    .danger { background: #fee2e2; color: #991b1b; }
+    .sidebar-footer { margin-top: 22px; padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.78); font-size: 12px; line-height: 1.6; }
+    .main { padding: 28px; }
+    .topbar { display: flex; justify-content: space-between; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .topbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .view-section.hidden { display: none !important; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.9fr); gap: 18px; margin-bottom: 20px; }
+    .hero-card {
+      background: linear-gradient(135deg, #0f766e 0%, #0b5f6d 100%); color: #fff; border-radius: 30px; padding: 28px; position: relative; overflow: hidden; box-shadow: var(--shadow);
+    }
+    .hero-card::after { content: ''; position: absolute; right: -70px; top: -60px; width: 220px; height: 220px; border-radius: 999px; background: rgba(255,255,255,0.07); }
+    .hero-card h2 { margin: 10px 0 12px; font-size: 30px; max-width: 760px; }
+    .hero-card p { margin: 0; max-width: 760px; line-height: 1.7; color: rgba(255,255,255,0.92); }
+    .hero-badges, .chips, .lesson-tags, .pack-preview-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .badge, .chip, .mini-tag {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; font-size: 12px; white-space: nowrap;
+    }
+    .badge { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.1); }
+    .chip { background: #edf7f6; color: var(--primary); border: 1px solid #c9ece6; cursor: pointer; }
+    .mini-tag { background: #eef2f7; color: #334155; }
+    .card { background: var(--card); border: 1px solid rgba(255,255,255,0.85); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
+    .stats-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; }
+    .stat-card .label { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+    .stat-card .value { font-size: 30px; font-weight: 900; }
+    .stat-card .sub { color: var(--muted); font-size: 12px; margin-top: 8px; }
+    .section-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+    .section-head h3 { margin: 0; }
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .toolbar input, .toolbar select, .field, textarea {
+      border: 1px solid var(--line); border-radius: 14px; background: #fff; color: var(--text); padding: 12px 13px;
+    }
+    .toolbar input { flex: 1 1 320px; }
+    .grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 18px; }
+    .pack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; }
+    .pack-card { border: 1px solid var(--line); border-radius: 24px; padding: 18px; background: #fff; display: flex; flex-direction: column; gap: 14px; }
+    .pack-icon { width: 52px; height: 52px; border-radius: 18px; display: grid; place-items: center; font-size: 24px; background: linear-gradient(135deg, #edf7f6, #f7fbfb); border: 1px solid #d4ece8; }
+    .pack-card h4 { margin: 0; font-size: 21px; }
+    .pack-card p { margin: 0; color: #334155; line-height: 1.65; }
+    .pack-card ul { margin: 0; padding-left: 18px; color: #475569; line-height: 1.55; }
+    .pack-card li { margin-bottom: 6px; }
+    .pack-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: auto; }
+    .progress-bar { width: 100%; height: 12px; border-radius: 999px; background: #e7edf4; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), #f3ce7a); width: 0%; }
+
+    .reader-wrap { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 18px; align-items: start; }
+    .reader-sidebar { position: sticky; top: 24px; display: grid; gap: 18px; }
+    .reader-meta { padding: 18px; border-radius: 22px; background: linear-gradient(180deg, #0f172a 0%, #14324a 100%); color: #fff; }
+    .reader-meta h3 { margin: 10px 0 8px; font-size: 24px; }
+    .reader-meta p { margin: 0; line-height: 1.65; color: rgba(255,255,255,0.86); }
+    .reader-count { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 14px; }
+    .reader-count .mini-box { background: rgba(255,255,255,0.08); border-radius: 16px; padding: 12px; }
+    .reader-count strong { display: block; font-size: 24px; }
+    .reader-list { max-height: calc(100vh - 340px); overflow-y: auto; }
+    .lesson-nav-item {
+      width: 100%; text-align: left; border: 1px solid var(--line); background: #fff; border-radius: 18px; padding: 14px; margin-bottom: 10px; cursor: pointer;
+    }
+    .lesson-nav-item.active { border-color: #84ccc2; background: #eef9f7; }
+    .lesson-nav-item .idx { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: block; }
+    .lesson-nav-item strong { display: block; margin-bottom: 4px; }
+    .lesson-nav-item small { color: var(--muted); display: block; line-height: 1.45; }
+    .reader-main { min-width: 0; }
+    .reader-article { padding: 22px; }
+    .reader-header { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 18px; }
+    .reader-header h2 { margin: 0; font-size: 30px; }
+    .reader-header p { margin: 10px 0 0; color: #475569; line-height: 1.65; }
+    .reader-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .lesson-body { color: #243241; line-height: 1.88; font-size: 16px; }
+    .lesson-body p { margin: 0 0 14px; }
+    .lesson-body .body-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 4px; }
+    .lesson-body ul { margin: 0 0 16px 0; padding-left: 24px; }
+    .lesson-body li { margin-bottom: 8px; }
+    .reader-bottom-nav { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); }
+
+    .list { display: grid; gap: 12px; }
+    .list-item { display: flex; justify-content: space-between; gap: 12px; align-items: center; border: 1px solid var(--line); background: #fff; border-radius: 18px; padding: 14px; }
+    .list-item small { display: block; color: var(--muted); margin-top: 4px; line-height: 1.55; }
+    .note-box textarea { width: 100%; min-height: 220px; resize: vertical; }
+    .quiz-box .question { font-size: 18px; font-weight: 800; margin-bottom: 14px; }
+    .option { display: block; width: 100%; text-align: left; border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; }
+    .option.correct { background: #f0fdf4; border-color: #86efac; }
+    .option.wrong { background: #fef2f2; border-color: #fca5a5; }
+    .muted { color: var(--muted); }
+    .empty-state { border: 1px dashed #cbd5e1; border-radius: 22px; padding: 24px; text-align: center; color: var(--muted); background: #fff; }
+    code.block { display: block; overflow-x: auto; background: #0f172a; color: #d1fae5; padding: 14px; border-radius: 16px; }
+    .hidden { display: none !important; }
+    @media (max-width: 1200px) {
+      .hero, .grid, .reader-wrap { grid-template-columns: 1fr; }
+      .reader-sidebar { position: static; }
+      .reader-list { max-height: none; }
+    }
+    @media (max-width: 900px) {
       .app { grid-template-columns: 1fr; }
       .sidebar { position: relative; height: auto; }
       .stats-row { grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .grid { grid-template-columns: 1fr; }
     }
-    @media (max-width: 720px) {
+    @media (max-width: 640px) {
       .main { padding: 16px; }
       .stats-row { grid-template-columns: 1fr; }
-      .hero-card h2 { font-size: 24px; }
+      .hero-card h2, .reader-header h2 { font-size: 24px; }
     }
   </style>
 </head>
@@ -168,7 +160,7 @@
         <div class="brand-badge">F&B</div>
         <div>
           <h1>Laya F&B Academy</h1>
-          <p>Knowledge • Training • Quiz • Progress</p>
+          <p>Reader Mode • Learning Packs • Quiz</p>
         </div>
       </div>
 
@@ -190,25 +182,26 @@
 
       <div class="menu-title">เมนูหลัก</div>
       <button class="nav-btn active" data-view="dashboard">แดชบอร์ด</button>
-      <button class="nav-btn" data-view="library">คลังความรู้</button>
+      <button class="nav-btn" data-view="library">Learning Packs</button>
+      <button class="nav-btn" data-view="reader">Reader Mode</button>
       <button class="nav-btn" data-view="quiz">Quiz & คะแนน</button>
       <button class="nav-btn" data-view="favorites">รายการโปรด</button>
       <button class="nav-btn" data-view="notes">โน้ตส่วนตัว</button>
       <button class="nav-btn" data-view="firebase">Firebase Setup</button>
 
       <div class="sidebar-footer">
-        ใช้งานได้ทันทีแบบ offline จากไฟล์เดียว<br>
-        ข้อมูล progress / favorite / note จะถูกเก็บในเครื่องด้วย LocalStorage
+        เวอร์ชันนี้เปลี่ยนการอ่านเป็นแบบ <strong>ชุดการเรียน</strong><br>
+        เหมาะกับบทความยาว เช่น English for F&B, Food Allergy, Hygiene และ Restaurant Service
       </div>
     </aside>
 
     <main class="main">
       <div class="topbar">
         <div>
-          <div class="small">F&B Training Program</div>
-          <h2 style="margin: 4px 0 0;">ระบบอ่านความรู้สายอาหารและเครื่องดื่ม</h2>
+          <div class="small">F&B Training System</div>
+          <div id="profileSummary" style="font-size:20px; font-weight:800; margin-top:4px;">ยังไม่ได้บันทึกชื่อพนักงาน</div>
         </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div class="topbar-actions">
           <button class="secondary" id="exportBtn">Export Progress</button>
           <button class="secondary" id="importBtn">Import Progress</button>
           <input type="file" id="importFile" class="hidden" accept="application/json" />
@@ -219,55 +212,50 @@
       <section id="view-dashboard" class="view-section">
         <div class="hero">
           <div class="hero-card">
-            <div class="badge">Training Mode พร้อมใช้งาน</div>
-            <h2>ฝึกทีม F&B ให้เก่งขึ้นแบบเป็นระบบ</h2>
-            <p>รวมบทความความรู้สายห้องอาหารจำนวนมากขึ้น ครอบคลุม service, food allergy, hygiene, buffet, breakfast, wine, bar, room service, banquet, operations และ English for F&B พร้อม quiz และระบบติดตามความคืบหน้า</p>
-            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
-              <button class="primary" onclick="goView('library')">เริ่มอ่านบทเรียน</button>
-              <button class="secondary" onclick="goView('quiz')">ทำแบบทดสอบ</button>
+            <div class="hero-badges">
+              <span class="badge">อ่านแบบเต็มหน้า</span>
+              <span class="badge">English Pack รวมในปุ่มเดียว</span>
+              <span class="badge">Offline พร้อมใช้</span>
             </div>
+            <h2>เปลี่ยนคลังความรู้ให้เหมือนระบบ training ที่อ่านจริงได้</h2>
+            <p>เวอร์ชันนี้รวมบทเรียนเป็น Learning Packs แล้ว เช่น English for F&B, Allergy & Hygiene, Restaurant Service, Beverage Knowledge และ Banquet / Room Service เพื่อให้พนักงานเปิดอ่านเป็นหน้าเต็ม ไม่ใช่โชว์สั้น ๆ ใต้ลิสต์เหมือนเดิม</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;">
+              <button class="primary" id="startReadingBtn">เปิด Learning Packs</button>
+              <button class="secondary" id="jumpEnglishBtn">เข้า English for F&B</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-head">
+              <h3>ความคืบหน้าโดยรวม</h3>
+              <span class="small">นับตามบทเรียนทั้งหมด</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="overallProgress"></div></div>
+            <div class="small" id="progressText" style="margin-top:10px;">0%</div>
+            <div class="small" style="margin-top:12px; line-height:1.7;">แนะนำลำดับการเรียน: Restaurant Service → Allergy & Hygiene → English for F&B → Beverage Knowledge</div>
+            <div class="chips" id="packChips" style="margin-top:14px;"></div>
           </div>
         </div>
 
         <div class="stats-row">
           <div class="card stat-card">
+            <div class="label">Learning Packs</div>
+            <div class="value" id="statPacks">0</div>
+            <div class="sub">ชุดการเรียนที่เปิดอ่านได้</div>
+          </div>
+          <div class="card stat-card">
             <div class="label">บทเรียนทั้งหมด</div>
             <div class="value" id="statLessons">0</div>
-            <div class="sub">หัวข้อความรู้ F&B ที่พร้อมอ่าน</div>
+            <div class="sub">ความรู้สาย F&B พร้อมใช้งาน</div>
           </div>
           <div class="card stat-card">
             <div class="label">อ่านจบแล้ว</div>
             <div class="value" id="statCompleted">0</div>
-            <div class="sub">จำนวนบทเรียนที่กดอ่านจบ</div>
-          </div>
-          <div class="card stat-card">
-            <div class="label">คะแนน Quiz</div>
-            <div class="value" id="statScore">0</div>
-            <div class="sub">คะแนนเฉลี่ยล่าสุด</div>
+            <div class="sub">บทเรียนที่ทำเครื่องหมายว่าอ่านจบ</div>
           </div>
           <div class="card stat-card">
             <div class="label">รายการโปรด</div>
             <div class="value" id="statFavorites">0</div>
-            <div class="sub">หัวข้อที่บันทึกไว้ทบทวน</div>
-          </div>
-        </div>
-
-        <div class="grid">
-          <div class="card">
-            <div class="section-head">
-              <h3>หมวดความรู้แนะนำ</h3>
-              <span class="small">คลิกเพื่อกรองบทเรียน</span>
-            </div>
-            <div id="categoryChips"></div>
-          </div>
-          <div class="card">
-            <div class="section-head">
-              <h3>ความคืบหน้าของคุณ</h3>
-              <span id="profileSummary" class="small">ยังไม่ได้บันทึกชื่อพนักงาน</span>
-            </div>
-            <div class="progress-bar"><div class="progress-fill" id="overallProgress"></div></div>
-            <div class="small" id="progressText" style="margin-top:10px;">0%</div>
-            <div class="footer-note">แนะนำให้พนักงานเริ่มจาก Service Standard → Hygiene → Upselling → Wine / Bar / Banquet</div>
+            <div class="sub">หัวข้อที่อยากทบทวนซ้ำ</div>
           </div>
         </div>
       </section>
@@ -275,26 +263,69 @@
       <section id="view-library" class="view-section hidden">
         <div class="card">
           <div class="section-head">
-            <h3>คลังความรู้ F&B</h3>
-            <span class="small">ค้นหา / เลือกหมวด / เปิดอ่านทีละบท</span>
+            <div>
+              <h3>Learning Packs</h3>
+              <div class="small">กด 1 ครั้งเพื่อเข้าโหมดอ่านเต็มหน้า และค่อยเลือกหัวข้อย่อยด้านใน</div>
+            </div>
+            <span class="small">เหมาะกับบทความยาวและหมวดภาษาอังกฤษ</span>
           </div>
           <div class="toolbar">
-            <input id="searchInput" placeholder="ค้นหาหัวข้อ เช่น allergy, hygiene, buffet, wine, service" />
-            <select id="categoryFilter"><option value="all">ทุกหมวด</option></select>
+            <input id="packSearchInput" placeholder="ค้นหาชุดการเรียน เช่น English, allergy, hygiene, wine, breakfast" />
           </div>
-          <div class="article-grid" id="articleGrid"></div>
+          <div class="pack-grid" id="packGrid"></div>
         </div>
+      </section>
 
-        <div class="card" id="lessonPanel" style="margin-top:18px;">
-          <div class="section-head">
-            <h3 id="lessonTitle">เลือกบทเรียนเพื่ออ่าน</h3>
-            <span class="small" id="lessonMeta">-</span>
+      <section id="view-reader" class="view-section hidden">
+        <div class="reader-wrap">
+          <div class="reader-sidebar">
+            <div class="reader-meta" id="readerMetaBox">
+              <div class="badge" id="readerPackBadge">เลือกชุดการเรียนก่อน</div>
+              <h3 id="readerPackTitle">Reader Mode</h3>
+              <p id="readerPackDesc">เมื่อกดเปิดชุดการเรียนจากหน้า Learning Packs รายละเอียดจะขึ้นที่นี่ พร้อมหัวข้อย่อยทั้งหมดของชุดนั้น</p>
+              <div class="reader-count">
+                <div class="mini-box">
+                  <span class="small" style="color:rgba(255,255,255,0.72)">บทเรียนในชุด</span>
+                  <strong id="readerPackLessonCount">0</strong>
+                </div>
+                <div class="mini-box">
+                  <span class="small" style="color:rgba(255,255,255,0.72)">อ่านจบแล้ว</span>
+                  <strong id="readerPackCompleteCount">0</strong>
+                </div>
+              </div>
+              <div style="margin-top:14px;" class="progress-bar"><div class="progress-fill" id="readerPackProgress"></div></div>
+              <div class="small" id="readerPackProgressText" style="margin-top:10px; color:rgba(255,255,255,0.78)">0%</div>
+            </div>
+            <div class="card">
+              <div class="section-head">
+                <h3>หัวข้อในชุด</h3>
+                <button class="secondary" id="backToPacksBtn">กลับไปหน้า Packs</button>
+              </div>
+              <div class="reader-list" id="readerLessonList"></div>
+            </div>
           </div>
-          <div class="lesson-view">
-            <div class="lesson-body" id="lessonBody">เมื่อคลิกปุ่ม “อ่านบทเรียน” เนื้อหาจะมาแสดงตรงนี้</div>
-            <div class="article-actions" style="margin-top:18px;">
-              <button class="primary" id="completeLessonBtn">อ่านจบแล้ว</button>
-              <button class="secondary" id="favoriteLessonBtn">บันทึกเป็นรายการโปรด</button>
+
+          <div class="reader-main">
+            <div class="card reader-article" id="readerArticleBox">
+              <div class="reader-header">
+                <div>
+                  <div class="lesson-tags" id="lessonMetaTags"></div>
+                  <h2 id="readerLessonTitle">ยังไม่ได้เลือกบทเรียน</h2>
+                  <p id="readerLessonSummary">เลือกชุดการเรียนจากหน้า Learning Packs แล้วคลิกหัวข้อย่อยที่ต้องการอ่าน</p>
+                </div>
+                <div class="reader-actions">
+                  <button class="secondary" id="prevLessonBtn">บทก่อนหน้า</button>
+                  <button class="secondary" id="nextLessonBtn">บทถัดไป</button>
+                </div>
+              </div>
+              <div class="lesson-body" id="readerLessonBody">เนื้อหาบทเรียนจะมาแสดงตรงนี้แบบเต็มหน้า</div>
+              <div class="reader-bottom-nav">
+                <div class="reader-actions">
+                  <button class="primary" id="completeLessonBtn">อ่านจบแล้ว</button>
+                  <button class="secondary" id="favoriteLessonBtn">บันทึกเป็นรายการโปรด</button>
+                </div>
+                <button class="secondary" id="openNotesFromReaderBtn">ไปที่โน้ตของบทนี้</button>
+              </div>
             </div>
           </div>
         </div>
@@ -305,7 +336,7 @@
           <div class="card quiz-box">
             <div class="section-head">
               <h3>แบบทดสอบความรู้</h3>
-              <span class="small">สุ่มคำถามจากฐานความรู้</span>
+              <span class="small">สุ่มคำถามจากฐานความรู้ทั้งหมด</span>
             </div>
             <div id="quizArea"></div>
             <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
@@ -327,7 +358,7 @@
         <div class="card">
           <div class="section-head">
             <h3>รายการโปรด</h3>
-            <span class="small">หัวข้อที่อยากทบทวนบ่อย ๆ</span>
+            <span class="small">หัวข้อที่อยากเปิดอ่านซ้ำบ่อย ๆ</span>
           </div>
           <div class="list" id="favoritesList"></div>
         </div>
@@ -341,7 +372,7 @@
               <span class="small">ใช้จด key points จากการเทรน</span>
             </div>
             <select id="noteLessonSelect" class="field" style="width:100%; margin-bottom:12px;"></select>
-            <textarea id="noteArea" placeholder="จดสรุป เช่น วิธีถือไวน์, ขั้นตอน service, คำพูด upsell, allergen reminder..."></textarea>
+            <textarea id="noteArea" placeholder="จดสรุป เช่น allergy script, sequence of service, wine pairing, pronunciation หรือจุดที่ต้องสอนทีม"></textarea>
             <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
               <button class="primary" id="saveNoteBtn">บันทึกโน้ต</button>
               <button class="secondary" id="loadNoteBtn">โหลดโน้ต</button>
@@ -349,1326 +380,44 @@
           </div>
           <div class="card">
             <div class="section-head">
-              <h3>คำแนะนำการใช้งาน</h3>
+              <h3>แนวทางใช้ในโรงแรม</h3>
               <span class="small">สำหรับ training ภายใน</span>
             </div>
-            <div class="lesson-body">1. ให้พนักงานกรอกชื่อก่อนใช้งาน
-2. เปิดอ่านหัวข้อที่จำเป็นของ outlet ตัวเอง
-3. ทำ quiz หลังจบการเทรนแต่ละหมวด
-4. ใช้ notes บันทึก script การพูดกับแขก, wine pairing, allergy info และ service standard
-5. ถ้าจะทำเป็นระบบออนไลน์ต่อ ให้ใช้หน้า Firebase Setup เป็นจุดเริ่มต้น</div>
+            <div class="lesson-body">
+              <p>1. ให้พนักงานกรอกชื่อก่อนใช้งาน เพื่อเก็บ progress แยกตามเครื่อง</p>
+              <p>2. เปิดอ่านเป็นชุดการเรียน เช่น English for F&B หรือ Allergy & Hygiene ตาม outlet ที่ต้องใช้</p>
+              <p>3. ใช้ Reader Mode เปิดสอนบนจอหรือ iPad ได้ เพราะเนื้อหาจะขึ้นเต็มหน้าแล้ว</p>
+              <p>4. หลังจบแต่ละชุด ให้ทำ Quiz และให้หัวหน้างานทบทวนจาก Notes</p>
+              <p>5. ภายหลังสามารถเชื่อม Firebase เพื่อให้หลายเครื่องเห็น progress เดียวกันได้</p>
+            </div>
           </div>
         </div>
       </section>
 
       <section id="view-firebase" class="view-section hidden">
-        <div class="card firebase-box">
+        <div class="card">
           <div class="section-head">
-            <h3>Firebase Setup (เตรียมต่อออนไลน์)</h3>
-            <span class="small">เวอร์ชันนี้ยังใช้งานได้แบบ local ก่อน</span>
+            <h3>Firebase Setup (โครงเตรียมไว้)</h3>
+            <span class="small">สำหรับทำเวอร์ชันหลายเครื่องในอนาคต</span>
           </div>
-          <p class="lesson-body">หากต้องการให้หลายเครื่องเห็น progress เดียวกัน ให้เชื่อม Firebase โดยเพิ่มไฟล์ config แล้วแก้จุดบันทึกข้อมูลจาก localStorage ไป Firestore/Realtime Database ภายหลังได้ทันที</p>
-          <p class="small">ตัวอย่าง object ที่ต้องใส่:</p>
-          <code>{
+          <div class="lesson-body">
+            <p>ตอนนี้เวอร์ชันนี้ยังเก็บข้อมูลใน LocalStorage ของเครื่องเดิมก่อน เพื่อให้ใช้งานได้ทันทีแบบ offline</p>
+            <p>ถ้าจะเชื่อม Firebase ในเวอร์ชันถัดไป ให้เพิ่มข้อมูล config แล้วเปลี่ยนส่วน persist / load ให้ไปอ่านจาก Firestore แทน</p>
+          </div>
+          <code class="block">const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
   projectId: "YOUR_PROJECT_ID",
   storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "...",
-  appId: "..."
-}</code>
-          <div class="lesson-body" style="margin-top:14px;">ข้อมูลที่ควรเก็บใน Firebase:
-- staffProfiles
-- lessonProgress
-- quizHistory
-- personalNotes
-- favorites
-
-หากต้องการ ฉันสามารถทำเวอร์ชันถัดไปที่เชื่อม Firebase จริงให้เลยได้</div>
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};</code>
+          <div class="small" style="margin-top:14px;">ถ้าหน่อยต้องการ เวอร์ชันถัดไปฉันสามารถทำต่อให้เป็น login จริง + sync progress + quiz score ข้ามหลายเครื่องได้</div>
         </div>
       </section>
     </main>
   </div>
 
-  <script>
-    const lessons = [
-      {
-            "id": "service-standard",
-            "title": "Service Standard พื้นฐานในห้องอาหาร",
-            "category": "Service",
-            "level": "Beginner",
-            "summary": "หลักการต้อนรับแขก การเดินเข้าโต๊ะ การเสิร์ฟอาหาร และการปิดการขายอย่างมืออาชีพ",
-            "body": `Service Standard พื้นฐาน
-
-1) Greeting: ทักทายภายใน 30 วินาทีแรกด้วยรอยยิ้ม สบตา และใช้คำพูดสุภาพ
-2) Seating: พาแขกไปที่โต๊ะอย่างมั่นใจ ตรวจสอบจำนวนคน เด็ก เก้าอี้เด็ก และ special request
-3) Menu Introduction: แนะนำ signature dish, promotion และรายการที่หมดให้ครบ
-4) Order Taking: ทวนออเดอร์ทุกครั้ง ระบุระดับความสุก side dish และข้อจำกัดด้านอาหาร
-5) Sequence of Service: เสิร์ฟเครื่องดื่มก่อน ตามด้วย appetizer, soup, main course และ clearing อย่างถูกจังหวะ
-6) Check Back: กลับไปเช็กโต๊ะภายใน 2–3 นาทีหลังเสิร์ฟอาหาร
-7) Bill Presentation: เสนอของหวานหรือเครื่องดื่มปิดท้ายก่อนยื่นบิลอย่างสุภาพ
-8) Farewell: ขอบคุณและเชิญกลับมาใช้บริการอีกครั้ง`
-      },
-      {
-            "id": "sequence-of-service",
-            "title": "Sequence of Service แบบละเอียด",
-            "category": "Service",
-            "level": "Mandatory",
-            "summary": "ลำดับการบริการตั้งแต่รับแขกจนแขกกลับ เพื่อให้บริการลื่นไหลและดูมืออาชีพ",
-            "body": `Sequence of Service
-
-1) เตรียม station และ mise en place ให้พร้อมก่อนเปิดบริการ
-2) ต้อนรับแขกและสอบถามจำนวนคน พร้อมดูว่ามี reservation หรือไม่
-3) พาแขกนั่งและแจกเมนู โดยแนะนำรายการเด่นอย่างกระชับ
-4) รับออเดอร์เครื่องดื่มก่อน และส่งออเดอร์เข้าระบบให้เร็วที่สุด
-5) เสิร์ฟน้ำและขนมปังหรือ amuse bouche ถ้ามีตามมาตรฐาน outlet
-6) รับออเดอร์อาหาร โดยทวนทุกจานและข้อกำหนดพิเศษ
-7) เสิร์ฟอาหารตามลำดับคอร์สให้ถูกโต๊ะ ถูกคน และถูกจังหวะ
-8) ตรวจสอบความพึงพอใจหลังเสิร์ฟ 2–3 นาที
-9) Clearing อย่างเงียบ สุภาพ และไม่รบกวนบทสนทนา
-10) แนะนำของหวาน ชา กาแฟ หรือ digestif ก่อนปิดโต๊ะ
-11) ยื่นบิลเมื่อแขกขอและขอบคุณเมื่อแขกเดินออก`
-      },
-      {
-            "id": "greeting-and-seating",
-            "title": "การต้อนรับและการพาแขกนั่งโต๊ะ",
-            "category": "Service",
-            "level": "Beginner",
-            "summary": "สิ่งเล็ก ๆ ที่สร้าง first impression เช่น eye contact, body language และการใช้คำพูด",
-            "body": `Greeting & Seating
-
-First impression เกิดขึ้นตั้งแต่วินาทีแรกที่แขกเห็นพนักงาน
-
-สิ่งที่ควรทำ:
-- ยิ้มจริงใจ สบตา และกล่าวทักทายทันที
-- ถามจำนวนแขกและตรวจสอบ reservation อย่างสุภาพ
-- เดินนำแขกด้วยจังหวะพอดี ไม่เร็วเกินไป
-- ช่วยดึงเก้าอี้หรือจัด seating ให้เหมาะกับเด็ก ผู้สูงอายุ หรือแขก VIP
-- แจ้งข้อมูลสำคัญ เช่น buffet line, restroom, last order, live station
-
-สิ่งที่ไม่ควรทำ:
-- ชี้มือแบบห้วน ๆ แล้วให้แขกเดินตามเอง
-- พูดคุยกันเองต่อหน้าแขก
-- ปล่อยให้แขกรอนานโดยไม่มีการ acknowledge`
-      },
-      {
-            "id": "menu-knowledge",
-            "title": "Menu Knowledge ที่พนักงานห้องอาหารต้องรู้",
-            "category": "Restaurant",
-            "level": "Mandatory",
-            "summary": "การรู้ส่วนผสม วิธีปรุง รสชาติ และจุดขายของแต่ละจาน ช่วยเพิ่มความมั่นใจในการขาย",
-            "body": `Menu Knowledge
-
-พนักงานควรรู้ข้อมูลพื้นฐานของทุกเมนูที่ขายจริง ได้แก่:
-- ส่วนผสมหลัก
-- วิธีปรุง เช่น grilled, fried, steamed, braised
-- รสชาติหลัก เช่น creamy, spicy, tangy, smoky
-- เวลารออาหารโดยประมาณ
-- เมนูที่มี allergen สำคัญ
-- ตัวเลือกการปรับ เช่น ไม่เผ็ด เพิ่มซอส เปลี่ยน side dish ได้หรือไม่
-
-เมื่อพนักงานรู้เมนูจริง จะสามารถ:
-1) ตอบคำถามแขกได้เร็ว
-2) แนะนำเมนูที่ตรงกับความชอบแขก
-3) upsell ได้อย่างเป็นธรรมชาติ
-4) ลดความผิดพลาดของออเดอร์`
-      },
-      {
-            "id": "upselling",
-            "title": "Upselling & Suggestive Selling สำหรับทีม F&B",
-            "category": "Sales",
-            "level": "Intermediate",
-            "summary": "วิธีเพิ่มยอดขายแบบไม่กดดันแขก เช่น pairing, add-on และ premium recommendation",
-            "body": `Upselling ที่ดีคือการเพิ่มคุณค่า ไม่ใช่แค่เพิ่มราคา
-
-เทคนิคสำคัญ:
-- ใช้คำถามเปิด: “วันนี้อยากได้อะไรเบา ๆ หรือจัดเต็มดีคะ?”
-- เสนอ add-on ที่สัมพันธ์กับเมนูหลัก
-- แนะนำไวน์หรือค็อกเทลที่เข้ากับจานอาหาร
-- ใช้คำบรรยายรสชาติให้น่ารับประทาน
-- เลือกช่วงเวลาที่เหมาะสม เช่น หลังรับออเดอร์ main course สามารถแนะนำ sparkling water, wine pairing หรือ dessert ล่วงหน้าได้
-
-ตัวอย่างประโยค:
-- เมนูนี้เข้ากับไวน์ขาวตัวนี้มากค่ะ
-- ถ้าชอบรสเข้ม ขอแนะนำเวอร์ชัน premium เพิ่มอีกนิดแต่คุ้มมากค่ะ
-- วันนี้เชฟมีของหวานพิเศษ ถ้าสนใจเดี๋ยวหนูแนะนำให้ค่ะ`
-      },
-      {
-            "id": "food-allergy-basics",
-            "title": "Food Allergy Basics สำหรับพนักงานห้องอาหาร",
-            "category": "Allergy",
-            "level": "Mandatory",
-            "summary": "รู้จักความแตกต่างระหว่าง food allergy, intolerance และ preference เพื่อไม่ตอบแขกผิด",
-            "body": `Food Allergy Basics
-
-Food allergy คือภาวะที่ร่างกายตอบสนองต่ออาหารบางชนิดและอาจรุนแรงได้
-Food intolerance มักเกี่ยวกับการย่อยหรือการระคายเคือง แต่ไม่ใช่ภูมิแพ้แบบเดียวกัน
-Food preference คือความชอบหรือข้อจำกัดส่วนบุคคล เช่น ไม่ทานหมู ไม่ทานเผ็ด
-
-พนักงานต้องไม่สรุปเองว่า:
-- “นิดหน่อยไม่น่าเป็นไร”
-- “เอาออกจากจานแล้วทานได้”
-- “เมนูนี้น่าจะไม่มี”
-
-คำตอบที่ถูกต้องคือ:
-1) ขอบคุณที่แจ้งข้อมูล
-2) ถามให้ชัดว่าแพ้อะไรบ้าง
-3) แจ้งครัวหรือเชฟทันที
-4) กลับมายืนยันกับแขกอย่างชัดเจนอีกครั้ง`
-      },
-      {
-            "id": "common-allergens",
-            "title": "Common Allergens ที่พบบ่อยในห้องอาหาร",
-            "category": "Allergy",
-            "level": "Mandatory",
-            "summary": "กลุ่มสารก่อภูมิแพ้ที่พนักงานต้องจำและเช็กให้เป็นนิสัยก่อนตอบแขก",
-            "body": `Common Allergens
-
-สารก่อภูมิแพ้ที่พบบ่อยในร้านอาหาร ได้แก่:
-- นมและผลิตภัณฑ์นม
-- ถั่วลิสงและถั่วเปลือกแข็ง
-- ไข่
-- แป้งสาลี / กลูเตน
-- ถั่วเหลือง
-- ปลา
-- หอยและสัตว์ทะเลเปลือกแข็ง เช่น กุ้ง ปู ล็อบสเตอร์
-- งา
-
-ตัวอย่างสิ่งที่พนักงานมักพลาด:
-- ซอสครีมมี dairy
-- น้ำสลัดบางชนิดมี egg หรือ mustard
-- garnish หรือ crumble มี nuts
-- ซอสผัดหรือ marinade อาจมี soy หรือ oyster sauce
-
-หลักสำคัญ: ถ้าไม่แน่ใจ ต้องเช็กสูตรกับครัวก่อนทุกครั้ง`
-      },
-      {
-            "id": "allergy-communication-script",
-            "title": "วิธีพูดกับแขกเรื่อง Food Allergy",
-            "category": "Allergy",
-            "level": "Mandatory",
-            "summary": "ตัวอย่างประโยคที่สุภาพ ชัดเจน และปลอดภัยกว่าเวลาแขกแจ้งว่าแพ้อาหาร",
-            "body": `Allergy Communication Script
-
-ประโยคแนะนำ:
-- ขอบคุณที่แจ้งนะคะ เดี๋ยวขอเช็กกับครัวให้แน่ใจก่อนค่ะ
-- ขออนุญาตถามเพิ่มเติมนะคะ แพ้อาหารชนิดนี้โดยตรงเลยใช่ไหมคะ หรือเป็นข้อจำกัดด้านอาหารคะ
-- เมนูนี้มีความเสี่ยงเรื่องส่วนผสม เดี๋ยวหนูขอแนะนำจานอื่นที่ปลอดภัยกว่านะคะ
-- ถ้าต้องการ หนูจะให้เชฟช่วยยืนยันส่วนผสมให้อีกครั้งค่ะ
-
-สิ่งที่ไม่ควรพูด:
-- ไม่น่ามีค่ะ
-- ปกติแขกคนอื่นก็ทานได้
-- เอาออกให้แล้วไม่น่ามีปัญหา
-
-การสื่อสารที่ดีช่วยลดความเสี่ยงและทำให้แขกรู้สึกว่าทีมงานใส่ใจจริง`
-      },
-      {
-            "id": "cross-contamination",
-            "title": "Cross Contamination และการป้องกัน",
-            "category": "Hygiene",
-            "level": "Mandatory",
-            "summary": "การปนเปื้อนข้ามเกิดได้ทั้งในครัว บาร์ และหน้าบ้าน พนักงานต้องรู้จุดเสี่ยง",
-            "body": `Cross Contamination
-
-การปนเปื้อนข้ามเกิดเมื่อสารก่อภูมิแพ้ เชื้อโรค หรือเศษอาหารจากสิ่งหนึ่งไปปนกับอีกสิ่งหนึ่งโดยไม่ตั้งใจ
-
-ตัวอย่างในห้องอาหาร:
-- ใช้คีมเดียวกันคีบอาหารหลายชนิดใน buffet
-- เขียงหรือมีดที่ปนกับของดิบแล้วไม่ล้างก่อนใช้ต่อ
-- ผ้าเช็ดโต๊ะหรือผ้าเช็ดอุปกรณ์ใช้ซ้ำโดยไม่เปลี่ยน
-- garnish ปนกับส่วนผสม allergen
-
-วิธีป้องกัน:
-1) แยกอุปกรณ์ชัดเจน
-2) ล้างมือและเปลี่ยนถุงมือเมื่อจำเป็น
-3) ใช้ภาชนะสะอาดทุกครั้ง
-4) สื่อสารระหว่างหน้าบ้านกับครัวให้ชัดเมื่อมีเคส allergy`
-      },
-      {
-            "id": "hygiene",
-            "title": "Food Safety & Hygiene สำหรับทีมหน้าบ้าน",
-            "category": "Hygiene",
-            "level": "Mandatory",
-            "summary": "สุขลักษณะส่วนบุคคล การจับอุปกรณ์ และข้อควรระวังเรื่อง allergen",
-            "body": `Food Safety & Hygiene
-
-- ล้างมือก่อนเริ่มงาน หลังจับเงิน หลังจับของดิบ และหลังเข้าห้องน้ำ
-- ไม่ใช้มือสัมผัสปากแก้ว ขอบจาน หรืออุปกรณ์สัมผัสอาหาร
-- ระวัง cross contamination
-- รู้ allergen สำคัญ เช่น dairy, nuts, shellfish, gluten
-- หากไม่แน่ใจเรื่องส่วนผสม ต้องเช็กกับครัวก่อนตอบแขก
-- พนักงานไม่ควรใส่น้ำหอมแรงเกินไปในพื้นที่บริการอาหาร`
-      },
-      {
-            "id": "handwashing",
-            "title": "Hand Washing & Personal Hygiene",
-            "category": "Hygiene",
-            "level": "Mandatory",
-            "summary": "การล้างมือและสุขอนามัยส่วนบุคคลที่ถูกต้องสำหรับทีมบริการ",
-            "body": `Hand Washing & Personal Hygiene
-
-ล้างมือให้ถูกเวลาและถูกวิธีเป็นพื้นฐานที่สำคัญมาก
-
-ควรล้างมือเมื่อ:
-- ก่อนเริ่มงาน
-- หลังเข้าห้องน้ำ
-- หลังจับเงิน โทรศัพท์ หรือของสกปรก
-- หลังไอ จาม หรือสัมผัสใบหน้า
-- ก่อนหยิบจับอุปกรณ์ที่เกี่ยวกับอาหาร
-
-สุขลักษณะส่วนบุคคล:
-- เล็บสั้นสะอาด
-- ผมเก็บเรียบร้อย
-- เครื่องแบบสะอาดและรีดเรียบ
-- แผลต้องปิดให้มิดชิด
-- หลีกเลี่ยงเครื่องประดับที่อาจหลุดลงอาหาร`
-      },
-      {
-            "id": "cleaning-sanitizing",
-            "title": "Cleaning vs Sanitizing ต่างกันอย่างไร",
-            "category": "Hygiene",
-            "level": "Intermediate",
-            "summary": "พนักงานหลายคนใช้สองคำนี้แทนกัน แต่จริง ๆ มีหน้าที่ต่างกันและต้องทำทั้งคู่",
-            "body": `Cleaning vs Sanitizing
-
-Cleaning คือการเอาคราบสกปรก คราบมัน และเศษอาหารออก
-Sanitizing คือการลดจำนวนเชื้อให้อยู่ในระดับที่ปลอดภัยตามมาตรฐาน
-
-ลำดับที่ถูกต้องโดยทั่วไปคือ:
-1) เก็บเศษสิ่งสกปรกออก
-2) ล้างด้วยน้ำยาทำความสะอาด
-3) ล้างน้ำออกตามความเหมาะสม
-4) ใช้น้ำยาฆ่าเชื้อหรือ sanitizer ตามขั้นตอน
-5) ปล่อยให้แห้งหรือเช็ดด้วยวัสดุสะอาด
-
-ถ้าข้ามขั้น cleaning ไปเลย sanitizer จะทำงานได้ไม่เต็มที่`
-      },
-      {
-            "id": "temperature-control",
-            "title": "Temperature Control เบื้องต้นในงานอาหาร",
-            "category": "Food Safety",
-            "level": "Intermediate",
-            "summary": "รู้ว่าทำไมอาหารต้องร้อนพอ เย็นพอ และไม่ปล่อยไว้นานโดยไม่ควบคุมอุณหภูมิ",
-            "body": `Temperature Control
-
-อาหารที่วางทิ้งไว้ในอุณหภูมิไม่เหมาะสมอาจเพิ่มความเสี่ยงด้านความปลอดภัยอาหาร
-
-พนักงานหน้าบ้านควรรู้ว่า:
-- อาหารร้อนควรถูกเสิร์ฟร้อนและไม่ปล่อยให้ชะงักโดยไม่จำเป็น
-- อาหารเย็นควรอยู่ในระบบแช่เย็นหรือภาชนะที่รักษาอุณหภูมิได้
-- Buffet line ต้องมีการตรวจเช็กอย่างสม่ำเสมอ
-- หากอาหารรอนานผิดปกติ ควรรีบประสานครัว
-
-เป้าหมายของทีมบริการคือช่วยลดเวลาที่อาหารอยู่นอกสภาพควบคุม`
-      },
-      {
-            "id": "buffet-service",
-            "title": "Buffet Service Standard",
-            "category": "Restaurant",
-            "level": "Intermediate",
-            "summary": "แนวทางดูแลไลน์บุฟเฟต์ เติมของ เช็กความสะอาด และช่วยเหลือแขกให้ไลน์ดูพร้อมตลอดเวลา",
-            "body": `Buffet Service Standard
-
-หน้าที่สำคัญของทีมบุฟเฟต์:
-- ตรวจความพร้อมของไลน์ก่อนเปิดบริการ
-- ตรวจป้ายชื่ออาหารและ allergen note ถ้ามี
-- เติมอุปกรณ์เสิร์ฟให้ครบ
-- เฝ้าดูความสะอาดบริเวณไลน์ตลอดเวลา
-- เติมอาหารอย่างเหมาะสม ไม่ปล่อยให้ดูโล่งหรือแห้ง
-- ช่วยแขกที่ไม่แน่ใจเรื่องเมนูหรือการใช้อุปกรณ์
-
-ไลน์บุฟเฟต์ที่ดีต้องดูเต็ม สะอาด และปลอดภัยอยู่เสมอ`
-      },
-      {
-            "id": "table-setting",
-            "title": "Table Setup, Cutlery และ Glassware Basics",
-            "category": "Restaurant",
-            "level": "Beginner",
-            "summary": "การจัดโต๊ะอย่างเป็นระบบช่วยให้การบริการลื่นไหลและเสริมภาพลักษณ์ห้องอาหาร",
-            "body": `Table Setup Basics
-
-หลักทั่วไป:
-- จาน ช้อน ส้อม มีด ต้องสะอาดและไม่มีคราบน้ำ
-- ระยะห่างระหว่าง cover ควรสม่ำเสมอ
-- แก้วต้องจับที่ก้านหรือฐานตามชนิดแก้ว
-- ผ้า napkin พับให้เรียบร้อยตามมาตรฐาน outlet
-- เช็ก alignment ของโต๊ะและเก้าอี้ทุกครั้ง
-
-พนักงานควรรู้ว่าโต๊ะแบบใดใช้ cutlery แบบไหน และต้องสามารถ reset โต๊ะได้รวดเร็วหลังแขกกลับ`
-      },
-      {
-            "id": "wine-basics",
-            "title": "Wine Basics สำหรับพนักงานเสิร์ฟ",
-            "category": "Wine",
-            "level": "Intermediate",
-            "summary": "เข้าใจประเภทไวน์ body, sweetness, serving temperature และการแนะนำไวน์เบื้องต้น",
-            "body": `Wine Basics
-
-1) ประเภทหลัก: Sparkling, White, Rosé, Red, Dessert
-2) Body: Light, Medium, Full
-3) Sweetness: Dry, Off-dry, Medium Sweet, Sweet
-4) เสิร์ฟอุณหภูมิ: White และ Sparkling เย็นกว่า Red
-5) Pairing เบื้องต้น:
-- Seafood → White / Sparkling
-- Cream Sauce → Rich White
-- Beef / Lamb → Medium to Full Body Red
-- Spicy Thai Food → Off-dry White หรือ Fruity Rosé
-6) การเปิดขวด: แสดงฉลาก, เปิดอย่างนุ่มนวล, ให้ host ชิมก่อน
-7) ห้ามจับขอบแก้ว และควรถือก้านแก้วไวน์`
-      },
-      {
-            "id": "wine-service",
-            "title": "Wine Service Step by Step",
-            "category": "Wine",
-            "level": "Intermediate",
-            "summary": "ขั้นตอนการนำเสนอ เปิดขวด ริน และดูแลโต๊ะไวน์อย่างถูกต้อง",
-            "body": `Wine Service Step by Step
-
-1) นำขวดไปแสดงฉลากให้ host ตรวจสอบ
-2) เปิดไวน์อย่างนุ่มนวลและเงียบที่สุด
-3) เช็ดปากขวดก่อนริน
-4) รินให้ host ชิมก่อนเสมอ
-5) เมื่อ host อนุมัติแล้วจึงรินให้แขกท่านอื่น โดยทั่วไปเริ่มจากสุภาพสตรีก่อนและ host เป็นลำดับท้าย
-6) ไม่รินแก้วเต็มเกินไป
-7) กลับมา top up ตามจังหวะโดยไม่รบกวน
-
-ความมั่นใจและความเรียบร้อยของ service สำคัญไม่แพ้ตัวไวน์เอง`
-      },
-      {
-            "id": "wine-pairing",
-            "title": "Wine Pairing พื้นฐานกับเมนูอาหาร",
-            "category": "Wine",
-            "level": "Intermediate",
-            "summary": "จับคู่ไวน์กับอาหารอย่างง่าย เพื่อช่วยขายและสร้างประสบการณ์ที่ดีขึ้นให้แขก",
-            "body": `Wine Pairing Basics
-
-แนวทางง่าย ๆ:
-- อาหารทะเลและปลา → White / Sparkling
-- ซอสครีม → White body กลางถึงเต็ม
-- เนื้อแดง → Red body กลางถึงเต็ม
-- อาหารเผ็ด → ไวน์ที่ผลไม้เด่นหรือมีความหวานเล็กน้อย
-- ของหวาน → Dessert wine ที่หวานกว่าเมนูเล็กน้อย
-
-ข้อสำคัญ:
-- ไม่มี pairing เดียวที่ถูกเสมอไป
-- ถามแขกก่อนเสมอว่าชอบสไตล์ไหน
-- ใช้คำอธิบายง่าย ๆ เช่น สดชื่น เบา นุ่ม เข้ม กลิ่นผลไม้`
-      },
-      {
-            "id": "bar-basics",
-            "title": "Bar Basics และมาตรฐานการชงเครื่องดื่ม",
-            "category": "Bar",
-            "level": "Intermediate",
-            "summary": "รู้จัก spirit หลัก วิธีวัด pour, garnish และการควบคุมต้นทุนเบื้องต้น",
-            "body": `Bar Basics
-
-Spirit หลักประกอบด้วย Vodka, Gin, Rum, Tequila, Whisky, Brandy
-
-สิ่งที่บาร์เทนเดอร์และทีมเสิร์ฟควรรู้:
-- สูตรมาตรฐานต้องชัดเจน
-- ใช้ jigger ทุกครั้งเพื่อลด overpour
-- Garnish มีผลต่อภาพลักษณ์และกลิ่น
-- ควรแยก classic cocktail ออกจาก signature cocktail
-- ต้องรู้ว่ารายการไหนขายเป็น shot ได้ รายการไหนเป็น mixer
-- ตรวจสอบ stock opening / closing ทุกวัน
-
-ตัวอย่างคลาสสิกที่ควรรู้: Mojito, Margarita, Martini, Old Fashioned, Negroni`
-      },
-      {
-            "id": "coffee-basics",
-            "title": "Coffee Basics สำหรับร้านอาหารและเลานจ์",
-            "category": "Coffee",
-            "level": "Beginner",
-            "summary": "ความต่างของ espresso, americano, latte, cappuccino และ service note",
-            "body": `Coffee Basics
-
-- Espresso: ช็อตเข้มข้นเป็นฐานหลัก
-- Americano: Espresso + Hot Water
-- Latte: Espresso + Milk มากกว่า foam
-- Cappuccino: Espresso + Steamed Milk + Foam หนา
-- Flat White: Microfoam เนียนกว่าและ milk texture ละเอียด
-
-Service Note:
-- ทวนความหวานและชนิดนม
-- เสิร์ฟพร้อมน้ำเปล่าหรือช้อนตามมาตรฐาน outlet
-- หากเครื่องเสียหรือช้าควรแจ้งแขกก่อน`
-      },
-      {
-            "id": "complaint-handling",
-            "title": "Complaint Handling อย่างมืออาชีพ",
-            "category": "Service",
-            "level": "Mandatory",
-            "summary": "รับมือคำร้องเรียนอย่างสงบ รวดเร็ว และรักษาความรู้สึกของแขก",
-            "body": `Complaint Handling
-
-หลัก L.A.S.T.
-- Listen: ฟังจนจบ ไม่แทรก
-- Apologize: ขอโทษอย่างจริงใจ
-- Solve: เสนอทางแก้ที่เป็นไปได้ทันที
-- Thank: ขอบคุณที่แจ้งให้ทราบ
-
-ข้อควรจำ:
-- อย่าโต้เถียงกับแขก
-- อย่าโยนความผิดให้ฝ่ายอื่นต่อหน้าแขก
-- หากเรื่องเกินอำนาจ ให้เรียกหัวหน้าทันที`
-      },
-      {
-            "id": "special-requests",
-            "title": "การจัดการ Special Request ของแขก",
-            "category": "Service",
-            "level": "Intermediate",
-            "summary": "เมื่อแขกขออะไรพิเศษ พนักงานต้องรับเรื่องอย่างมีระบบ ไม่รับปากเกินจริง",
-            "body": `Special Request Management
-
-ตัวอย่าง special request:
-- ไม่ใส่กระเทียม / ไม่ใส่หัวหอม
-- ต้องการ vegetarian / vegan
-- เค้กวันเกิด / โต๊ะพิเศษ / high chair
-- แพ้อาหาร
-- เปลี่ยนเครื่องเคียงหรือวิธีปรุง
-
-แนวทางที่ดี:
-1) ฟังและทวนสิ่งที่แขกต้องการ
-2) เช็กกับครัวหรือหัวหน้าก่อนรับปาก
-3) บันทึกในระบบหรือสื่อสารด้วยคำที่ชัดเจน
-4) กลับมายืนยันกับแขกเสมอ
-5) follow up หลังเสิร์ฟว่าได้ตามที่ต้องการหรือไม่`
-      },
-      {
-            "id": "banquet",
-            "title": "Banquet & Event Service Essentials",
-            "category": "Banquet",
-            "level": "Intermediate",
-            "summary": "ขั้นตอนก่อนงาน ระหว่างงาน และหลังงานสำหรับงานจัดเลี้ยง",
-            "body": `Banquet Service Essentials
-
-ก่อนงาน:
-- ตรวจ BEO ให้ครบ
-- เช็ก set up โต๊ะ, ผ้า, แก้ว, cutlery, station และ flow แขก
-- รู้เวลาเริ่ม VIP arrival, speech, buffet opening
-
-ระหว่างงาน:
-- เติมน้ำและ clearing อย่างเงียบที่สุด
-- สื่อสารกับครัวและ AV อย่างต่อเนื่อง
-- รักษาภาพลักษณ์และยืนประจำจุด
-
-หลังงาน:
-- เก็บ breakdown เป็นระบบ
-- สรุปของเสียและของคงเหลือ
-- จดปัญหาที่เกิดขึ้นเพื่อปรับปรุงงานครั้งถัดไป`
-      },
-      {
-            "id": "breakfast-operation",
-            "title": "Breakfast Operation สำหรับโรงแรม",
-            "category": "Restaurant",
-            "level": "Intermediate",
-            "summary": "การเตรียมบริการอาหารเช้าให้เร็ว เรียบร้อย และรองรับจำนวนแขกมากได้อย่างมีประสิทธิภาพ",
-            "body": `Breakfast Operation
-
-จุดสำคัญของอาหารเช้าโรงแรม:
-- เช็กจำนวน in-house guest และ expected covers
-- เตรียม station, cutlery roll, coffee station และ juice ให้พร้อมก่อนแขกลง
-- ประสานข้อมูล package เช่น RO / RB / Executive ให้ชัด
-- เฝ้าดู refill และ clearing อย่างต่อเนื่อง
-- ช่วง peak ต้องเน้น speed + communication + โต๊ะหมุนเร็วแต่ไม่เร่งแขกจนเกินไป
-
-อาหารเช้าที่ดีต้องดูพร้อมตลอดและทำให้แขกรู้สึกว่าวันเริ่มต้นอย่างราบรื่น`
-      },
-      {
-            "id": "room-service-basics",
-            "title": "Room Service / In-Room Dining Basics",
-            "category": "Room Service",
-            "level": "Intermediate",
-            "summary": "มาตรฐานรับออเดอร์ ส่งอาหารถึงห้อง และเก็บอุปกรณ์กลับอย่างสุภาพ",
-            "body": `Room Service Basics
-
-- รับออเดอร์ให้ชัดทั้งห้อง เวลา และ special request
-- ทวนรายการทุกครั้ง
-- จัด tray หรือ trolley ให้สะอาดและครบอุปกรณ์
-- เคาะประตูอย่างสุภาพและแนะนำตัวชัดเจน
-- อธิบายสั้น ๆ ว่ามีอะไรในเซ็ตบ้าง
-- ขอให้แขกเซ็นบิลหรือยืนยัน charge ตามขั้นตอน
-- แจ้งวิธีเรียกเก็บอุปกรณ์หลังใช้เสร็จ
-
-Room service ที่ดีต้องทั้งสุภาพ เร็ว และไม่รบกวนความเป็นส่วนตัวของแขก`
-      },
-      {
-            "id": "closing-checklist",
-            "title": "Restaurant Closing Checklist",
-            "category": "Operations",
-            "level": "Intermediate",
-            "summary": "รายการตรวจปิดร้านที่ช่วยลดการลืมงานและทำให้เปิดรอบถัดไปง่ายขึ้น",
-            "body": `Closing Checklist
-
-ก่อนปิดร้านควรเช็กอย่างน้อย:
-- เคลียร์โต๊ะและ reset พื้นที่
-- เก็บ cutlery, glassware และอุปกรณ์เข้าที่
-- เช็ก stock คงเหลือที่ต้องส่งต่อ
-- ปิดระบบไฟหรืออุปกรณ์ที่ไม่จำเป็น
-- ส่งข้อมูล lost & found ถ้ามี
-- สรุป issue ของวันนั้นให้หัวหน้าทราบ
-- ทำความสะอาด station ตามมาตรฐาน
-
-Checklist ที่ดีทำให้ทีมทำงานต่อเนื่องได้แม้เปลี่ยนกะ`
-      },
-      {
-            "id": "team-communication",
-            "title": "Team Communication ระหว่าง Service, Kitchen และ Bar",
-            "category": "Operations",
-            "level": "Mandatory",
-            "summary": "การสื่อสารที่ดีช่วยลด order mistake, delay และ complaint ได้มากกว่าที่คิด",
-            "body": `Team Communication
-
-หลักการสื่อสารที่ดี:
-- ใช้คำสั้น ชัด และตรงประเด็น
-- ยืนยันข้อมูลสำคัญซ้ำเมื่อเป็นเรื่อง allergy, VIP หรือ special request
-- หากมี delay ต้องแจ้งกันเร็ว ไม่ใช่รอจนแขกถาม
-- อย่า assume ว่าอีกฝ่ายรู้แล้ว
-- ส่งต่อข้อมูลตอนเปลี่ยนกะอย่างครบถ้วน
-
-ตัวอย่างข้อมูลที่ต้องย้ำให้ชัด:
-- โต๊ะไหนรีบ
-- จานไหน no onion / no nuts
-- เมนูไหนหมด
-- งานไหนมี VIP หรือ birthday setup`
-      },
-      {
-            "id": "stewarding-awareness",
-            "title": "Stewarding Awareness สำหรับทีมหน้าบ้าน",
-            "category": "Operations",
-            "level": "Beginner",
-            "summary": "แม้ไม่ใช่ steward โดยตรง แต่ทีม service ควรรู้ flow การจัดการอุปกรณ์และความสะอาดร่วมกัน",
-            "body": `Stewarding Awareness
-
-สิ่งที่ทีมหน้าบ้านควรรู้:
-- ส่งจาน แก้ว ช้อนส้อมกลับพื้นที่ล้างอย่างเป็นระเบียบ
-- แยกของแตก ของมีคม และของสกปรกหนักให้ถูกต้อง
-- ไม่กองอุปกรณ์จนเสี่ยงแตกหรือเกิดอุบัติเหตุ
-- ประสานจำนวนอุปกรณ์ที่ขาดล่วงหน้า โดยเฉพาะช่วงงานใหญ่
-- รักษาความสะอาด back area เช่นเดียวกับ front area
-
-การทำงานร่วมกับ steward ที่ดีทำให้บริการหน้าร้านลื่นไหลขึ้นมาก`
-      },
-{
-            "id": "english-restaurant-core",
-            "title": "English for F&B: Core Restaurant Vocabulary",
-            "category": "English",
-            "level": "Beginner",
-            "summary": "คำศัพท์อังกฤษพื้นฐานที่พนักงานห้องอาหารควรรู้ เช่น menu, order, bill, reservation และคำที่ใช้บ่อยหน้าร้าน",
-            "body": `Core Restaurant Vocabulary\\n\\nคำศัพท์สำคัญ:\\n- Menu = เมนู\\n- Reservation = การจองโต๊ะ\\n- Table = โต๊ะ\\n- Guest = แขก\\n- Order = ออเดอร์ / คำสั่งอาหาร\\n- Bill / Check = ใบเสร็จ / บิล\\n- Receipt = ใบเสร็จรับเงิน\\n- Promotion = โปรโมชั่น\\n- Recommendation = คำแนะนำ\\n- Available = มีขาย / พร้อมเสิร์ฟ\\n- Sold out = หมด\\n- Refill = เติมเพิ่ม\\n- Complimentary = ฟรีจากทางร้าน\\n- Signature dish = เมนูเด่น\\n- Last order = รับออเดอร์รอบสุดท้าย\\n\\nตัวอย่างประโยค:\\n- Here is the menu. = นี่คือเมนูค่ะ\\n- Are you ready to order? = พร้อมสั่งอาหารหรือยังคะ\\n- This item is sold out today. = รายการนี้หมดวันนี้ค่ะ\\n- Would you like the bill? = ต้องการรับบิลเลยไหมคะ`
-      },
-      {
-            "id": "english-service-phrases",
-            "title": "English for F&B: Service Phrases ที่ใช้หน้าร้านจริง",
-            "category": "English",
-            "level": "Mandatory",
-            "summary": "ประโยคอังกฤษสุภาพที่ใช้รับแขก พาไปนั่ง รับออเดอร์ เช็กโต๊ะ และปิดการขาย",
-            "body": `Service Phrases\\n\\nตอนรับแขก:\\n- Welcome to our restaurant. = ยินดีต้อนรับสู่ห้องอาหารของเราค่ะ\\n- How many guests, please? = มากันกี่ท่านคะ\\n- Do you have a reservation? = ได้จองโต๊ะไว้ไหมคะ\\n- This way, please. = เชิญทางนี้ค่ะ\\n\\nตอนรับออเดอร์:\\n- May I take your order? = ขอรับออเดอร์ได้ไหมคะ\\n- Would you like something to drink first? = รับเครื่องดื่มก่อนดีไหมคะ\\n- How would you like your steak cooked? = ต้องการระดับความสุกแบบไหนคะ\\n- Would you like any side dish? = รับเครื่องเคียงเพิ่มไหมคะ\\n\\nตอนเช็กโต๊ะ:\\n- Is everything alright? = ทุกอย่างเรียบร้อยดีไหมคะ\\n- How is your meal? = อาหารเป็นอย่างไรบ้างคะ\\n\\nตอนปิดบริการ:\\n- Would you like dessert or coffee? = รับของหวานหรือกาแฟเพิ่มไหมคะ\\n- Thank you for dining with us. = ขอบคุณที่มาใช้บริการค่ะ`
-      },
-      {
-            "id": "english-tableware-equipment",
-            "title": "English for F&B: Tableware, Cutlery & Equipment",
-            "category": "English",
-            "level": "Beginner",
-            "summary": "คำศัพท์อุปกรณ์บนโต๊ะอาหารและของใช้ในห้องอาหาร เช่น fork, spoon, napkin, wine glass, tray",
-            "body": `Tableware & Equipment\\n\\nอุปกรณ์บนโต๊ะ:\\n- Plate = จาน\\n- Bowl = ชาม\\n- Fork = ส้อม\\n- Knife = มีด\\n- Spoon = ช้อน\\n- Dessert spoon = ช้อนของหวาน\\n- Chopsticks = ตะเกียบ\\n- Napkin = ผ้าเช็ดปาก\\n- Tablecloth = ผ้าปูโต๊ะ\\n- Placemat = แผ่นรองจาน\\n- Salt shaker = กระปุกเกลือ\\n- Pepper mill = เครื่องบดพริกไทย\\n\\nแก้วและภาชนะ:\\n- Water glass = แก้วน้ำ\\n- Wine glass = แก้วไวน์\\n- Champagne flute = แก้วแชมเปญ\\n- Coffee cup = ถ้วยกาแฟ\\n- Saucer = จานรองถ้วย\\n\\nอุปกรณ์บริการ:\\n- Tray = ถาด\\n- Trolley = รถเข็นเสิร์ฟ\\n- Ice bucket = ถังน้ำแข็ง\\n- Bill folder = แฟ้มบิล`
-      },
-      {
-            "id": "english-food-allergy-terms",
-            "title": "English for F&B: Food Allergy & Dietary Terms",
-            "category": "English",
-            "level": "Mandatory",
-            "summary": "คำศัพท์อังกฤษเรื่องการแพ้อาหารและข้อจำกัดด้านอาหารที่พนักงานควรตอบได้อย่างปลอดภัย",
-            "body": `Food Allergy & Dietary Terms\\n\\nคำศัพท์สำคัญ:\\n- Food allergy = การแพ้อาหาร\\n- Allergy = อาการแพ้\\n- Allergic to = แพ้...\\n- Intolerance = ภาวะแพ้อ่อน / ย่อยไม่ได้\\n- Dietary restriction = ข้อจำกัดด้านอาหาร\\n- Vegetarian = มังสวิรัติ\\n- Vegan = วีแกน\\n- Gluten-free = ปราศจากกลูเตน\\n- Dairy-free = ไม่มีนม\\n- Nut-free = ไม่มีถั่ว\\n- Shellfish = สัตว์ทะเลเปลือกแข็ง\\n- Cross contamination = การปนเปื้อนข้าม\\n- Ingredient = ส่วนผสม\\n\\nประโยคที่ใช้บ่อย:\\n- Do you have any food allergies? = แพ้อาหารอะไรหรือไม่คะ\\n- This dish contains nuts. = เมนูนี้มีถั่วค่ะ\\n- Let me check the ingredients with the chef. = เดี๋ยวขอเช็กส่วนผสมกับเชฟก่อนค่ะ\\n- We cannot guarantee that it is completely allergen-free. = เราไม่สามารถรับประกันได้ว่าปลอดสารก่อภูมิแพ้ 100% ค่ะ`
-      },
-      {
-            "id": "english-hygiene-cleaning",
-            "title": "English for F&B: Hygiene, Cleaning & Safety Vocabulary",
-            "category": "English",
-            "level": "Intermediate",
-            "summary": "คำศัพท์อังกฤษเกี่ยวกับสุขอนามัย การทำความสะอาด และความปลอดภัยในห้องอาหาร",
-            "body": `Hygiene, Cleaning & Safety Vocabulary\\n\\nคำศัพท์สำคัญ:\\n- Hygiene = สุขอนามัย\\n- Hand washing = การล้างมือ\\n- Sanitizer = น้ำยาฆ่าเชื้อ / สารฆ่าเชื้อ\\n- Cleaning = การทำความสะอาด\\n- Sanitizing = การฆ่าเชื้อให้อยู่ในระดับปลอดภัย\\n- Disposable gloves = ถุงมือใช้ครั้งเดียว\\n- Waste bin = ถังขยะ\\n- Spill = ของหก\\n- Wet floor = พื้นเปียก\\n- Broken glass = แก้วแตก\\n- Safe temperature = อุณหภูมิที่ปลอดภัย\\n- Expired = หมดอายุ\\n\\nตัวอย่างประโยค:\\n- Please wash your hands before handling food. = กรุณาล้างมือก่อนจับอาหาร\\n- The table has been sanitized. = โต๊ะนี้ผ่านการฆ่าเชื้อแล้ว\\n- Be careful, the floor is wet. = ระวัง พื้นเปียกค่ะ`
-      },
-      {
-            "id": "english-food-cooking-terms",
-            "title": "English for F&B: Food Descriptions & Cooking Terms",
-            "category": "English",
-            "level": "Intermediate",
-            "summary": "คำศัพท์อังกฤษสำหรับอธิบายรสชาติ เนื้อสัมผัส และวิธีปรุงอาหาร เพื่อใช้แนะนำเมนูได้ดีขึ้น",
-            "body": `Food Descriptions & Cooking Terms\\n\\nคำศัพท์รสชาติ:\\n- Spicy = เผ็ด\\n- Mild = รสอ่อน\\n- Sweet = หวาน\\n- Sour = เปรี้ยว\\n- Salty = เค็ม\\n- Bitter = ขม\\n- Creamy = ครีมมี่ / นุ่มมัน\\n- Crispy = กรอบ\\n- Tender = นุ่ม\\n- Juicy = ฉ่ำ\\n\\nวิธีปรุง:\\n- Grilled = ย่าง\\n- Fried = ทอด\\n- Steamed = นึ่ง\\n- Roasted = อบ\\n- Braised = ตุ๋น\\n- Poached = ลวก/ต้มแบบเบา\\n- Stir-fried = ผัด\\n\\nระดับความสุกสเต๊ก:\\n- Rare\\n- Medium rare\\n- Medium\\n- Medium well\\n- Well done\\n\\nตัวอย่างประโยค:\\n- This dish is mildly spicy. = จานนี้เผ็ดอ่อนค่ะ\\n- The fish is grilled and served with lemon butter sauce. = ปลาจานนี้ย่างและเสิร์ฟพร้อมซอสเลมอนบัตเตอร์ค่ะ`
-      },
-      {
-            "id": "english-breakfast-buffet",
-            "title": "English for F&B: Breakfast & Buffet Vocabulary",
-            "category": "English",
-            "level": "Beginner",
-            "summary": "คำศัพท์อังกฤษที่ใช้บ่อยในไลน์อาหารเช้าและบุฟเฟต์ เช่น refill, buffet line, live station, cereal, pastry",
-            "body": `Breakfast & Buffet Vocabulary\\n\\nคำศัพท์สำคัญ:\\n- Breakfast buffet = บุฟเฟต์อาหารเช้า\\n- Buffet line = ไลน์บุฟเฟต์\\n- Live station = จุดปรุงสด\\n- Refill = เติมเพิ่ม\\n- Coffee station = มุมกาแฟ\\n- Juice station = มุมน้ำผลไม้\\n- Cereal = ซีเรียล\\n- Pastry = ขนมอบ\\n- Bakery = เบเกอรี่\\n- Fresh fruit = ผลไม้สด\\n- Yogurt = โยเกิร์ต\\n- Omelet = ไข่เจียวฝรั่ง\\n- Fried egg = ไข่ดาว\\n- Scrambled eggs = ไข่คน\\n- Sausage = ไส้กรอก\\n- Bacon = เบคอน\\n\\nตัวอย่างประโยค:\\n- Breakfast is served from 6:30 to 10:30 a.m. = อาหารเช้าให้บริการเวลา 6:30 ถึง 10:30 น.\\n- The omelet station is over there. = มุมทำไข่อยู่ทางนั้นค่ะ\\n- We will refill the buffet shortly. = เราจะเติมไลน์อาหารอีกสักครู่นะคะ`
-      },
-      {
-            "id": "english-bar-beverage",
-            "title": "English for F&B: Bar & Beverage Vocabulary",
-            "category": "English",
-            "level": "Intermediate",
-            "summary": "คำศัพท์เครื่องดื่ม บาร์ และการสั่งดื่ม เช่น neat, on the rocks, mixer, draft beer, sparkling water",
-            "body": `Bar & Beverage Vocabulary\\n\\nเครื่องดื่มพื้นฐาน:\\n- Soft drink = น้ำอัดลม\\n- Juice = น้ำผลไม้\\n- Sparkling water = น้ำแร่มีฟอง\\n- Still water = น้ำเปล่า / น้ำแร่ไม่มีฟอง\\n- Mocktail = ม็อกเทล\\n- Cocktail = ค็อกเทล\\n- Draft beer = เบียร์สด\\n- Bottle beer = เบียร์ขวด\\n- House wine = ไวน์เฮาส์\\n- Spirit = สุรากลั่น\\n- Mixer = มิกเซอร์\\n\\nวิธีเสิร์ฟ:\\n- Neat = ไม่ใส่น้ำแข็ง\\n- On the rocks = ใส่น้ำแข็ง\\n- With soda = ผสมโซดา\\n- Double shot = สองช็อต\\n- Garnish = เครื่องตกแต่งแก้ว\\n\\nตัวอย่างประโยค:\\n- Would you like it neat or on the rocks? = ต้องการแบบไม่ใส่น้ำแข็งหรือใส่น้ำแข็งคะ\\n- Our house wine is available by the glass. = ไวน์เฮาส์ของเราสามารถสั่งเป็นแก้วได้ค่ะ`
-      },
-      {
-            "id": "english-wine-terms",
-            "title": "English for F&B: Wine Vocabulary & Guest Conversation",
-            "category": "English",
-            "level": "Intermediate",
-            "summary": "คำศัพท์ไวน์ที่ใช้บ่อยเวลาแนะนำแขก เช่น dry, full-bodied, fruity, pair with, vintage",
-            "body": `Wine Vocabulary\\n\\nคำศัพท์สำคัญ:\\n- Dry = แห้ง / ไม่หวาน\\n- Sweet = หวาน\\n- Light-bodied = บางเบา\\n- Medium-bodied = บอดี้กลาง\\n- Full-bodied = หนักแน่น\\n- Fruity = กลิ่นผลไม้เด่น\\n- Crisp = สดชื่น คม\\n- Smooth = นุ่ม\\n- Tannins = แทนนิน\\n- Vintage = ปีองุ่น\\n- Bottle = ขวด\\n- Glass = แก้ว\\n- Pair with = จับคู่กับ\\n\\nตัวอย่างประโยค:\\n- This wine is dry and fruity. = ไวน์ตัวนี้แห้งและมีกลิ่นผลไม้เด่นค่ะ\\n- It pairs well with seafood. = เข้ากันได้ดีกับอาหารทะเลค่ะ\\n- Would you prefer red or white wine? = ต้องการไวน์แดงหรือไวน์ขาวคะ`
-      },
-      {
-            "id": "english-room-service-payment",
-            "title": "English for F&B: Room Service, Billing & Payment Terms",
-            "category": "English",
-            "level": "Intermediate",
-            "summary": "คำศัพท์และประโยคเกี่ยวกับ room service การคิดเงิน และการชำระเงินที่ต้องใช้บ่อยในโรงแรม",
-            "body": `Room Service, Billing & Payment Terms\\n\\nคำศัพท์สำคัญ:\\n- Room service / In-room dining = รูมเซอร์วิส\\n- Tray = ถาด\\n- Trolley = รถเข็น\\n- Charge to room = ชาร์จเข้าห้องพัก\\n- Signature = ลายเซ็น\\n- Bill / Check = บิล\\n- Receipt = ใบเสร็จ\\n- Cash = เงินสด\\n- Credit card = บัตรเครดิต\\n- Contactless payment = จ่ายแบบแตะ\\n- Service charge = ค่าบริการ\\n- Tax = ภาษี\\n\\nตัวอย่างประโยค:\\n- Would you like to charge it to your room? = ต้องการชาร์จเข้าห้องพักไหมคะ\\n- May I have your room number, please? = ขอหมายเลขห้องได้ไหมคะ\\n- Please sign here. = กรุณาเซ็นตรงนี้ค่ะ\\n- Here is your receipt. = นี่คือใบเสร็จค่ะ`
-      },
-      {
-            "id": "english-complaint-apology",
-            "title": "English for F&B: Complaint Handling & Apology Phrases",
-            "category": "English",
-            "level": "Mandatory",
-            "summary": "ประโยคอังกฤษสุภาพสำหรับขอโทษ รับเรื่อง และดูแลแขกเมื่อเกิดปัญหาในห้องอาหาร",
-            "body": `Complaint Handling & Apology Phrases\\n\\nประโยคที่ใช้ได้จริง:\\n- I’m very sorry for the inconvenience. = ขออภัยในความไม่สะดวกอย่างยิ่งค่ะ\\n- Thank you for letting us know. = ขอบคุณที่แจ้งให้เราทราบค่ะ\\n- Let me fix this for you right away. = เดี๋ยวขอแก้ไขให้ทันทีค่ะ\\n- I will check with my supervisor. = เดี๋ยวจะตรวจสอบกับหัวหน้าก่อนค่ะ\\n- Would you allow us a few minutes? = ขอเวลาเราไม่กี่นาทีได้ไหมคะ\\n- We appreciate your patience. = ขอบคุณที่กรุณารอค่ะ\\n\\nบทสนทนาสั้น:\\nGuest: My order is taking too long.\\nStaff: I’m sorry for the delay. Let me check your order right away.\\n\\nGuest: This is not what I ordered.\\nStaff: I apologize. I will replace it immediately.`
-      }
-];
-
-    const questionBank = [
-      {
-            "q": "เมื่อแขกแจ้งว่าแพ้อาหาร สิ่งแรกที่พนักงานควรทำคืออะไร?",
-            "choices": [
-                  "บอกว่าเมนูส่วนใหญ่ไม่น่ามี",
-                  "ขอบคุณที่แจ้งและขอเช็กกับครัว",
-                  "แนะนำให้แขกลองทานนิดหน่อย",
-                  "ตอบตามความจำ"
-            ],
-            "a": 1
-      },
-      {
-            "q": "ข้อใดคือตัวอย่างของ cross contamination?",
-            "choices": [
-                  "ใช้คีมเดียวคีบหลายเมนู",
-                  "เช็ดโต๊ะหลังแขกกลับ",
-                  "เปิดไวน์ให้ host ชิม",
-                  "เติมน้ำแข็งในบาร์"
-            ],
-            "a": 0
-      },
-      {
-            "q": "หลัก L.A.S.T. ใช้สำหรับเรื่องใด?",
-            "choices": [
-                  "เปิดไวน์",
-                  "รับคำร้องเรียน",
-                  "ทำความสะอาดบาร์",
-                  "จัดโต๊ะ banquet"
-            ],
-            "a": 1
-      },
-      {
-            "q": "การกลับไปเช็กโต๊ะหลังเสิร์ฟอาหารควรทำประมาณเมื่อใด?",
-            "choices": [
-                  "ทันทีภายใน 10 วินาที",
-                  "2–3 นาทีหลังเสิร์ฟ",
-                  "หลังแขกเรียกเท่านั้น",
-                  "ตอนเก็บจาน"
-            ],
-            "a": 1
-      },
-      {
-            "q": "ไวน์ประเภทใดมักเข้ากับอาหารทะเลได้ดี?",
-            "choices": [
-                  "Red Full Body",
-                  "White หรือ Sparkling",
-                  "Dessert Wine",
-                  "Fortified Wine"
-            ],
-            "a": 1
-      },
-      {
-            "q": "เครื่องมือมาตรฐานที่ช่วยลด overpour ในบาร์คืออะไร?",
-            "choices": [
-                  "Shaker",
-                  "Jigger",
-                  "Strainer",
-                  "Blender"
-            ],
-            "a": 1
-      },
-      {
-            "q": "ถ้าไม่แน่ใจเรื่อง allergen ควรทำอย่างไร?",
-            "choices": [
-                  "ตอบไปก่อน",
-                  "ถามพนักงานคนอื่นแบบเดา",
-                  "เช็กกับครัวก่อนตอบแขก",
-                  "บอกว่าไม่มีทุกเมนู"
-            ],
-            "a": 2
-      },
-      {
-            "q": "ข้อใดคือการ upsell ที่ดี?",
-            "choices": [
-                  "กดดันให้ซื้อราคาแพง",
-                  "เสนอสิ่งที่เข้ากับเมนูและเพิ่มคุณค่า",
-                  "บอกว่าเมนูธรรมดาไม่อร่อย",
-                  "เสนอเฉพาะของแพงสุด"
-            ],
-            "a": 1
-      },
-      {
-            "q": "Cappuccino ต่างจาก Latte อย่างไรโดยทั่วไป?",
-            "choices": [
-                  "ไม่มีนม",
-                  "ใช้ชาแทนกาแฟ",
-                  "มีโฟมหนากว่า",
-                  "เย็นเสมอ"
-            ],
-            "a": 2
-      },
-      {
-            "q": "ก่อนงาน banquet ควรเช็กเอกสารใด?",
-            "choices": [
-                  "Payslip",
-                  "BEO",
-                  "Invoice ลูกค้าอย่างเดียว",
-                  "Stock card บาร์เท่านั้น"
-            ],
-            "a": 1
-      },
-      {
-            "q": "ข้อใดเป็น common allergen ที่พบบ่อย?",
-            "choices": [
-                  "น้ำเปล่า",
-                  "นม",
-                  "ข้าวสวย",
-                  "เกลือ"
-            ],
-            "a": 1
-      },
-      {
-            "q": "ลำดับที่ถูกต้องโดยทั่วไปของการทำความสะอาดคือข้อใด?",
-            "choices": [
-                  "Sanitize ก่อนแล้วค่อย Cleaning",
-                  "Cleaning แล้วค่อย Sanitizing",
-                  "เช็ดอย่างเดียวพอ",
-                  "ล้างน้ำอย่างเดียว"
-            ],
-            "a": 1
-      },
-      {
-            "q": "พนักงานไม่ควรสัมผัสส่วนใดของแก้วน้ำ?",
-            "choices": [
-                  "ฐานแก้ว",
-                  "ก้านแก้วไวน์",
-                  "ปากแก้ว",
-                  "ผิวด้านนอก"
-            ],
-            "a": 2
-      },
-      {
-            "q": "ใน breakfast operation สิ่งใดสำคัญมากช่วง peak hour?",
-            "choices": [
-                  "ปล่อยให้แขกรอเพราะคนเยอะ",
-                  "speed และ communication",
-                  "ขายไวน์เป็นหลัก",
-                  "เก็บโต๊ะช้าที่สุด"
-            ],
-            "a": 1
-      },
-      {
-            "q": "เมื่อรับ special request ควรทำอย่างไร?",
-            "choices": [
-                  "รับปากทันทีทุกเรื่อง",
-                  "ฟัง ทวน เช็ก แล้วค่อยยืนยัน",
-                  "บอกว่าไม่ได้ทั้งหมด",
-                  "ให้แขกคุยกับครัวเอง"
-            ],
-            "a": 1
-      },
-      {
-            "q": "การจัดโต๊ะที่ดีควรมีลักษณะอย่างไร?",
-            "choices": [
-                  "อุปกรณ์ไม่ต้องตรงกัน",
-                  "ระยะห่าง cover สม่ำเสมอ",
-                  "แก้วมีคราบน้ำเล็กน้อยได้",
-                  "วางมีดส้อมแบบไหนก็ได้"
-            ],
-            "a": 1
-      },
-      {
-            "q": "ข้อใดไม่ควรพูดกับแขกที่แพ้อาหาร?",
-            "choices": [
-                  "เดี๋ยวขอเช็กกับครัวก่อนค่ะ",
-                  "เมนูนี้มีความเสี่ยงนะคะ",
-                  "ไม่น่ามีค่ะ",
-                  "ขออนุญาตยืนยันส่วนผสมให้อีกครั้งค่ะ"
-            ],
-            "a": 2
-      },
-      {
-            "q": "Room service ที่ดีควรเน้นอะไร?",
-            "choices": [
-                  "ความเร็วและความเป็นส่วนตัวของแขก",
-                  "วางอาหารแล้วรีบเดินออกโดยไม่พูด",
-                  "ไม่ต้องทวนออเดอร์",
-                  "ใช้ถาดไม่ครบอุปกรณ์"
-            ],
-            "a": 0
-      },
-      {
-            "q": "ทีม service ควรสื่อสารข้อมูลใดกับครัวอย่างชัดเจนที่สุด?",
-            "choices": [
-                  "เพลงที่แขกชอบ",
-                  "เรื่อง allergy และ VIP",
-                  "สีเสื้อแขก",
-                  "เรื่องอากาศ"
-            ],
-            "a": 1
-      },
-      {
-            "q": "ข้อใดคือเป้าหมายของ temperature control?",
-            "choices": [
-                  "ทำให้อาหารดูแพงขึ้น",
-                  "ช่วยให้อาหารคงอยู่ในสภาพปลอดภัย",
-                  "ทำให้เสิร์ฟช้าลง",
-                  "ใช้ได้เฉพาะบาร์"
-            ],
-            "a": 1
-      },
-{
-            "q": "คำว่า 'reservation' หมายถึงอะไรในงานห้องอาหาร?",
-            "choices": [
-                  "การชำระเงิน",
-                  "การจองโต๊ะ",
-                  "การจัดโต๊ะ",
-                  "การส่งอาหาร"
-            ],
-            "a": 1
-      },
-      {
-            "q": "ถ้าต้องการถามแขกว่า 'พร้อมสั่งอาหารหรือยังคะ' ควรใช้ประโยคใด?",
-            "choices": [
-                  "Would you like the bill?",
-                  "Are you ready to order?",
-                  "How is your meal?",
-                  "Do you have a reservation?"
-            ],
-            "a": 1
-      },
-      {
-            "q": "คำว่า 'sold out' แปลว่าอะไร?",
-            "choices": [
-                  "มีพร้อมเสิร์ฟ",
-                  "เสิร์ฟฟรี",
-                  "หมด",
-                  "เผ็ดมาก"
-            ],
-            "a": 2
-      },
-      {
-            "q": "คำว่า 'cross contamination' หมายถึงอะไร?",
-            "choices": [
-                  "การชาร์จเข้าห้อง",
-                  "การปนเปื้อนข้าม",
-                  "การเปิดไวน์",
-                  "การปิดรอบบัญชี"
-            ],
-            "a": 1
-      },
-      {
-            "q": "ข้อใดคือคำเรียก 'ผ้าเช็ดปาก' เป็นภาษาอังกฤษ?",
-            "choices": [
-                  "Tray",
-                  "Napkin",
-                  "Trolley",
-                  "Saucer"
-            ],
-            "a": 1
-      },
-      {
-            "q": "ถ้าแขกถามว่าไวน์ตัวไหน 'เข้ากับอาหารทะเล' คำกริยาที่ใช้บ่อยคืออะไร?",
-            "choices": [
-                  "charge",
-                  "refill",
-                  "pair with",
-                  "sanitize"
-            ],
-            "a": 2
-      },
-      {
-            "q": "คำว่า 'neat' ในบาร์หมายถึงอะไร?",
-            "choices": [
-                  "เสิร์ฟใส่น้ำแข็ง",
-                  "เสิร์ฟไม่ใส่น้ำแข็ง",
-                  "เสิร์ฟกับโซดา",
-                  "เสิร์ฟสองช็อต"
-            ],
-            "a": 1
-      },
-      {
-            "q": "ประโยคใดเหมาะสำหรับการขอโทษแขกอย่างสุภาพ?",
-            "choices": [
-                  "No problem.",
-                  "I’m very sorry for the inconvenience.",
-                  "You have to wait.",
-                  "That’s not my section."
-            ],
-            "a": 1
-      },
-      {
-            "q": "คำว่า 'charge to room' หมายถึงอะไร?",
-            "choices": [
-                  "ส่งอาหารไปห้อง",
-                  "ชาร์จค่าใช้จ่ายเข้าห้องพัก",
-                  "ย้ายโต๊ะ",
-                  "ทำความสะอาดห้อง"
-            ],
-            "a": 1
-      },
-      {
-            "q": "ถ้าจะบอกแขกว่า 'เดี๋ยวขอเช็กส่วนผสมกับเชฟก่อนค่ะ' ควรใช้ประโยคใด?",
-            "choices": [
-                  "Let me check the ingredients with the chef.",
-                  "Please sign here.",
-                  "This way, please.",
-                  "The floor is wet."
-            ],
-            "a": 0
-      }
-];
-
-    const state = {
-      currentView: 'dashboard',
-      currentLessonId: null,
-      currentQuestion: null,
-      profile: JSON.parse(localStorage.getItem('fnb_profile') || '{"name":"","dept":"Service"}'),
-      completed: JSON.parse(localStorage.getItem('fnb_completed') || '[]'),
-      favorites: JSON.parse(localStorage.getItem('fnb_favorites') || '[]'),
-      notes: JSON.parse(localStorage.getItem('fnb_notes') || '{}'),
-      quizHistory: JSON.parse(localStorage.getItem('fnb_quiz_history') || '[]')
-    };
-
-    const byId = (id) => document.getElementById(id);
-
-    function persist() {
-      localStorage.setItem('fnb_profile', JSON.stringify(state.profile));
-      localStorage.setItem('fnb_completed', JSON.stringify(state.completed));
-      localStorage.setItem('fnb_favorites', JSON.stringify(state.favorites));
-      localStorage.setItem('fnb_notes', JSON.stringify(state.notes));
-      localStorage.setItem('fnb_quiz_history', JSON.stringify(state.quizHistory));
-      renderAll();
-    }
-
-    function goView(view) {
-      state.currentView = view;
-      document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-      byId(`view-${view}`).classList.remove('hidden');
-      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.view === view));
-      if (view === 'favorites') renderFavorites();
-      if (view === 'quiz') renderQuizHistory();
-    }
-    window.goView = goView;
-
-    function renderDashboard() {
-      byId('statLessons').textContent = lessons.length;
-      byId('statCompleted').textContent = state.completed.length;
-      const latestScore = state.quizHistory.length ? state.quizHistory[0].score : 0;
-      byId('statScore').textContent = latestScore;
-      byId('statFavorites').textContent = state.favorites.length;
-
-      const pct = Math.round((state.completed.length / lessons.length) * 100) || 0;
-      byId('overallProgress').style.width = pct + '%';
-      byId('progressText').textContent = `${pct}% (${state.completed.length}/${lessons.length} บท)`;
-      byId('profileSummary').textContent = state.profile.name
-        ? `${state.profile.name} • ${state.profile.dept}`
-        : 'ยังไม่ได้บันทึกชื่อพนักงาน';
-
-      const categories = [...new Set(lessons.map(l => l.category))];
-      byId('categoryChips').innerHTML = categories.map(cat => `<button class="chip" data-category="${cat}">${cat}</button>`).join('');
-    }
-    window.filterByCategory = function(cat) {
-      goView('library');
-      byId('categoryFilter').value = cat;
-      renderLibrary();
-    }
-
-    function renderCategoryFilter() {
-      const select = byId('categoryFilter');
-      const cats = [...new Set(lessons.map(l => l.category))];
-      select.innerHTML = '<option value="all">ทุกหมวด</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('');
-    }
-
-    function renderLibrary() {
-      const q = byId('searchInput').value.trim().toLowerCase();
-      const cat = byId('categoryFilter').value;
-      const filtered = lessons.filter(l => {
-        const hitText = [l.title, l.summary, l.body, l.category].join(' ').toLowerCase();
-        return (cat === 'all' || l.category === cat) && (!q || hitText.includes(q));
-      });
-
-      byId('articleGrid').innerHTML = filtered.map(lesson => {
-        const isCompleted = state.completed.includes(lesson.id);
-        const isFav = state.favorites.includes(lesson.id);
-        return `
-          <div class="article-card">
-            <div style="display:flex; justify-content:space-between; gap:10px; align-items:flex-start;">
-              <div>
-                <h3>${lesson.title}</h3>
-                <div class="meta">${lesson.category} • ${lesson.level}</div>
-              </div>
-              <span class="tag">${isCompleted ? 'อ่านแล้ว' : 'ยังไม่อ่าน'}</span>
-            </div>
-            <p>${lesson.summary}</p>
-            <div>
-              <span class="tag">${lesson.category}</span>
-              ${isFav ? '<span class="tag">โปรด</span>' : ''}
-            </div>
-            <div class="article-actions">
-              <button class="primary" data-action="open-lesson" data-lesson-id="${lesson.id}">อ่านบทเรียน</button>
-              <button class="secondary" data-action="toggle-favorite" data-lesson-id="${lesson.id}">${isFav ? 'เอาออกจากโปรด' : 'เพิ่มโปรด'}</button>
-            </div>
-          </div>
-        `;
-      }).join('') || '<div class="muted">ไม่พบบทเรียนที่ตรงกับคำค้นหา</div>';
-    }
-
-    function openLesson(id) {
-      const lesson = lessons.find(l => l.id === id);
-      if (!lesson) return;
-      state.currentLessonId = id;
-      byId('lessonTitle').textContent = lesson.title;
-      byId('lessonMeta').textContent = `${lesson.category} • ${lesson.level}`;
-      byId('lessonBody').textContent = lesson.body;
-      byId('favoriteLessonBtn').textContent = state.favorites.includes(id) ? 'เอาออกจากรายการโปรด' : 'บันทึกเป็นรายการโปรด';
-      goView('library');
-      const panel = byId('lessonPanel');
-      if (panel) {
-        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        panel.style.outline = '3px solid rgba(15,118,110,0.18)';
-        setTimeout(() => { panel.style.outline = 'none'; }, 1200);
-      }
-    }
-    window.openLesson = openLesson;
-
-    function toggleFavorite(id = state.currentLessonId) {
-      if (!id) return;
-      if (state.favorites.includes(id)) {
-        state.favorites = state.favorites.filter(x => x !== id);
-      } else {
-        state.favorites.unshift(id);
-      }
-      persist();
-      renderLibrary();
-      if (state.currentLessonId === id) {
-        byId('favoriteLessonBtn').textContent = state.favorites.includes(id) ? 'เอาออกจากรายการโปรด' : 'บันทึกเป็นรายการโปรด';
-      }
-    }
-    window.toggleFavorite = toggleFavorite;
-
-    function completeCurrentLesson() {
-      if (!state.currentLessonId) return alert('กรุณาเลือกบทเรียนก่อน');
-      if (!state.completed.includes(state.currentLessonId)) state.completed.push(state.currentLessonId);
-      persist();
-      alert('บันทึกว่าอ่านจบแล้ว');
-    }
-
-    function renderFavorites() {
-      const list = state.favorites.map(id => lessons.find(l => l.id === id)).filter(Boolean);
-      byId('favoritesList').innerHTML = list.length ? list.map(lesson => `
-        <div class="list-item">
-          <div>
-            <strong>${lesson.title}</strong>
-            <small>${lesson.category} • ${lesson.level}</small>
-          </div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="secondary" data-action="open-lesson" data-lesson-id="${lesson.id}">เปิดอ่าน</button>
-            <button class="danger" data-action="toggle-favorite" data-lesson-id="${lesson.id}">ลบ</button>
-          </div>
-        </div>
-      `).join('') : '<div class="muted">ยังไม่มีรายการโปรด</div>';
-    }
-
-    function populateNotesSelect() {
-      byId('noteLessonSelect').innerHTML = lessons.map(l => `<option value="${l.id}">${l.title}</option>`).join('');
-    }
-
-    function loadNote() {
-      const id = byId('noteLessonSelect').value;
-      byId('noteArea').value = state.notes[id] || '';
-    }
-
-    function saveNote() {
-      const id = byId('noteLessonSelect').value;
-      state.notes[id] = byId('noteArea').value;
-      persist();
-      alert('บันทึกโน้ตแล้ว');
-    }
-
-    function randomQuestion() {
-      return questionBank[Math.floor(Math.random() * questionBank.length)];
-    }
-
-    function renderQuestion() {
-      if (!state.currentQuestion) {
-        byId('quizArea').innerHTML = '<div class="muted">กด “เริ่ม Quiz ใหม่” เพื่อเริ่มทำแบบทดสอบ</div>';
-        return;
-      }
-      const q = state.currentQuestion;
-      byId('quizArea').innerHTML = `
-        <div class="question">${q.q}</div>
-        ${q.choices.map((c, i) => `<button class="option" onclick="answerQuestion(${i})">${i+1}. ${c}</button>`).join('')}
-      `;
-    }
-
-    function startQuiz() {
-      state.currentQuestion = randomQuestion();
-      renderQuestion();
-    }
-
-    function answerQuestion(index) {
-      const q = state.currentQuestion;
-      if (!q) return;
-      const correct = index === q.a;
-      const score = correct ? 100 : 0;
-      state.quizHistory.unshift({
-        at: new Date().toLocaleString('th-TH'),
-        question: q.q,
-        score,
-        result: correct ? 'Correct' : 'Wrong'
-      });
-      state.quizHistory = state.quizHistory.slice(0, 20);
-      persist();
-      const buttons = [...document.querySelectorAll('.option')];
-      buttons.forEach((btn, i) => {
-        btn.disabled = true;
-        if (i === q.a) btn.classList.add('correct');
-        if (i === index && i !== q.a) btn.classList.add('wrong');
-      });
-    }
-    window.answerQuestion = answerQuestion;
-
-    function renderQuizHistory() {
-      byId('quizHistoryList').innerHTML = state.quizHistory.length ? state.quizHistory.map(item => `
-        <div class="list-item">
-          <div>
-            <strong>${item.score} คะแนน • ${item.result}</strong>
-            <small>${item.question}<br>${item.at}</small>
-          </div>
-        </div>
-      `).join('') : '<div class="muted">ยังไม่มีประวัติการทำแบบทดสอบ</div>';
-    }
-
-    function saveProfile() {
-      state.profile.name = byId('staffName').value.trim();
-      state.profile.dept = byId('staffDept').value;
-      persist();
-      alert('บันทึกโปรไฟล์แล้ว');
-    }
-
-    function exportProgress() {
-      const data = {
-        profile: state.profile,
-        completed: state.completed,
-        favorites: state.favorites,
-        notes: state.notes,
-        quizHistory: state.quizHistory
-      };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'fnb_training_progress.json';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
-
-    function importProgress(file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const data = JSON.parse(reader.result);
-          state.profile = data.profile || state.profile;
-          state.completed = data.completed || [];
-          state.favorites = data.favorites || [];
-          state.notes = data.notes || {};
-          state.quizHistory = data.quizHistory || [];
-          persist();
-          alert('นำเข้าข้อมูลเรียบร้อย');
-        } catch (e) {
-          alert('ไฟล์ไม่ถูกต้อง');
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function resetAll() {
-      if (!confirm('ต้องการล้างข้อมูลในเครื่องทั้งหมดใช่หรือไม่?')) return;
-      localStorage.removeItem('fnb_profile');
-      localStorage.removeItem('fnb_completed');
-      localStorage.removeItem('fnb_favorites');
-      localStorage.removeItem('fnb_notes');
-      localStorage.removeItem('fnb_quiz_history');
-      location.reload();
-    }
-
-    function renderAll() {
-      byId('staffName').value = state.profile.name || '';
-      byId('staffDept').value = state.profile.dept || 'Service';
-      renderDashboard();
-      renderLibrary();
-      renderFavorites();
-      renderQuizHistory();
-      populateNotesSelect();
-      loadNote();
-      if (state.currentLessonId) openLesson(state.currentLessonId);
-    }
-
-    document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', () => goView(btn.dataset.view)));
-
-    byId('articleGrid').addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-action]');
-      if (!btn) return;
-      const id = btn.dataset.lessonId;
-      if (btn.dataset.action === 'open-lesson') openLesson(id);
-      if (btn.dataset.action === 'toggle-favorite') toggleFavorite(id);
-    });
-
-    byId('favoritesList').addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-action]');
-      if (!btn) return;
-      const id = btn.dataset.lessonId;
-      if (btn.dataset.action === 'open-lesson') openLesson(id);
-      if (btn.dataset.action === 'toggle-favorite') toggleFavorite(id);
-    });
-
-    byId('categoryChips').addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-category]');
-      if (!btn) return;
-      filterByCategory(btn.dataset.category);
-    });
-    byId('searchInput').addEventListener('input', renderLibrary);
-    byId('categoryFilter').addEventListener('change', renderLibrary);
-    byId('completeLessonBtn').addEventListener('click', completeCurrentLesson);
-    byId('favoriteLessonBtn').addEventListener('click', () => toggleFavorite());
-    byId('saveProfileBtn').addEventListener('click', saveProfile);
-    byId('saveNoteBtn').addEventListener('click', saveNote);
-    byId('loadNoteBtn').addEventListener('click', loadNote);
-    byId('noteLessonSelect').addEventListener('change', loadNote);
-    byId('startQuizBtn').addEventListener('click', startQuiz);
-    byId('nextQuestionBtn').addEventListener('click', startQuiz);
-    byId('exportBtn').addEventListener('click', exportProgress);
-    byId('importBtn').addEventListener('click', () => byId('importFile').click());
-    byId('importFile').addEventListener('change', (e) => { if (e.target.files[0]) importProgress(e.target.files[0]); });
-    byId('resetBtn').addEventListener('click', resetAll);
-
-    renderCategoryFilter();
-    renderAll();
-    renderQuestion();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
