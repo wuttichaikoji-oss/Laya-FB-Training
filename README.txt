@@ -1,26 +1,25 @@
-Laya F&B Academy Pro
-====================
+Laya F&B Academy v2.1 — More Articles Edition
 
-วิธีใช้งาน
-1) แตกไฟล์ ZIP
-2) เปิดไฟล์ index.html ด้วย Chrome / Edge
-3) ใช้งานได้ทันทีแบบ offline
+เวอร์ชันนี้เพิ่มบทความความรู้สายห้องอาหารจำนวนมากขึ้น โดยเฉพาะ:
+- Food Allergy
+- Common Allergens
+- Allergy Communication Script
+- Cross Contamination
+- Hand Washing & Personal Hygiene
+- Cleaning vs Sanitizing
+- Temperature Control
+- Buffet Service Standard
+- Table Setup / Cutlery / Glassware
+- Wine Service / Wine Pairing
+- Breakfast Operation
+- Room Service Basics
+- Team Communication
+- Closing Checklist
+และบทเรียนอื่น ๆ
 
-ความสามารถในเวอร์ชันนี้
-- หน้า dashboard
-- โปรไฟล์พนักงาน
-- คลังความรู้สาย F&B
-- ระบบค้นหา / กรองหมวด
-- กดอ่านจบแล้ว
-- รายการโปรด
-- โน้ตส่วนตัว
-- Quiz + ประวัติคะแนน
-- Export / Import progress
-- หน้าเตรียมต่อ Firebase
+วิธีใช้:
+1. แตกไฟล์ ZIP
+2. เปิดไฟล์ index.html
+3. ใช้งานได้ทันทีแบบ offline
 
-ถ้าต้องการเวอร์ชันออนไลน์จริง:
-- เชื่อม Firebase Auth
-- บันทึก progress ลง Firestore
-- แยก role Manager / Staff
-- เพิ่มข้อสอบแยกตาม Outlet
-- เพิ่มภาษาอังกฤษ / ไทย
+ข้อมูลจะถูกเก็บใน LocalStorage ของเครื่องที่ใช้งาน
