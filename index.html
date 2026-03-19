@@ -3,610 +3,392 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Laya F&B Academy v2.8.3.1</title>
+<title>Laya F&B Academy Firebase Edition</title>
 <style>
 :root{
-  --bg:#0f172a; --panel:#111827; --card:#1f2937; --soft:#374151; --text:#f8fafc; --muted:#cbd5e1;
-  --accent:#22c55e; --accent2:#38bdf8; --warn:#f59e0b; --danger:#ef4444;
+  --bg:#f4f7fb;--panel:#ffffff;--text:#14213d;--muted:#5b6b84;--line:#dbe4f0;--brand:#1d4ed8;--brand2:#0f766e;--soft:#eef4ff;--danger:#dc2626;
 }
-*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0b1220;color:var(--text)}
-header{padding:18px 16px;background:linear-gradient(135deg,#0f172a,#1e293b);position:sticky;top:0;z-index:5;border-bottom:1px solid #23304a}
-h1,h2,h3{margin:.2rem 0}
-.small{font-size:.9rem;color:var(--muted)}
-.container{max-width:1200px;margin:0 auto;padding:16px}
-.grid{display:grid;gap:14px}
-.grid-2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
-.grid-3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-.card{background:rgba(31,41,55,.94);border:1px solid #2a364d;border-radius:18px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
-label{display:block;margin:10px 0 6px;color:#dbeafe}
-input,select,textarea,button{width:100%;padding:11px 12px;border-radius:12px;border:1px solid #3b4a63;background:#0f172a;color:var(--text)}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+header{position:sticky;top:0;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:10}
+.container{max-width:1080px;margin:0 auto;padding:16px}
+.hero{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.brand{font-size:1.35rem;font-weight:800}
+.sub{font-size:.95rem;color:var(--muted)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 6px 22px rgba(20,33,61,.05)}
+.grid{display:grid;gap:14px}.grid-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+button,input,textarea,select{font:inherit}
+input,textarea,select{width:100%;padding:12px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--text)}
 textarea{min-height:90px;resize:vertical}
-button{cursor:pointer;background:#1d4ed8;border:none;font-weight:700}
-button.secondary{background:#334155}
-button.success{background:#15803d}
-button.warn{background:#b45309}
-button.danger{background:#b91c1c}
-button.inline{width:auto;padding:8px 12px;margin-right:6px;margin-top:6px}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-.badge{display:inline-block;padding:4px 10px;border-radius:999px;background:#0f172a;border:1px solid #314158;font-size:.85rem;margin:3px 4px 0 0}
-.kpi{font-size:1.8rem;font-weight:800}
-.table-wrap{overflow:auto}
-table{width:100%;border-collapse:collapse}
-th,td{border-bottom:1px solid #314158;padding:10px 8px;text-align:left;font-size:.95rem;vertical-align:top}
-th{background:#162032;position:sticky;top:0}
-.notice{padding:12px;border-radius:14px;background:#132238;border:1px solid #28405f}
-.ok{color:#86efac}.warn-text{color:#fcd34d}.danger-text{color:#fca5a5}
-footer{padding:24px 16px;color:#94a3b8;text-align:center}
+button{border:none;border-radius:14px;padding:12px 14px;font-weight:700;cursor:pointer;background:var(--brand);color:#fff}
+button.secondary{background:#e8eef9;color:var(--text)} button.success{background:var(--brand2)} button.danger{background:var(--danger)}
+button.ghost{background:#fff;color:var(--brand);border:1px solid #bfd0f5}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1 1 160px}
 .hidden{display:none}
-@media (max-width:640px){ header h1{font-size:1.25rem} .kpi{font-size:1.4rem}}
-
-.english-reader{background:#f8fafc;color:#0f172a;border-radius:22px;padding:18px;border:1px solid #dbe4f0;min-height:500px}
-.english-hero{padding:18px;border-radius:18px;background:linear-gradient(135deg,#eff6ff,#f8fafc);border:1px solid #dbeafe;margin-bottom:14px}
-.english-hero h3{font-size:2rem;line-height:1.15;margin:0 0 8px}
-.english-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.english-chip{display:inline-block;background:#eef2ff;color:#1e3a8a;border:1px solid #c7d2fe;padding:6px 10px;border-radius:999px;font-size:.88rem}
-.english-section{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px;margin-bottom:12px}
-.english-section h4{margin:0 0 10px;font-size:1.1rem;color:#0f172a}
-.english-list{display:grid;gap:10px}
-.english-item{padding:12px;border-radius:14px;background:#f8fafc;border:1px solid #e5e7eb}
-.english-term{font-weight:700;font-size:1.05rem;color:#111827}
-.english-meaning{color:#334155;margin-top:4px}
-.english-example{margin-top:8px;padding-top:8px;border-top:1px dashed #cbd5e1;color:#1e293b}
-.english-dialogue{display:grid;gap:10px}
- .english-line{padding:12px 14px;border-radius:14px;background:#f8fafc;border:1px solid #e5e7eb}
- .english-speaker{font-weight:700;color:#1d4ed8;margin-bottom:4px}
- .english-thai{color:#475569;font-size:.95rem}
- .topic-pill{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:14px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;margin:8px 0;cursor:pointer}
- .topic-pill.active{background:#dbeafe;color:#0f172a;border-color:#93c5fd;font-weight:700}
- @media (max-width:640px){.english-reader{padding:14px}.english-hero h3{font-size:1.6rem}}
-
+.pillbar{display:flex;gap:8px;overflow:auto;padding-bottom:4px;margin-top:12px}
+.pill{white-space:nowrap;background:#fff;border:1px solid var(--line);padding:10px 12px;border-radius:999px;color:var(--text);cursor:pointer}
+.pill.active{background:var(--soft);border-color:#bfd0f5;color:var(--brand);font-weight:700}
+.lesson-list{display:grid;gap:10px}
+.lesson-btn{text-align:left;padding:14px 16px;border-radius:16px;background:#fff;border:1px solid var(--line);cursor:pointer}
+.lesson-btn.active{background:var(--soft);border-color:#bfd0f5}
+.reader{background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px}
+.reader h2{font-size:1.9rem;line-height:1.15;margin:0 0 8px}
+.reader p{line-height:1.7}
+.section{border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px;background:#fbfdff}
+.term{padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff;margin-bottom:8px}
+.term strong{display:block;font-size:1.05rem}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}.chip{background:var(--soft);color:var(--brand);padding:6px 10px;border-radius:999px;font-size:.88rem}
+.small{font-size:.92rem;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.kpi{padding:14px;border-radius:18px;background:#fff;border:1px solid var(--line)}.kpi .n{font-size:1.8rem;font-weight:800;margin-top:6px}
+label{display:block;margin:10px 0 6px;color:#334155;font-weight:700}
+.notice{padding:12px 14px;border-radius:16px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}
+.ok{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
+.footer{padding:24px;text-align:center;color:var(--muted)}
+@media (max-width:760px){.hero{align-items:flex-start;flex-direction:column}.kpis{grid-template-columns:1fr}.reader h2{font-size:1.55rem}}
 </style>
 </head>
 <body>
 <header>
-  <div class="container">
-    <h1>Laya F&B Academy v2.8.3.1</h1>
-    <div class="small">Attendance / Training Log · Retraining Reminder · Role Tracks · Outlet Certificates · English Readability Patch · Offline Save</div>
+  <div class="container hero">
+    <div>
+      <div class="brand">Laya F&B Academy · Firebase Edition</div>
+      <div class="sub">ล็อกอินเก็บข้อมูลส่วนตัวของพนักงาน · อ่านง่าย · ใช้งานบนมือถือ</div>
+    </div>
+    <div class="row" style="max-width:420px;width:100%">
+      <button id="btnOpenConfig" class="secondary">ตั้งค่า Firebase</button>
+      <button id="btnLogout" class="danger hidden">ออกจากระบบ</button>
+    </div>
   </div>
 </header>
 
-<div class="container grid grid-2">
-  <section class="card">
-    <h2>โปรไฟล์พนักงาน</h2>
-    <div class="grid grid-2">
-      <div>
-        <label>ชื่อพนักงาน</label>
-        <input id="staffName" placeholder="เช่น Somchai" />
+<main class="container grid" style="margin-top:14px">
+  <section id="setupNotice" class="notice">
+    ยังไม่ได้เชื่อม Firebase — กดปุ่ม <strong>ตั้งค่า Firebase</strong> แล้ววางค่า config ของโปรเจกต์ก่อนใช้งานจริง
+  </section>
+
+  <section id="authCard" class="card grid grid-2">
+    <div>
+      <h2 style="margin-top:0">พนักงานล็อกอิน</h2>
+      <p class="small">ใช้ email/password ของแต่ละคน เพื่อเก็บ progress, note และผลการเรียนของตัวเอง</p>
+      <label>อีเมล</label>
+      <input id="email" type="email" placeholder="name@hotel.com" />
+      <label>รหัสผ่าน</label>
+      <input id="password" type="password" placeholder="อย่างน้อย 6 ตัวอักษร" />
+      <div class="row" style="margin-top:12px">
+        <button id="btnLogin">เข้าสู่ระบบ</button>
+        <button id="btnRegister" class="success">สมัครผู้ใช้ใหม่</button>
       </div>
-      <div>
-        <label>ตำแหน่ง/Role</label>
-        <select id="staffRole">
-          <option>New Hire</option>
-          <option>Senior</option>
-          <option>Supervisor</option>
-        </select>
+      <p id="authMsg" class="small"></p>
+    </div>
+    <div class="card" style="background:#fbfdff">
+      <h3 style="margin-top:0">ทำไมควรใช้ Firebase</h3>
+      <div class="small">ข้อมูลจะผูกกับบัญชีของพนักงานแต่ละคน เช่น</div>
+      <div class="meta" style="margin-top:10px">
+        <span class="chip">ประวัติการเรียน</span>
+        <span class="chip">โน้ตส่วนตัว</span>
+        <span class="chip">หัวข้อที่อ่านจบ</span>
+        <span class="chip">ใช้ข้ามเครื่องได้</span>
       </div>
+      <div class="small">เหมาะถ้าพนักงานล็อกอินในมือถือของตัวเอง และต้องการให้ข้อมูลไม่หายเมื่อเปลี่ยนเครื่อง</div>
+    </div>
+  </section>
+
+  <section id="app" class="hidden grid">
+    <section class="card grid grid-2">
       <div>
+        <h2 style="margin-top:0">โปรไฟล์พนักงาน</h2>
+        <div class="small" id="userEmail"></div>
+        <label>ชื่อที่แสดง</label>
+        <input id="displayName" placeholder="เช่น Somchai" />
         <label>Outlet</label>
-        <select id="staffOutlet">
+        <select id="outlet">
           <option>The Taste</option>
           <option>Mangrove</option>
           <option>Lounge / Bar</option>
           <option>Banquet</option>
           <option>Room Service</option>
         </select>
-      </div>
-      <div>
-        <label>วันที่เริ่มงาน</label>
-        <input id="startDate" type="date" />
-      </div>
-    </div>
-    <div class="row" style="margin-top:12px">
-      <button class="inline success" onclick="saveProfile()">บันทึกโปรไฟล์</button>
-      <button class="inline secondary" onclick="loadSample()">โหลดตัวอย่าง</button>
-      <button class="inline warn" onclick="exportBackup()">Backup JSON</button>
-      <label class="inline" style="display:inline-block">
-        <input id="importFile" type="file" accept=".json" onchange="importBackup(event)" style="display:none">
-        <button class="inline secondary" onclick="document.getElementById('importFile').click()">Import JSON</button>
-      </label>
-    </div>
-    <p class="small" id="saveStatus">ข้อมูลจะถูกเก็บในเครื่องนี้เท่านั้น</p>
-  </section>
-
-  <section class="card">
-    <h2>สรุปภาพรวม</h2>
-    <div class="grid grid-3">
-      <div class="card"><div class="small">Training Log</div><div class="kpi" id="kpiLogs">0</div></div>
-      <div class="card"><div class="small">หัวข้อครบกำหนดทบทวน</div><div class="kpi warn-text" id="kpiDue">0</div></div>
-      <div class="card"><div class="small">Certificate พร้อมพิมพ์</div><div class="kpi ok" id="kpiCerts">0</div></div>
-    </div>
-    <div class="notice" style="margin-top:10px" id="roleNotice"></div>
-  </section>
-</div>
-
-<div class="container grid grid-2">
-  <section class="card">
-    <h2>Training Attendance / Log</h2>
-    <div class="grid grid-2">
-      <div>
-        <label>วันที่อบรม</label>
-        <input id="logDate" type="date" />
-      </div>
-      <div>
-        <label>สถานะ</label>
-        <select id="logStatus">
-          <option>Completed</option>
-          <option>Attended</option>
-          <option>Needs Review</option>
-          <option>Missed</option>
+        <label>ตำแหน่ง</label>
+        <select id="role">
+          <option>Service Staff</option>
+          <option>Captain</option>
+          <option>Supervisor</option>
         </select>
+        <div class="row" style="margin-top:12px">
+          <button id="btnSaveProfile" class="success">บันทึกโปรไฟล์</button>
+          <button id="btnSync" class="secondary">ดึงข้อมูลล่าสุด</button>
+        </div>
+        <p id="profileMsg" class="small"></p>
       </div>
       <div>
-        <label>หมวด</label>
-        <select id="logCategory">
-          <option>Food Allergy</option>
-          <option>Hygiene & Sanitation</option>
-          <option>English for F&B</option>
-          <option>SOP Checklist</option>
-          <option>Wine & Beverage</option>
-          <option>Guest Service</option>
-          <option>Outlet SOP</option>
-        </select>
+        <h2 style="margin-top:0">ภาพรวมของฉัน</h2>
+        <div class="kpis">
+          <div class="kpi"><div class="small">อ่านจบแล้ว</div><div class="n" id="doneCount">0</div></div>
+          <div class="kpi"><div class="small">รายการโปรด</div><div class="n" id="favCount">0</div></div>
+          <div class="kpi"><div class="small">โน้ตที่บันทึก</div><div class="n" id="noteCount">0</div></div>
+        </div>
+        <div class="section" style="margin-top:14px">
+          <div class="small">แนวคิดของเวอร์ชันนี้: เน้นใช้งานง่าย ไม่รก และเก็บข้อมูลแยกตามพนักงานอัตโนมัติ</div>
+        </div>
       </div>
-      <div>
-        <label>หัวข้อ</label>
-        <input id="logTopic" placeholder="เช่น Hand Washing Standard" />
-      </div>
-      <div>
-        <label>Trainer / Supervisor</label>
-        <input id="logTrainer" placeholder="เช่น Noi" />
-      </div>
-      <div>
-        <label>คะแนน (0-100)</label>
-        <input id="logScore" type="number" min="0" max="100" value="100" />
-      </div>
-      <div>
-        <label>วันทบทวนครั้งถัดไป</label>
-        <input id="reviewDate" type="date" />
-      </div>
-      <div>
-        <label>ความถี่ทบทวน</label>
-        <select id="reviewCycle">
-          <option value="30">30 วัน</option>
-          <option value="60">60 วัน</option>
-          <option value="90">90 วัน</option>
-          <option value="180">180 วัน</option>
-        </select>
-      </div>
-    </div>
-    <label>หมายเหตุ</label>
-    <textarea id="logNotes" placeholder="สิ่งที่ทำได้ดี / สิ่งที่ต้องพัฒนา"></textarea>
-    <div class="row" style="margin-top:12px">
-      <button class="inline success" onclick="addLog()">เพิ่ม Log</button>
-      <button class="inline secondary" onclick="seedLogs()">เพิ่มตัวอย่าง</button>
-      <button class="inline danger" onclick="clearLogs()">ลบ Log ทั้งหมด</button>
-    </div>
+    </section>
+
+    <section class="card">
+      <h2 style="margin-top:0">เลือกหมวดความรู้</h2>
+      <div class="pillbar" id="categoryBar"></div>
+    </section>
+
+    <section class="grid grid-2">
+      <aside class="card">
+        <h3 style="margin-top:0">รายการบทเรียน</h3>
+        <div id="lessonList" class="lesson-list"></div>
+      </aside>
+      <section class="reader" id="reader">
+        <div class="small">เลือกบทเรียนจากด้านซ้าย</div>
+      </section>
+    </section>
   </section>
+</main>
 
-  <section class="card">
-    <h2>Retraining Reminder</h2>
-    <div id="reminderList" class="grid"></div>
-  </section>
-</div>
-
-<div class="container grid grid-2">
-  <section class="card">
-    <h2>Role-based Training Tracks</h2>
-    <div id="roleTracks"></div>
-  </section>
-
-  <section class="card">
-    <h2>Outlet Certificate</h2>
-    <label>เลือกหมวด Certificate</label>
-    <select id="certCategory">
-      <option>Outlet Orientation</option>
-      <option>Food Allergy & Safety</option>
-      <option>Hygiene & Sanitation</option>
-      <option>English for F&B</option>
-      <option>Wine & Beverage Basics</option>
-      <option>Guest Service Standard</option>
-    </select>
-    <label>คะแนนผ่านขั้นต่ำ</label>
-    <input id="certPass" type="number" value="80" />
-    <div class="row" style="margin-top:12px">
-      <button class="inline success" onclick="generateCertificate()">สร้าง Certificate</button>
-      <button class="inline secondary" onclick="window.print()">Print / Save PDF</button>
-    </div>
-    <div id="certificateArea" class="card" style="margin-top:12px;background:#fff;color:#111827"></div>
-  </section>
-</div>
-
-<div class="container card">
-  <h2>Training Log Records</h2>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th><th>Category</th><th>Topic</th><th>Status</th><th>Score</th><th>Review</th><th>Notes</th><th>Action</th>
-        </tr>
-      </thead>
-      <tbody id="logTable"></tbody>
-    </table>
-  </div>
-</div>
-
-
-<div class="container card">
-  <h2>English for F&amp;B Reader Mode</h2>
-  <p class="small">ปรับให้อ่านง่ายขึ้นสำหรับพนักงาน: แยกเป็นหัวข้อสั้น ๆ, คำศัพท์สำคัญ, ประโยคใช้งานจริง, บทสนทนาตัวอย่าง และเคล็ดลับหน้างาน</p>
-  <div class="grid grid-2" style="align-items:start">
-    <div>
-      <label>เลือกบทเรียนภาษาอังกฤษ</label>
-      <select id="englishTopicSelect" onchange="renderEnglishTopic()"></select>
+<div id="configModal" class="hidden" style="position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;padding:16px;overflow:auto">
+  <div class="container" style="max-width:760px">
+    <div class="card">
+      <div class="row">
+        <h2 style="margin:0;flex:1">ตั้งค่า Firebase</h2>
+        <button id="btnCloseConfig" class="secondary" style="max-width:160px">ปิด</button>
+      </div>
+      <p class="small">วางค่า Firebase config ของโปรเจกต์คุณด้านล่าง ระบบจะเก็บไว้ในเบราว์เซอร์เครื่องนี้</p>
+      <label>firebaseConfig (JSON)</label>
+      <textarea id="firebaseConfigInput" placeholder='{
+  "apiKey":"...",
+  "authDomain":"...",
+  "projectId":"...",
+  "storageBucket":"...",
+  "messagingSenderId":"...",
+  "appId":"..."
+}'></textarea>
       <div class="row" style="margin-top:12px">
-        <button class="inline secondary" onclick="prevEnglishTopic()">บทก่อนหน้า</button>
-        <button class="inline secondary" onclick="nextEnglishTopic()">บทถัดไป</button>
+        <button id="btnSaveConfig">บันทึก config</button>
+        <button id="btnClearConfig" class="danger">ล้าง config</button>
       </div>
-      <div id="englishTopicList" style="margin-top:12px"></div>
+      <div class="section">
+        <h3 style="margin-top:0">ก่อนใช้ ต้องเปิดใน Firebase</h3>
+        <ol class="small" style="line-height:1.8;padding-left:18px">
+          <li>Authentication → เปิด Email/Password</li>
+          <li>Firestore Database → Create database</li>
+          <li>Rules เบื้องต้น: ให้ user อ่าน/เขียนได้เฉพาะข้อมูลของตัวเอง</li>
+        </ol>
+      </div>
     </div>
-    <div id="englishReader" class="english-reader"></div>
   </div>
 </div>
 
-<footer>Offline-first • ข้อมูลเก็บในเครื่องผู้ใช้เอง • เหมาะสำหรับใช้งานบนมือถือส่วนตัว</footer>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 
-<script>
-const KEY = 'laya_fnb_academy_v2831';
-const TRACKS = {
-  "New Hire": [
-    "Hotel & Outlet Orientation",
-    "Food Allergy Basics",
-    "Hand Washing Standard",
-    "Service Greeting Script",
-    "Basic English for F&B",
-    "Opening Checklist"
+const lessons = {
+  'English for F&B': [
+    {
+      id:'eng-core', title:'Core Restaurant Vocabulary', level:'Beginner', summary:'คำศัพท์พื้นฐานที่ใช้ในห้องอาหารทุกวัน',
+      vocab:[
+        ['Menu','เมนูอาหาร / เครื่องดื่ม'],['Reservation','การจองโต๊ะ'],['Order','คำสั่งอาหาร'],['Bill / Check','ใบเสร็จ'],['Recommendation','คำแนะนำเมนู']
+      ],
+      phrases:[
+        ['Here is the menu.','นี่คือเมนูค่ะ/ครับ'],['Are you ready to order?','พร้อมสั่งอาหารหรือยังคะ/ครับ'],['Would you like the bill?','ต้องการรับบิลเลยไหมคะ/ครับ']
+      ],
+      tips:['ใช้ประโยคสั้น ชัด สุภาพ','พูดช้าเล็กน้อยเวลารับออเดอร์','ถ้าลูกค้าลังเล ให้แนะนำเมนูเด่น 1-2 รายการ']
+    },
+    {
+      id:'eng-allergy', title:'Food Allergy English', level:'Beginner', summary:'ประโยคสำคัญเมื่อแขกแจ้งอาการแพ้อาหาร',
+      vocab:[['Allergy','อาการแพ้อาหาร'],['Nuts','ถั่วเปลือกแข็ง'],['Shellfish','อาหารทะเลเปลือกแข็ง'],['Dairy','นมและผลิตภัณฑ์นม'],['Cross-contamination','การปนเปื้อนข้าม']],
+      phrases:[['Do you have any food allergies?','คุณมีอาการแพ้อาหารอะไรไหมคะ/ครับ'],['I will inform the kitchen.','ฉัน/ผมจะแจ้งครัวให้ทันที'],['We cannot guarantee zero cross-contamination.','เราไม่สามารถรับประกันได้ 100% ว่าจะไม่มีการปนเปื้อนข้าม']],
+      tips:['ห้ามเดา ถ้าไม่แน่ใจให้เช็กกับครัวทันที','ทวนสารก่อภูมิแพ้ที่ลูกค้าแจ้งทุกครั้ง','ถ้าเสี่ยง ให้แจ้งอย่างตรงไปตรงมา']
+    },
+    {
+      id:'eng-complaint', title:'Handling Complaints', level:'Intermediate', summary:'ประโยคอังกฤษเวลาลูกค้าไม่พอใจ',
+      vocab:[['Delay','ความล่าช้า'],['Apologize','ขอโทษ'],['Replace','เปลี่ยนใหม่'],['Immediately','ทันที'],['Manager','ผู้จัดการ']],
+      phrases:[['I am sorry for the delay.','ขออภัยสำหรับความล่าช้าค่ะ/ครับ'],['Let me replace it for you.','ขออนุญาตเปลี่ยนให้ทันทีนะคะ/ครับ'],['I will call my supervisor to assist.','ฉัน/ผมจะเรียกหัวหน้ามาช่วยดูแลให้ค่ะ/ครับ']],
+      tips:['ฟังก่อน ไม่เถียง','ขอโทษก่อนอธิบาย','ถ้าแก้เองไม่ได้ ให้เรียกหัวหน้าเร็ว']
+    }
   ],
-  "Senior": [
-    "Advanced Guest Handling",
-    "Cross Contamination Prevention",
-    "Wine & Beverage Knowledge",
-    "Upselling English",
-    "Complaint Recovery",
-    "Outlet Deep SOP"
+  'Food Allergy': [
+    {id:'allergy-basics', title:'Food Allergy Basics', level:'Core', summary:'แนวทางรับมือเมื่อลูกค้าแจ้งแพ้อาหาร', body:['ถามให้ชัดว่าแพ้อะไร','แจ้งครัวและหัวหน้าทันที','ทวนเมนูที่ปลอดภัยและเมนูที่เสี่ยง','ห้ามรับปากหากไม่มั่นใจ']},
+    {id:'cross', title:'Cross Contamination', level:'Core', summary:'การปนเปื้อนข้ามคืออะไรและต้องระวังอย่างไร', body:['ใช้อุปกรณ์แยกเมื่อจำเป็น','ระวังน้ำมันทอดร่วม','ระวังเขียง มีด ภาชนะ และซอสที่ใช้ร่วมกัน']}
   ],
-  "Supervisor": [
-    "Team Briefing Standard",
-    "Training Observation & Feedback",
-    "Incident / Allergy Escalation",
-    "Audit Checklist",
-    "Coaching Conversation",
-    "Sign-off & Documentation"
+  'Hygiene & SOP': [
+    {id:'handwash', title:'Hand Washing Standard', level:'Core', summary:'ล้างมือเมื่อไรและอย่างไร', body:['ก่อนเริ่มงาน','หลังจับเงินสด','หลังเข้าห้องน้ำ','หลังเก็บจานสกปรก','ล้างอย่างน้อย 20 วินาที']},
+    {id:'opening', title:'Opening Checklist', level:'Daily', summary:'สิ่งที่ต้องเช็กก่อนเปิดบริการ', body:['เช็กความสะอาดโต๊ะ-เก้าอี้','เช็กอุปกรณ์บนโต๊ะ','เช็ก POS และเมนู','brief ทีมก่อนเปิดร้าน']}
   ]
 };
 
+let firebaseApp=null, auth=null, db=null, currentUser=null;
+let state={ profile:{}, progress:{} };
+let currentCategory='English for F&B';
+let currentLessonId='eng-core';
 
-const ENGLISH_TOPICS = [
-  {
-    id:'core-vocab',
-    title:'English for F&B: Core Restaurant Vocabulary',
-    level:'Beginner',
-    focus:'คำศัพท์พื้นฐานที่พนักงานห้องอาหารใช้ทุกวัน',
-    intro:'บทนี้ออกแบบให้อ่านง่ายเป็นช่วงสั้น ๆ พนักงานจะเห็นคำศัพท์หลัก ความหมายไทย และตัวอย่างประโยคที่ใช้ได้จริงหน้าร้าน',
-    vocab:[
-      ['Menu','เมนูอาหารหรือเครื่องดื่ม','Here is the menu for today. = นี่คือเมนูสำหรับวันนี้ค่ะ'],
-      ['Reservation','การจองโต๊ะ','Do you have a reservation? = คุณลูกค้าได้จองโต๊ะไว้ไหมคะ'],
-      ['Table','โต๊ะ','Your table is ready. = โต๊ะของคุณพร้อมแล้วค่ะ'],
-      ['Order','คำสั่งอาหาร','May I take your order? = ขออนุญาตรับออเดอร์นะคะ'],
-      ['Bill / Check','ใบเสร็จ / บิล','Would you like the bill now? = ต้องการรับบิลตอนนี้ไหมคะ'],
-      ['Available','มีขาย / พร้อมเสิร์ฟ','This dish is available today. = เมนูนี้มีขายวันนี้ค่ะ'],
-      ['Sold out','หมด','I am sorry, this item is sold out. = ขออภัย เมนูนี้หมดแล้วค่ะ']
-    ],
-    phrases:[
-      'Welcome to our restaurant. = ยินดีต้อนรับสู่ห้องอาหารของเรา',
-      'Are you ready to order? = พร้อมสั่งอาหารหรือยังคะ',
-      'Would you like still or sparkling water? = รับน้ำเปล่าหรือน้ำแร่มีแก๊สดีคะ',
-      'Please let me know if you need any recommendations. = แจ้งได้เลยนะคะ หากต้องการคำแนะนำเมนู'
-    ],
-    dialogue:[
-      ['Staff','Good evening. Welcome to our restaurant.','สวัสดีตอนเย็นค่ะ ยินดีต้อนรับสู่ห้องอาหารของเรา'],
-      ['Guest','Thank you. Do you have a table for two?','ขอบคุณครับ มีโต๊ะสำหรับ 2 ท่านไหม'],
-      ['Staff','Yes, certainly. Please follow me.','มีค่ะ เชิญตามมาได้เลยค่ะ']
-    ],
-    tips:['พยายามจำคำศัพท์เป็นชุด เช่น menu, order, bill จะใช้บ่อยมาก','ถ้าไม่แน่ใจคำศัพท์ ให้พูดช้า ชัด และยิ้มไว้ก่อน']
-  },
-  {
-    id:'allergy',
-    title:'English for F&B: Food Allergy & Dietary Terms',
-    level:'Intermediate',
-    focus:'คำศัพท์สำคัญเวลาพูดคุยเรื่องอาหารแพ้และข้อจำกัดด้านอาหาร',
-    intro:'หัวข้อนี้สำคัญมาก เพราะใช้กับความปลอดภัยของแขกโดยตรง ควรอ่านแบบทำความเข้าใจ ไม่ใช่ท่องอย่างเดียว',
-    vocab:[
-      ['Allergy','อาการแพ้อาหาร','Do you have any food allergies? = คุณลูกค้ามีอาการแพ้อาหารอะไรไหมคะ'],
-      ['Peanut','ถั่วลิสง','This sauce may contain peanut. = ซอสนี้อาจมีถั่วลิสง'],
-      ['Shellfish','อาหารทะเลเปลือกแข็ง','Are you allergic to shellfish? = คุณแพ้อาหารทะเลเปลือกแข็งไหมคะ'],
-      ['Dairy','นมและผลิตภัณฑ์นม','This dessert contains dairy. = ของหวานนี้มีส่วนผสมของนม'],
-      ['Gluten-free','ปราศจากกลูเตน','We have a gluten-free option. = เรามีตัวเลือกที่ไม่มีกลูเตน'],
-      ['Cross-contamination','การปนเปื้อนข้าม','We will avoid cross-contamination. = เราจะหลีกเลี่ยงการปนเปื้อนข้าม']
-    ],
-    phrases:[
-      'Let me check with the chef for you. = ขออนุญาตตรวจสอบกับเชฟให้นะคะ',
-      'Please do not guarantee before checking. = อย่ารับประกันกับแขกก่อนตรวจสอบจริง',
-      'This dish contains nuts, dairy, and soy. = เมนูนี้มีถั่ว นม และถั่วเหลือง'
-    ],
-    dialogue:[
-      ['Guest','I have a severe shellfish allergy.','ฉันแพ้อาหารทะเลอย่างรุนแรง'],
-      ['Staff','Thank you for telling me. I will inform the chef immediately.','ขอบคุณที่แจ้งนะคะ ฉันจะรีบแจ้งเชฟทันที'],
-      ['Staff','May I recommend a dish without shellfish?','ขออนุญาตแนะนำเมนูที่ไม่มีอาหารทะเลได้ไหมคะ']
-    ],
-    tips:['อย่าเดาเรื่อง allergen เอง','ต้องเช็กกับครัวทุกครั้งถ้าแขกแจ้งว่าแพ้อาหาร']
-  },
-  {
-    id:'service',
-    title:'English for F&B: Taking Orders & Recommending Dishes',
-    level:'Beginner',
-    focus:'ประโยคใช้จริงตอนรับออเดอร์และแนะนำเมนู',
-    intro:'พนักงานส่วนใหญ่มักติดตรงการเริ่มต้นประโยค หัวข้อนี้จึงเน้นประโยคสำเร็จรูปที่ใช้ได้ทันที',
-    vocab:[
-      ['Recommend','แนะนำ','May I recommend our signature dish? = ขออนุญาตแนะนำเมนูซิกเนเจอร์ของร้านนะคะ'],
-      ['Signature dish','เมนูเด่นของร้าน','Our signature dish is grilled seabass. = เมนูเด่นของเราคือปลากะพงย่าง'],
-      ['Spicy','รสเผ็ด','Would you like it spicy? = ต้องการรสเผ็ดไหมคะ'],
-      ['Side dish','เครื่องเคียง','Would you like a side dish with that? = รับเครื่องเคียงเพิ่มไหมคะ'],
-      ['Well-done','สุกมาก','How would you like your steak cooked? = ต้องการให้สเต๊กสุกระดับไหนคะ']
-    ],
-    phrases:[
-      'Would you like some recommendations? = ต้องการให้แนะนำเมนูไหมคะ',
-      'This dish is one of our best sellers. = เมนูนี้เป็นหนึ่งในเมนูขายดีของเรา',
-      'It goes well with white wine. = เมนูนี้เข้ากันได้ดีกับไวน์ขาว'
-    ],
-    dialogue:[
-      ['Staff','May I recommend our grilled salmon?','ขออนุญาตแนะนำแซลมอนย่างของเรานะคะ'],
-      ['Guest','Is it spicy?','มันเผ็ดไหม'],
-      ['Staff','No, it is mild, but we can make it spicy if you prefer.','ไม่เผ็ดค่ะ แต่เราสามารถทำให้เผ็ดได้ถ้าคุณลูกค้าต้องการ']
-    ],
-    tips:['ใช้โครงประโยคเดิมซ้ำ ๆ เพื่อให้คล่อง','เวลาพูดชื่อเมนู ควรพูดช้าและชัด']
+const $ = id => document.getElementById(id);
+const categoryBar = $('categoryBar');
+const lessonList = $('lessonList');
+const reader = $('reader');
+
+function escapeHtml(s=''){return s.replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));}
+
+function getSavedConfig(){ try{return JSON.parse(localStorage.getItem('laya_firebase_config')||'null')}catch{return null}}
+function setSetupState(ok){ $('setupNotice').className = ok ? 'notice ok' : 'notice'; $('setupNotice').innerHTML = ok ? 'เชื่อม Firebase แล้ว — พนักงานสามารถล็อกอินเพื่อเก็บข้อมูลของตัวเองได้' : 'ยังไม่ได้เชื่อม Firebase — กดปุ่ม <strong>ตั้งค่า Firebase</strong> แล้ววางค่า config ของโปรเจกต์ก่อนใช้งานจริง'; }
+
+function initFirebaseFromStorage(){
+  const cfg = getSavedConfig();
+  if(!cfg) { setSetupState(false); return false; }
+  try{
+    firebaseApp = initializeApp(cfg, 'laya-app');
+    auth = getAuth(firebaseApp);
+    db = getFirestore(firebaseApp);
+    setSetupState(true);
+    bindAuthListener();
+    return true;
+  }catch(err){
+    console.error(err);
+    setSetupState(false);
+    return false;
   }
-];
-
-function renderEnglishTopicList(){
-  const list = document.getElementById('englishTopicList');
-  const current = document.getElementById('englishTopicSelect').value;
-  list.innerHTML = ENGLISH_TOPICS.map(t => `<button class="topic-pill ${t.id===current?'active':''}" onclick="selectEnglishTopic('${t.id}')">${t.title}<br><span class="small">${t.focus}</span></button>`).join('');
-}
-function selectEnglishTopic(id){ document.getElementById('englishTopicSelect').value = id; renderEnglishTopic(); }
-function prevEnglishTopic(){ const sel = document.getElementById('englishTopicSelect'); const i = Math.max(0, sel.selectedIndex - 1); sel.selectedIndex = i; renderEnglishTopic(); }
-function nextEnglishTopic(){ const sel = document.getElementById('englishTopicSelect'); const i = Math.min(sel.options.length-1, sel.selectedIndex + 1); sel.selectedIndex = i; renderEnglishTopic(); }
-function renderEnglishTopic(){
-  const id = document.getElementById('englishTopicSelect').value;
-  const topic = ENGLISH_TOPICS.find(x=>x.id===id) || ENGLISH_TOPICS[0];
-  const reader = document.getElementById('englishReader');
-  if(!reader) return;
-  reader.innerHTML = `
-    <div class="english-hero">
-      <div class="english-meta"><span class="english-chip">English for F&amp;B</span><span class="english-chip">ระดับ ${topic.level}</span></div>
-      <h3>${topic.title}</h3>
-      <div class="english-meaning">${topic.focus}</div>
-      <p style="margin-top:10px;line-height:1.7;color:#334155">${topic.intro}</p>
-    </div>
-    <div class="english-section">
-      <h4>คำศัพท์สำคัญ</h4>
-      <div class="english-list">
-        ${topic.vocab.map(v=>`<div class="english-item"><div class="english-term">${v[0]}</div><div class="english-meaning">${v[1]}</div><div class="english-example">${v[2]}</div></div>`).join('')}
-      </div>
-    </div>
-    <div class="english-section">
-      <h4>ประโยคที่ใช้ได้จริง</h4>
-      <div class="english-list">
-        ${topic.phrases.map(p=>`<div class="english-item">${p}</div>`).join('')}
-      </div>
-    </div>
-    <div class="english-section">
-      <h4>บทสนทนาตัวอย่าง</h4>
-      <div class="english-dialogue">
-        ${topic.dialogue.map(d=>`<div class="english-line"><div class="english-speaker">${d[0]}</div><div>${d[1]}</div><div class="english-thai">${d[2]}</div></div>`).join('')}
-      </div>
-    </div>
-    <div class="english-section">
-      <h4>เคล็ดลับหน้างาน</h4>
-      <div class="english-list">
-        ${topic.tips.map(t=>`<div class="english-item">• ${t}</div>`).join('')}
-      </div>
-    </div>`;
-  renderEnglishTopicList();
 }
 
-let app = {
-  profile: {name:'', role:'New Hire', outlet:'The Taste', startDate:''},
-  logs: [],
-  certs: []
-};
-
-function today(){ return new Date().toISOString().slice(0,10); }
-function plusDays(base, days){
-  const d = new Date(base || today()); d.setDate(d.getDate()+Number(days)); return d.toISOString().slice(0,10);
-}
-function save(){ localStorage.setItem(KEY, JSON.stringify(app)); document.getElementById('saveStatus').textContent = 'บันทึกล่าสุด: ' + new Date().toLocaleString(); }
-function load(){
-  const raw = localStorage.getItem(KEY);
-  if(raw){ try{ app = JSON.parse(raw);}catch(e){} }
-  document.getElementById('staffName').value = app.profile.name || '';
-  document.getElementById('staffRole').value = app.profile.role || 'New Hire';
-  document.getElementById('staffOutlet').value = app.profile.outlet || 'The Taste';
-  document.getElementById('startDate').value = app.profile.startDate || '';
-  document.getElementById('logDate').value = today();
-  document.getElementById('reviewDate').value = plusDays(today(),30);
-  const sel = document.getElementById('englishTopicSelect');
-  if(sel && !sel.options.length){ sel.innerHTML = ENGLISH_TOPICS.map(t=>`<option value="${t.id}">${t.title}</option>`).join(''); }
-  if(sel && !sel.value){ sel.value = ENGLISH_TOPICS[0].id; }
-  render();
-  renderEnglishTopic();
-}
-function saveProfile(){
-  app.profile.name = document.getElementById('staffName').value.trim();
-  app.profile.role = document.getElementById('staffRole').value;
-  app.profile.outlet = document.getElementById('staffOutlet').value;
-  app.profile.startDate = document.getElementById('startDate').value;
-  save(); render();
-}
-function loadSample(){
-  app.profile = {name:'Somchai', role:'New Hire', outlet:'Mangrove', startDate:today()};
-  app.logs = [{
-    id: Date.now(),
-    date: today(),
-    status: 'Completed',
-    category: 'Hygiene & Sanitation',
-    topic: 'Hand Washing Standard',
-    trainer: 'Noi',
-    score: 92,
-    reviewDate: plusDays(today(),30),
-    reviewCycle: 30,
-    notes: 'ล้างมือครบ 7 ขั้นตอนและทำได้ถูกต้อง'
-  }];
-  save(); load();
-}
-function addLog(){
-  const entry = {
-    id: Date.now(),
-    date: document.getElementById('logDate').value || today(),
-    status: document.getElementById('logStatus').value,
-    category: document.getElementById('logCategory').value,
-    topic: document.getElementById('logTopic').value.trim(),
-    trainer: document.getElementById('logTrainer').value.trim(),
-    score: Number(document.getElementById('logScore').value || 0),
-    reviewDate: document.getElementById('reviewDate').value,
-    reviewCycle: Number(document.getElementById('reviewCycle').value || 30),
-    notes: document.getElementById('logNotes').value.trim()
-  };
-  if(!entry.topic){ alert('กรุณาใส่ชื่อหัวข้อ'); return; }
-  app.logs.unshift(entry);
-  save(); render();
-  document.getElementById('logTopic').value=''; document.getElementById('logTrainer').value=''; document.getElementById('logNotes').value='';
-}
-function seedLogs(){
-  const sample = [
-    ['Food Allergy','Common Allergens','Completed',88,30],
-    ['English for F&B','Greeting Guests','Attended',84,60],
-    ['Outlet SOP','Mangrove Opening Checklist','Needs Review',70,15]
-  ];
-  sample.forEach((s,i)=>{
-    app.logs.unshift({
-      id: Date.now()+i,
-      date: today(),
-      category:s[0], topic:s[1], status:s[2], score:s[3],
-      trainer:'Noi', reviewDate:plusDays(today(), s[4]), reviewCycle:s[4], notes:'ตัวอย่างข้อมูล'
-    })
+let authBound=false;
+function bindAuthListener(){
+  if(authBound || !auth) return; authBound=true;
+  onAuthStateChanged(auth, async (user)=>{
+    currentUser = user;
+    if(user){
+      $('authCard').classList.add('hidden'); $('app').classList.remove('hidden'); $('btnLogout').classList.remove('hidden');
+      $('userEmail').textContent = user.email || '';
+      await loadUserData();
+    }else{
+      $('authCard').classList.remove('hidden'); $('app').classList.add('hidden'); $('btnLogout').classList.add('hidden');
+    }
   });
-  save(); render();
 }
-function clearLogs(){
-  if(confirm('ลบ Training Log ทั้งหมด?')){ app.logs=[]; save(); render(); }
+
+async function saveUserData(){
+  if(!currentUser || !db) return;
+  await setDoc(doc(db,'users',currentUser.uid), {
+    email: currentUser.email,
+    profile: state.profile,
+    progress: state.progress,
+    updatedAt: serverTimestamp()
+  }, {merge:true});
 }
-function deleteLog(id){
-  app.logs = app.logs.filter(x=>x.id!==id); save(); render();
-}
-function dueItems(){
-  const now = today();
-  return app.logs.filter(x => x.reviewDate && x.reviewDate <= now);
-}
-function upcomingItems(){
-  const now = new Date();
-  const in14 = new Date(); in14.setDate(now.getDate()+14);
-  return app.logs.filter(x => x.reviewDate && new Date(x.reviewDate) > now && new Date(x.reviewDate) <= in14);
-}
-function generateCertificate(){
-  const category = document.getElementById('certCategory').value;
-  const pass = Number(document.getElementById('certPass').value || 80);
-  const relevant = app.logs.filter(x => x.category === mapCertToCategory(category) || x.topic.includes(category) );
-  const best = relevant.length ? Math.max(...relevant.map(x=>Number(x.score||0))) : 0;
-  const passed = best >= pass;
-  const name = app.profile.name || '________________';
-  const area = document.getElementById('certificateArea');
-  area.innerHTML = `
-    <div style="border:4px solid #d4af37;padding:26px;border-radius:18px;background:linear-gradient(180deg,#fffdf5,#fff)">
-      <div style="text-align:center">
-        <div style="font-size:13px;letter-spacing:3px;color:#6b7280">LAYA F&B ACADEMY</div>
-        <h2 style="font-size:34px;margin:10px 0;color:#111827">CERTIFICATE OF COMPLETION</h2>
-        <p style="font-size:18px">This certifies that</p>
-        <div style="font-size:32px;font-weight:700;margin:10px 0;color:#0f172a">${name}</div>
-        <p>has completed <strong>${category}</strong><br>for outlet <strong>${app.profile.outlet || '________'}</strong></p>
-        <p>Role: <strong>${app.profile.role || '________'}</strong> &nbsp; | &nbsp; Best Score: <strong>${best}</strong></p>
-        <p>Status: <strong style="color:${passed ? '#15803d' : '#b91c1c'}">${passed ? 'PASSED' : 'NEEDS MORE TRAINING'}</strong></p>
-        <div style="margin-top:28px;display:flex;justify-content:space-between;gap:18px">
-          <div style="flex:1;border-top:1px solid #555;padding-top:8px">Supervisor Sign-off</div>
-          <div style="flex:1;border-top:1px solid #555;padding-top:8px">Date: ${today()}</div>
-        </div>
-      </div>
-    </div>`;
-}
-function mapCertToCategory(cert){
-  const map = {
-    'Outlet Orientation':'Outlet SOP',
-    'Food Allergy & Safety':'Food Allergy',
-    'Hygiene & Sanitation':'Hygiene & Sanitation',
-    'English for F&B':'English for F&B',
-    'Wine & Beverage Basics':'Wine & Beverage',
-    'Guest Service Standard':'Guest Service'
-  };
-  return map[cert] || cert;
-}
-function render(){
-  document.getElementById('kpiLogs').textContent = app.logs.length;
-  document.getElementById('kpiDue').textContent = dueItems().length;
-  document.getElementById('kpiCerts').textContent = Object.keys(TRACKS).length;
-  const due = dueItems();
-  const upcoming = upcomingItems();
-  const reminderList = document.getElementById('reminderList');
-  reminderList.innerHTML = '';
-  if(due.length===0 && upcoming.length===0){
-    reminderList.innerHTML = '<div class="notice ok">ยังไม่มีหัวข้อที่ถึงเวลาทบทวน</div>';
-  } else {
-    due.forEach(x => {
-      reminderList.insertAdjacentHTML('beforeend', `<div class="notice"><strong class="danger-text">ถึงกำหนดทบทวนแล้ว</strong><br>${x.topic} <span class="badge">${x.category}</span><br><span class="small">Review date: ${x.reviewDate}</span></div>`)
-    });
-    upcoming.forEach(x => {
-      reminderList.insertAdjacentHTML('beforeend', `<div class="notice"><strong class="warn-text">ใกล้ถึงกำหนดทบทวน</strong><br>${x.topic} <span class="badge">${x.category}</span><br><span class="small">Review date: ${x.reviewDate}</span></div>`)
-    });
+
+async function loadUserData(){
+  if(!currentUser || !db) return;
+  const snap = await getDoc(doc(db,'users',currentUser.uid));
+  if(snap.exists()){
+    const data = snap.data();
+    state.profile = data.profile || {};
+    state.progress = data.progress || {};
+  }else{
+    state.profile = { displayName:'', outlet:'The Taste', role:'Service Staff' };
+    state.progress = {};
+    await saveUserData();
   }
-  const role = app.profile.role || 'New Hire';
-  document.getElementById('roleNotice').innerHTML = `<strong>Track สำหรับ ${role}</strong><br>${TRACKS[role].map(x=>`<span class="badge">${x}</span>`).join(' ')}`;
-  const rt = document.getElementById('roleTracks');
-  rt.innerHTML = Object.entries(TRACKS).map(([r, items]) => `
-    <div class="card" style="margin-bottom:10px;${r===role ? 'outline:2px solid #38bdf8' : ''}">
-      <h3>${r}</h3>
-      ${items.map(i=>`<div class="badge">${i}</div>`).join('')}
-    </div>`).join('');
-  const tbody = document.getElementById('logTable');
-  tbody.innerHTML = app.logs.map(x=>`
-    <tr>
-      <td>${x.date||''}</td>
-      <td>${x.category||''}</td>
-      <td>${x.topic||''}<br><span class="small">Trainer: ${x.trainer||'-'}</span></td>
-      <td>${x.status||''}</td>
-      <td>${x.score||0}</td>
-      <td>${x.reviewDate||'-'}</td>
-      <td>${x.notes||''}</td>
-      <td><button class="inline danger" onclick="deleteLog(${x.id})">ลบ</button></td>
-    </tr>`).join('');
+  $('displayName').value = state.profile.displayName || '';
+  $('outlet').value = state.profile.outlet || 'The Taste';
+  $('role').value = state.profile.role || 'Service Staff';
+  renderStats(); renderCategories();
 }
-function exportBackup(){
-  const blob = new Blob([JSON.stringify(app,null,2)], {type:'application/json'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'laya_fnb_academy_v2831_backup.json';
-  a.click();
+
+function renderStats(){
+  const vals = Object.values(state.progress || {});
+  $('doneCount').textContent = vals.filter(v=>v.done).length;
+  $('favCount').textContent = vals.filter(v=>v.favorite).length;
+  $('noteCount').textContent = vals.filter(v=>v.note && v.note.trim()).length;
 }
-function importBackup(event){
-  const file = event.target.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try{
-      app = JSON.parse(reader.result);
-      save(); load();
-      alert('นำเข้าข้อมูลสำเร็จ');
-    }catch(e){ alert('ไฟล์ไม่ถูกต้อง'); }
-  };
-  reader.readAsText(file);
+
+function renderCategories(){
+  categoryBar.innerHTML = Object.keys(lessons).map(cat=>`<button class="pill ${cat===currentCategory?'active':''}" data-cat="${cat}">${cat}</button>`).join('');
+  [...categoryBar.querySelectorAll('.pill')].forEach(btn=>btn.onclick=()=>{currentCategory=btn.dataset.cat; currentLessonId=lessons[currentCategory][0].id; renderCategories(); renderLessonList(); renderReader();});
+  renderLessonList(); renderReader();
 }
-load();
+
+function renderLessonList(){
+  lessonList.innerHTML = lessons[currentCategory].map(item=>{
+    const p = state.progress[item.id] || {};
+    return `<button class="lesson-btn ${item.id===currentLessonId?'active':''}" data-id="${item.id}">
+      <div style="font-weight:700">${escapeHtml(item.title)}</div>
+      <div class="small">${escapeHtml(item.summary)}</div>
+      <div class="meta" style="margin-top:8px">
+        <span class="chip">${escapeHtml(item.level||'')}</span>
+        ${p.done?'<span class="chip">อ่านจบแล้ว</span>':''}
+        ${p.favorite?'<span class="chip">รายการโปรด</span>':''}
+      </div>
+    </button>`;
+  }).join('');
+  [...lessonList.querySelectorAll('.lesson-btn')].forEach(btn=>btn.onclick=()=>{currentLessonId=btn.dataset.id; renderLessonList(); renderReader();});
+}
+
+function renderReader(){
+  const item = lessons[currentCategory].find(x=>x.id===currentLessonId);
+  if(!item) return;
+  const p = state.progress[item.id] || {done:false,favorite:false,note:''};
+  let html = `<div class="meta"><span class="chip">${escapeHtml(currentCategory)}</span><span class="chip">${escapeHtml(item.level||'')}</span></div>
+  <h2>${escapeHtml(item.title)}</h2><p>${escapeHtml(item.summary)}</p>`;
+  if(item.vocab){
+    html += `<div class="section"><h3 style="margin-top:0">คำศัพท์สำคัญ</h3>`;
+    html += item.vocab.map(v=>`<div class="term"><strong>${escapeHtml(v[0])}</strong><div class="small">${escapeHtml(v[1])}</div></div>`).join('');
+    html += `</div>`;
+  }
+  if(item.phrases){
+    html += `<div class="section"><h3 style="margin-top:0">ตัวอย่างประโยค</h3>`;
+    html += item.phrases.map(v=>`<div class="term"><strong>${escapeHtml(v[0])}</strong><div class="small">${escapeHtml(v[1])}</div></div>`).join('');
+    html += `</div>`;
+  }
+  if(item.body){
+    html += `<div class="section"><h3 style="margin-top:0">สาระสำคัญ</h3>` + item.body.map(t=>`<div class="term"><div>${escapeHtml(t)}</div></div>`).join('') + `</div>`;
+  }
+  if(item.tips){
+    html += `<div class="section"><h3 style="margin-top:0">เคล็ดลับหน้างาน</h3>` + item.tips.map(t=>`<div class="term"><div>${escapeHtml(t)}</div></div>`).join('') + `</div>`;
+  }
+  html += `<div class="section"><h3 style="margin-top:0">โน้ตของฉัน</h3><textarea id="lessonNote" placeholder="พิมพ์โน้ตสั้น ๆ ที่อยากจำ">${escapeHtml(p.note||'')}</textarea>
+  <div class="row" style="margin-top:12px">
+    <button id="btnDone" class="success">${p.done?'ยกเลิกอ่านจบ':'อ่านจบแล้ว'}</button>
+    <button id="btnFav" class="ghost">${p.favorite?'เอาออกจากรายการโปรด':'บันทึกเป็นรายการโปรด'}</button>
+    <button id="btnSaveNote" class="secondary">บันทึกโน้ต</button>
+  </div>
+  <p id="lessonMsg" class="small"></p></div>`;
+  reader.innerHTML = html;
+  $('btnDone').onclick = async ()=>{ensureProgress(item.id); state.progress[item.id].done=!state.progress[item.id].done; await saveUserData(); renderStats(); renderLessonList(); renderReader();};
+  $('btnFav').onclick = async ()=>{ensureProgress(item.id); state.progress[item.id].favorite=!state.progress[item.id].favorite; await saveUserData(); renderStats(); renderLessonList(); renderReader();};
+  $('btnSaveNote').onclick = async ()=>{ensureProgress(item.id); state.progress[item.id].note = $('lessonNote').value.trim(); await saveUserData(); renderStats(); $('lessonMsg').textContent='บันทึกโน้ตแล้ว';};
+}
+function ensureProgress(id){ if(!state.progress[id]) state.progress[id]={done:false,favorite:false,note:''}; }
+
+$('btnOpenConfig').onclick = ()=>{$('configModal').classList.remove('hidden'); $('firebaseConfigInput').value = JSON.stringify(getSavedConfig()||{},null,2); };
+$('btnCloseConfig').onclick = ()=>$('configModal').classList.add('hidden');
+$('btnSaveConfig').onclick = ()=>{
+  try{ const parsed = JSON.parse($('firebaseConfigInput').value); localStorage.setItem('laya_firebase_config', JSON.stringify(parsed)); location.reload(); }
+  catch{ alert('รูปแบบ JSON ไม่ถูกต้อง'); }
+};
+$('btnClearConfig').onclick = ()=>{ localStorage.removeItem('laya_firebase_config'); location.reload(); };
+
+$('btnRegister').onclick = async ()=>{
+  if(!auth) return $('authMsg').textContent='กรุณาตั้งค่า Firebase ก่อน';
+  try{ await createUserWithEmailAndPassword(auth, $('email').value.trim(), $('password').value); $('authMsg').textContent='สมัครสำเร็จ'; }
+  catch(err){ $('authMsg').textContent = err.message; }
+};
+$('btnLogin').onclick = async ()=>{
+  if(!auth) return $('authMsg').textContent='กรุณาตั้งค่า Firebase ก่อน';
+  try{ await signInWithEmailAndPassword(auth, $('email').value.trim(), $('password').value); $('authMsg').textContent='เข้าสู่ระบบสำเร็จ'; }
+  catch(err){ $('authMsg').textContent = err.message; }
+};
+$('btnLogout').onclick = async ()=>{ if(auth) await signOut(auth); };
+$('btnSaveProfile').onclick = async ()=>{
+  state.profile = { displayName:$('displayName').value.trim(), outlet:$('outlet').value, role:$('role').value };
+  await saveUserData(); $('profileMsg').textContent='บันทึกโปรไฟล์แล้ว';
+};
+$('btnSync').onclick = async ()=>{ await loadUserData(); $('profileMsg').textContent='อัปเดตข้อมูลล่าสุดแล้ว'; };
+
+initFirebaseFromStorage();
 </script>
+<div class="footer">Firebase config จะไม่ถูกฝังตายตัวในไฟล์นี้ · เหมาะสำหรับนำไปอัป GitHub Pages แล้วตั้งค่าใช้งานจริง</div>
 </body>
 </html>

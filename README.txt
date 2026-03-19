@@ -1,14 +1,26 @@
-Laya F&B Academy v2.3 Reader Mode
+Laya F&B Academy - Firebase Edition
 
-จุดเปลี่ยนของเวอร์ชันนี้:
-- เปลี่ยนจากกดบทเรียนแล้วโชว์เนื้อหาสั้น ๆ ใต้ลิสต์
-- เป็นระบบ Learning Packs + Reader Mode เต็มหน้า
-- English for F&B ถูกจัดรวมอยู่ในปุ่มเดียวแล้ว
-- เมื่อกดเปิดชุดการเรียน จะเลือกหัวข้อย่อยด้านซ้ายและอ่านเต็มหน้าได้
+สิ่งที่ต้องทำก่อนใช้งานจริง
+1) สร้าง Firebase Project
+2) เปิด Authentication > Sign-in method > Email/Password
+3) สร้าง Firestore Database
+4) เปิดไฟล์ index.html หรืออัปขึ้น GitHub Pages
+5) กดปุ่ม "ตั้งค่า Firebase" แล้ววางค่า config JSON ของโปรเจกต์
+6) สมัครผู้ใช้พนักงานแต่ละคนด้วย email/password
 
-วิธีใช้:
-1) แตกไฟล์ ZIP
-2) เปิดไฟล์ index.html
-3) ไปที่หน้า Learning Packs
-4) กดเปิดชุดการเรียนที่ต้องการ
-5) อ่านแบบเต็มหน้าใน Reader Mode
+โครงสร้างข้อมูล
+- users/{uid}
+  - email
+  - profile
+  - progress
+  - updatedAt
+
+Firestore Rules ตัวอย่าง
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
