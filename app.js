@@ -117,6 +117,93 @@ function splitLines(text) {
     .filter(Boolean);
 }
 
+
+function splitMediaLines(text) {
+  return splitLines(text).filter(line => /^https?:\/\//i.test(line) || /^data:image\//i.test(line));
+}
+
+function extractBulletItems(text) {
+  return splitLines(text)
+    .map(line => line.replace(/^[-•●]\s*/, '').trim())
+    .filter(Boolean);
+}
+
+function sanitizeUrl(url) {
+  const value = String(url || '').trim();
+  if (!value) return '';
+  if (/^https?:\/\//i.test(value) || /^data:image\//i.test(value) || /^blob:/i.test(value)) return value;
+  return '';
+}
+
+function toYouTubeEmbed(url) {
+  const value = String(url || '').trim();
+  if (!value) return '';
+  try {
+    const parsed = new URL(value);
+    if (parsed.hostname.includes('youtu.be')) {
+      const id = parsed.pathname.replace(/^\//, '').split('/')[0];
+      return id ? `https://www.youtube.com/embed/${id}` : '';
+    }
+    if (parsed.hostname.includes('youtube.com')) {
+      if (parsed.pathname === '/watch') {
+        const id = parsed.searchParams.get('v');
+        return id ? `https://www.youtube.com/embed/${id}` : '';
+      }
+      const parts = parsed.pathname.split('/').filter(Boolean);
+      if (parts[0] === 'shorts' && parts[1]) return `https://www.youtube.com/embed/${parts[1]}`;
+      if (parts[0] === 'embed' && parts[1]) return `https://www.youtube.com/embed/${parts[1]}`;
+    }
+  } catch (err) {
+    return '';
+  }
+  return '';
+}
+
+function buildRichTextHTML(text) {
+  const raw = String(text || '').replace(/\r/g, '');
+  if (!raw.trim()) return '';
+  const chunks = raw.split(/\n\s*\n/).map(chunk => chunk.trim()).filter(Boolean);
+  return chunks.map(chunk => {
+    const lines = chunk.split('\n').map(line => line.trim()).filter(Boolean);
+    const isBulletBlock = lines.every(line => /^[-•●]\s+/.test(line));
+    if (isBulletBlock) {
+      return `<ul>${lines.map(line => `<li>${safeHTML(line.replace(/^[-•●]\s*/, ''))}</li>`).join('')}</ul>`;
+    }
+    return lines.map(line => `<p>${safeHTML(line)}</p>`).join('');
+  }).join('');
+}
+
+function renderSectionMedia(section) {
+  const images = Array.isArray(section.images) ? section.images.map(sanitizeUrl).filter(Boolean) : [];
+  const videos = Array.isArray(section.videos) ? section.videos.map(sanitizeUrl).filter(Boolean) : [];
+  if (!images.length && !videos.length) return '';
+  return `
+    <div class="section-media-wrap">
+      ${images.length ? `
+        <div class="media-block">
+          <div class="media-block-title">รูปภาพ</div>
+          <div class="media-grid image-grid">
+            ${images.map(url => `<a class="media-card image-card" href="${safeHTML(url)}" target="_blank" rel="noopener"><img src="${safeHTML(url)}" alt="lesson image" loading="lazy"></a>`).join('')}
+          </div>
+        </div>
+      ` : ''}
+      ${videos.length ? `
+        <div class="media-block">
+          <div class="media-block-title">วิดีโอ</div>
+          <div class="media-grid video-grid">
+            ${videos.map(url => {
+              const yt = toYouTubeEmbed(url);
+              if (yt) return `<div class="media-card video-card"><iframe src="${safeHTML(yt)}" title="lesson video" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`;
+              if (/\.mp4($|\?)/i.test(url)) return `<div class="media-card video-card"><video controls preload="metadata" src="${safeHTML(url)}"></video></div>`;
+              return `<a class="media-card video-link-card" href="${safeHTML(url)}" target="_blank" rel="noopener">เปิดวิดีโอ</a>`;
+            }).join('')}
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
 function lessonProgress(id) {
   state.userData.progress[id] ||= { openedCount: 0, completed: false, favorite: false };
   return state.userData.progress[id];
@@ -190,10 +277,19 @@ function transformCommunityLesson(docId, raw = {}) {
     level: raw.level || 'Team',
     title: raw.title || 'Untitled Lesson',
     summary: raw.summary || '',
-    sections: Array.isArray(raw.sections) ? raw.sections.map(section => ({
-      title: section?.title || 'หัวข้อ',
-      items: Array.isArray(section?.items) ? section.items.filter(Boolean) : []
-    })).filter(section => section.items.length || section.title) : [],
+    sections: Array.isArray(raw.sections) ? raw.sections.map(section => {
+      const content = String(section?.content || '').trim();
+      const items = Array.isArray(section?.items) ? section.items.filter(Boolean) : [];
+      const images = Array.isArray(section?.images) ? section.images.filter(Boolean) : [];
+      const videos = Array.isArray(section?.videos) ? section.videos.filter(Boolean) : [];
+      return {
+        title: section?.title || 'หัวข้อ',
+        content,
+        items,
+        images,
+        videos
+      };
+    }).filter(section => section.title || section.content || section.items.length || section.images.length || section.videos.length) : [],
     tips: Array.isArray(raw.tips) ? raw.tips.filter(Boolean) : [],
     authorId: raw.authorId || '',
     authorName: raw.authorName || 'Team Member',
@@ -282,7 +378,8 @@ function renderChips() {
 function matchesLesson(lesson) {
   const q = state.search.trim().toLowerCase();
   const catOK = state.filter === 'All' || (lesson.category || 'General') === state.filter;
-  const hay = `${lesson.title} ${lesson.summary || ''} ${lesson.category || ''} ${lesson.authorName || ''}`.toLowerCase();
+  const sectionText = (lesson.sections || []).map(section => `${section.title || ''} ${section.content || ''} ${(section.items || []).join(' ')}`).join(' ');
+  const hay = `${lesson.title} ${lesson.summary || ''} ${lesson.category || ''} ${lesson.authorName || ''} ${sectionText}`.toLowerCase();
   return catOK && (!q || hay.includes(q));
 }
 
@@ -433,12 +530,20 @@ function renderEnglishPack() {
 }
 
 function renderSections(lesson) {
-  return (lesson.sections || []).map(section => `
-    <section class="section-box">
-      <h3>${safeHTML(section.title)}</h3>
-      <ul>${(section.items || []).map(item => `<li>${safeHTML(item)}</li>`).join('')}</ul>
-    </section>
-  `).join('');
+  return (lesson.sections || []).map(section => {
+    const content = String(section.content || '').trim();
+    const fallbackItems = Array.isArray(section.items) ? section.items : [];
+    const body = content
+      ? buildRichTextHTML(content)
+      : (fallbackItems.length ? `<ul>${fallbackItems.map(item => `<li>${safeHTML(item)}</li>`).join('')}</ul>` : '<div class="empty-box">ยังไม่มีเนื้อหาในหัวข้อนี้</div>');
+    return `
+      <section class="section-box">
+        <h3>${safeHTML(section.title)}</h3>
+        <div class="section-body">${body}</div>
+        ${renderSectionMedia(section)}
+      </section>
+    `;
+  }).join('');
 }
 
 function renderTips(lesson) {
@@ -700,9 +805,11 @@ function fillEditorFromLesson(lesson) {
   el('editorLessonLevel').value = lesson.level || 'Team';
   el('editorLessonSummary').value = lesson.summary || '';
   [0,1,2,3].forEach(index => {
-    const section = lesson.sections?.[index] || { title: '', items: [] };
+    const section = lesson.sections?.[index] || { title: '', items: [], content: '', images: [], videos: [] };
     el(`section${index+1}Title`).value = section.title || '';
-    el(`section${index+1}Items`).value = (section.items || []).join('\n');
+    el(`section${index+1}Items`).value = section.content || (section.items || []).join('\n');
+    el(`section${index+1}Images`).value = (section.images || []).join('\n');
+    el(`section${index+1}Videos`).value = (section.videos || []).join('\n');
   });
   el('editorLessonTips').value = (lesson.tips || []).join('\n');
   el('deleteLessonBtn').classList.remove('hidden');
@@ -724,10 +831,18 @@ function buildEditorPayload() {
   const category = el('editorLessonCategory').value.trim() || 'Team Knowledge';
   const level = el('editorLessonLevel').value || 'Team';
   const summary = el('editorLessonSummary').value.trim();
-  const sections = [0,1,2,3].map(index => ({
-    title: el(`section${index+1}Title`).value.trim(),
-    items: splitLines(el(`section${index+1}Items`).value)
-  })).filter(section => section.title || section.items.length);
+  const sections = [0,1,2,3].map(index => {
+    const content = el(`section${index+1}Items`).value.trim();
+    const images = splitMediaLines(el(`section${index+1}Images`).value);
+    const videos = splitMediaLines(el(`section${index+1}Videos`).value);
+    return {
+      title: el(`section${index+1}Title`).value.trim(),
+      content,
+      items: extractBulletItems(content),
+      images,
+      videos
+    };
+  }).filter(section => section.title || section.content || section.images.length || section.videos.length);
   const tips = splitLines(el('editorLessonTips').value);
 
   if (!title) throw new Error('กรุณาใส่ชื่อบทเรียน');

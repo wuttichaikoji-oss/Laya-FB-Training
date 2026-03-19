@@ -123,14 +123,25 @@
           </label>
         </div>
 
+        <div class="editor-help-box">
+          <strong>เขียนได้อิสระมากขึ้น</strong>
+          <p>ในแต่ละหัวข้อสามารถพิมพ์เป็นย่อหน้า, bullet, เว้นบรรทัด, แปะลิงก์รูปภาพ และลิงก์วิดีโอ YouTube/MP4 ได้ โดย 1 ลิงก์ต่อ 1 บรรทัด</p>
+        </div>
+
         <div class="editor-grid two-col">
           <div class="editor-block">
             <h4>หัวข้อที่ 1</h4>
             <label>ชื่อหัวข้อ
               <input id="section1Title" type="text" placeholder="เช่น จุดสำคัญก่อนเริ่มกะ">
             </label>
-            <label>เนื้อหา (1 บรรทัด = 1 bullet)
-              <textarea id="section1Items" placeholder="เขียนทีละบรรทัด เช่น&#10;เช็กอุปกรณ์ให้พร้อม&#10;เช็กยูนิฟอร์มให้เรียบร้อย"></textarea>
+            <label>เนื้อหาแบบอิสระ
+              <textarea id="section1Items" class="editor-content-input" placeholder="พิมพ์ได้อิสระ เช่น&#10;ลูกค้ามาถึงต้องทักทายภายใน 30 วินาที&#10;&#10;- ตรวจสอบการจองก่อนพาไปที่โต๊ะ&#10;- เสนอเมนูและน้ำดื่มทันที&#10;&#10;สามารถเว้นบรรทัดเพื่อแยกย่อหน้าได้"></textarea>
+            </label>
+            <label>ลิงก์รูปภาพ (1 บรรทัด = 1 รูป)
+              <textarea id="section1Images" class="editor-media-input" placeholder="https://.../image1.jpg&#10;https://.../image2.png"></textarea>
+            </label>
+            <label>ลิงก์วิดีโอ (YouTube / MP4, 1 บรรทัด = 1 ลิงก์)
+              <textarea id="section1Videos" class="editor-media-input" placeholder="https://youtu.be/...&#10;https://.../video.mp4"></textarea>
             </label>
           </div>
           <div class="editor-block">
@@ -138,8 +149,14 @@
             <label>ชื่อหัวข้อ
               <input id="section2Title" type="text" placeholder="เช่น ขั้นตอนการปฏิบัติงาน">
             </label>
-            <label>เนื้อหา (1 บรรทัด = 1 bullet)
-              <textarea id="section2Items" placeholder="เขียนทีละบรรทัด"></textarea>
+            <label>เนื้อหาแบบอิสระ
+              <textarea id="section2Items" class="editor-content-input" placeholder="พิมพ์ได้อิสระ จะเขียนเป็น bullet หรือย่อหน้าก็ได้"></textarea>
+            </label>
+            <label>ลิงก์รูปภาพ (1 บรรทัด = 1 รูป)
+              <textarea id="section2Images" class="editor-media-input" placeholder="https://.../image.jpg"></textarea>
+            </label>
+            <label>ลิงก์วิดีโอ (YouTube / MP4, 1 บรรทัด = 1 ลิงก์)
+              <textarea id="section2Videos" class="editor-media-input" placeholder="https://youtu.be/...&#10;https://.../video.mp4"></textarea>
             </label>
           </div>
         </div>
@@ -150,8 +167,14 @@
             <label>ชื่อหัวข้อ
               <input id="section3Title" type="text" placeholder="เช่น สิ่งที่ต้องระวัง">
             </label>
-            <label>เนื้อหา (1 บรรทัด = 1 bullet)
-              <textarea id="section3Items" placeholder="เขียนทีละบรรทัด"></textarea>
+            <label>เนื้อหาแบบอิสระ
+              <textarea id="section3Items" class="editor-content-input" placeholder="พิมพ์ได้อิสระ จะเขียนเป็น bullet หรือย่อหน้าก็ได้"></textarea>
+            </label>
+            <label>ลิงก์รูปภาพ (1 บรรทัด = 1 รูป)
+              <textarea id="section3Images" class="editor-media-input" placeholder="https://.../image.jpg"></textarea>
+            </label>
+            <label>ลิงก์วิดีโอ (YouTube / MP4, 1 บรรทัด = 1 ลิงก์)
+              <textarea id="section3Videos" class="editor-media-input" placeholder="https://youtu.be/...&#10;https://.../video.mp4"></textarea>
             </label>
           </div>
           <div class="editor-block">
@@ -159,8 +182,14 @@
             <label>ชื่อหัวข้อ
               <input id="section4Title" type="text" placeholder="เช่น สรุปหน้างาน / key takeaway">
             </label>
-            <label>เนื้อหา (1 บรรทัด = 1 bullet)
-              <textarea id="section4Items" placeholder="เขียนทีละบรรทัด"></textarea>
+            <label>เนื้อหาแบบอิสระ
+              <textarea id="section4Items" class="editor-content-input" placeholder="พิมพ์ได้อิสระ จะเขียนเป็น bullet หรือย่อหน้าก็ได้"></textarea>
+            </label>
+            <label>ลิงก์รูปภาพ (1 บรรทัด = 1 รูป)
+              <textarea id="section4Images" class="editor-media-input" placeholder="https://.../image.jpg"></textarea>
+            </label>
+            <label>ลิงก์วิดีโอ (YouTube / MP4, 1 บรรทัด = 1 ลิงก์)
+              <textarea id="section4Videos" class="editor-media-input" placeholder="https://youtu.be/...&#10;https://.../video.mp4"></textarea>
             </label>
           </div>
         </div>
