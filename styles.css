@@ -102,3 +102,8 @@ input,textarea{width:100%;border:1px solid var(--line);border-radius:14px;paddin
   .english-pack-head,.vocab-row,.vocab-toolbar{flex-direction:column}
   .speak-mini{width:100%}
 }
+
+.reader{scroll-margin-top:16px}
+.vocab-row{align-items:center}
+.vocab-main{min-width:0}
+.vocab-main strong{word-break:break-word}
