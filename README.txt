@@ -1,26 +1,25 @@
-Laya F&B Academy v3.1 English Master
+Laya F&B Academy v3.0 Lite - Firebase Ready
 
-ไฟล์นี้เป็นเวอร์ชันสร้างใหม่เพื่อให้ดาวน์โหลดและเปิดใช้งานได้จริง
-เน้น:
-- English for F&B แบบ List
-- คำศัพท์ + คำอ่านไทย + คำแปลไทย
-- กดฟังเสียงได้
-- รายการโปรดบันทึกในเครื่อง
+ไฟล์นี้ฝังค่า Firebase ของโปรเจกต์ laya-training ไว้แล้ว
+จึงสามารถเปิดใช้งานได้ทันทีหลังจากเปิดใช้บริการต่อไปนี้ใน Firebase Console:
 
-จำนวนคำศัพท์:
-- ร้านอาหาร: 121
-- ผัก: 115
-- ผลไม้: 120
-- รับออเดอร์: 110
-- พูดคุย/ทักทาย: 109
+1) Authentication > Sign-in method > เปิด Email/Password
+2) Firestore Database > Create database
+3) แนะนำให้ตั้ง Rules ตามนี้
 
-รวมทั้งหมด: 575
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
 
-วิธีใช้:
-1) แตกไฟล์ ZIP
-2) เปิดไฟล์ index.html
-3) ใช้ช่องค้นหา / เปลี่ยนหมวด / กดดาว / กดลำโพง
+ระบบจะบันทึกข้อมูลต่อบัญชีพนักงาน เช่น
+- บทที่อ่านจบ
+- รายการโปรด
+- โน้ตส่วนตัว
+- โปรไฟล์เบื้องต้น
 
-หมายเหตุ:
-- ระบบอ่านเสียงใช้ Web Speech API ของเบราว์เซอร์
-- ถ้าบางเครื่องยังไม่มีเสียง ให้ลองเปิดผ่าน Chrome หรือ Edge
+ถ้ายังไม่พร้อมใช้ Firebase สามารถกด Local Demo ได้
