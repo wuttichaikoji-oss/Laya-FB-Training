@@ -182,3 +182,12 @@ textarea{min-height:130px;resize:vertical}
   .media-grid{grid-template-columns:1fr}
   .video-card iframe,.video-card video{height:200px}
 }
+
+
+.upload-row{display:grid;gap:8px}
+.upload-box{display:grid;place-items:center;min-height:48px;padding:12px 14px;border-radius:14px;border:1px dashed #9fd8d3;background:#f4fffd;color:var(--brand-dark);font-weight:800;text-align:center}
+.upload-box:hover{background:#ecfbf9}
+.file-input{display:none}
+.upload-msg{font-size:.92rem;color:var(--muted);line-height:1.55}
+.upload-msg.error{color:var(--danger)}
+.upload-msg.success{color:var(--brand-dark)}

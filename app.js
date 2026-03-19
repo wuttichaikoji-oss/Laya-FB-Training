@@ -11,6 +11,8 @@ const FIREBASE_CONFIG = {
 if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
 const auth = firebase.auth();
 const db = firebase.firestore();
+let storage = null;
+try { storage = firebase.storage(); } catch (err) { console.warn('Firebase Storage unavailable', err); }
 
 const baseLessons = window.LESSONS_DATA || [];
 const ENGLISH_DATA = window.ENGLISH_DATA || {};
@@ -133,6 +135,79 @@ function sanitizeUrl(url) {
   if (!value) return '';
   if (/^https?:\/\//i.test(value) || /^data:image\//i.test(value) || /^blob:/i.test(value)) return value;
   return '';
+}
+
+
+function safeFileName(name) {
+  return String(name || 'image')
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '') || 'image';
+}
+
+function appendLineToTextarea(id, value) {
+  const node = el(id);
+  if (!node || !value) return;
+  const current = node.value.trim();
+  node.value = current ? `${current}\n${value}` : value;
+}
+
+function setUploadMessage(sectionNum, message, tone = '') {
+  const node = el(`section${sectionNum}UploadMsg`);
+  if (!node) return;
+  node.textContent = message;
+  node.classList.remove('error', 'success');
+  if (tone) node.classList.add(tone);
+}
+
+function refreshUploadHint(sectionNum) {
+  const count = splitMediaLines(el(`section${sectionNum}Images`)?.value || '').length;
+  if (!count) {
+    setUploadMessage(sectionNum, 'เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ');
+    return;
+  }
+  setUploadMessage(sectionNum, `มีลิงก์รูปภาพแล้ว ${count} รูป`, 'success');
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ''));
+    reader.onerror = () => reject(new Error('อ่านไฟล์รูปไม่สำเร็จ'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function uploadImageFile(file) {
+  if (state.isDemo) return await fileToDataUrl(file);
+  if (!state.user) throw new Error('กรุณาเข้าสู่ระบบก่อนอัปโหลดรูป');
+  if (!storage) throw new Error('Firebase Storage ยังไม่พร้อมใช้งาน');
+  const path = `team_lesson_uploads/${state.user.uid}/${Date.now()}-${safeFileName(file.name)}`;
+  const ref = storage.ref().child(path);
+  const snapshot = await ref.put(file, { contentType: file.type || 'image/jpeg' });
+  return await snapshot.ref.getDownloadURL();
+}
+
+async function handleSectionImageUpload(sectionNum, files) {
+  const picked = Array.from(files || []).filter(Boolean);
+  if (!picked.length) return;
+  setUploadMessage(sectionNum, `กำลังเตรียมอัปโหลด ${picked.length} รูป...`);
+  try {
+    for (let i = 0; i < picked.length; i += 1) {
+      const file = picked[i];
+      setUploadMessage(sectionNum, `กำลังอัปโหลด ${i + 1}/${picked.length}: ${file.name}`);
+      const url = await uploadImageFile(file);
+      appendLineToTextarea(`section${sectionNum}Images`, url);
+    }
+    refreshUploadHint(sectionNum);
+  } catch (err) {
+    console.error(err);
+    setUploadMessage(sectionNum, err.message || 'อัปโหลดรูปไม่สำเร็จ', 'error');
+  } finally {
+    const input = el(`section${sectionNum}ImageFiles`);
+    if (input) input.value = '';
+  }
 }
 
 function toYouTubeEmbed(url) {
@@ -788,6 +863,7 @@ function resetEditorForm() {
   el('lessonEditorForm').reset();
   el('editorLessonLevel').value = 'Team';
   el('deleteLessonBtn').classList.add('hidden');
+  [1,2,3,4].forEach(refreshUploadHint);
 }
 
 function openEditor() {
@@ -813,6 +889,7 @@ function fillEditorFromLesson(lesson) {
   });
   el('editorLessonTips').value = (lesson.tips || []).join('\n');
   el('deleteLessonBtn').classList.remove('hidden');
+  [1,2,3,4].forEach(refreshUploadHint);
 }
 
 function openEditorForLesson(lesson) {
@@ -934,6 +1011,14 @@ el('lessonEditorForm').addEventListener('submit', async e => {
   } catch (err) {
     el('editorMsg').textContent = err.message || 'บันทึกบทเรียนไม่สำเร็จ';
   }
+});
+
+
+[1,2,3,4].forEach(sectionNum => {
+  el(`section${sectionNum}ImageFiles`).addEventListener('change', e => {
+    handleSectionImageUpload(sectionNum, e.target.files);
+  });
+  el(`section${sectionNum}Images`).addEventListener('input', () => refreshUploadHint(sectionNum));
 });
 
 el('demoBtn').addEventListener('click', async () => {

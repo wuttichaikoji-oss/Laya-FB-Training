@@ -140,6 +140,11 @@
             <label>ลิงก์รูปภาพ (1 บรรทัด = 1 รูป)
               <textarea id="section1Images" class="editor-media-input" placeholder="https://.../image1.jpg&#10;https://.../image2.png"></textarea>
             </label>
+            <div class="upload-row">
+              <label class="upload-box" for="section1ImageFiles">อัปโหลดรูปจากเครื่อง</label>
+              <input id="section1ImageFiles" class="file-input" type="file" accept="image/*" multiple>
+              <div id="section1UploadMsg" class="upload-msg">เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ</div>
+            </div>
             <label>ลิงก์วิดีโอ (YouTube / MP4, 1 บรรทัด = 1 ลิงก์)
               <textarea id="section1Videos" class="editor-media-input" placeholder="https://youtu.be/...&#10;https://.../video.mp4"></textarea>
             </label>
@@ -155,6 +160,11 @@
             <label>ลิงก์รูปภาพ (1 บรรทัด = 1 รูป)
               <textarea id="section2Images" class="editor-media-input" placeholder="https://.../image.jpg"></textarea>
             </label>
+            <div class="upload-row">
+              <label class="upload-box" for="section2ImageFiles">อัปโหลดรูปจากเครื่อง</label>
+              <input id="section2ImageFiles" class="file-input" type="file" accept="image/*" multiple>
+              <div id="section2UploadMsg" class="upload-msg">เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ</div>
+            </div>
             <label>ลิงก์วิดีโอ (YouTube / MP4, 1 บรรทัด = 1 ลิงก์)
               <textarea id="section2Videos" class="editor-media-input" placeholder="https://youtu.be/...&#10;https://.../video.mp4"></textarea>
             </label>
@@ -173,6 +183,11 @@
             <label>ลิงก์รูปภาพ (1 บรรทัด = 1 รูป)
               <textarea id="section3Images" class="editor-media-input" placeholder="https://.../image.jpg"></textarea>
             </label>
+            <div class="upload-row">
+              <label class="upload-box" for="section3ImageFiles">อัปโหลดรูปจากเครื่อง</label>
+              <input id="section3ImageFiles" class="file-input" type="file" accept="image/*" multiple>
+              <div id="section3UploadMsg" class="upload-msg">เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ</div>
+            </div>
             <label>ลิงก์วิดีโอ (YouTube / MP4, 1 บรรทัด = 1 ลิงก์)
               <textarea id="section3Videos" class="editor-media-input" placeholder="https://youtu.be/...&#10;https://.../video.mp4"></textarea>
             </label>
@@ -188,6 +203,11 @@
             <label>ลิงก์รูปภาพ (1 บรรทัด = 1 รูป)
               <textarea id="section4Images" class="editor-media-input" placeholder="https://.../image.jpg"></textarea>
             </label>
+            <div class="upload-row">
+              <label class="upload-box" for="section4ImageFiles">อัปโหลดรูปจากเครื่อง</label>
+              <input id="section4ImageFiles" class="file-input" type="file" accept="image/*" multiple>
+              <div id="section4UploadMsg" class="upload-msg">เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ</div>
+            </div>
             <label>ลิงก์วิดีโอ (YouTube / MP4, 1 บรรทัด = 1 ลิงก์)
               <textarea id="section4Videos" class="editor-media-input" placeholder="https://youtu.be/...&#10;https://.../video.mp4"></textarea>
             </label>
@@ -213,6 +233,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
   <script src="english-data.js"></script>
   <script src="lessons-data.js"></script>
   <script src="app.js"></script>

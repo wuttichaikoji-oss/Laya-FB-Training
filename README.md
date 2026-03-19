@@ -73,3 +73,31 @@ Authentication > Settings > Authorized domains
 - วิดีโอ YouTube เช่น `https://youtu.be/...` หรือ `https://www.youtube.com/watch?v=...`
 - วิดีโอ MP4 ผ่าน URL ตรง
 - เวอร์ชันนี้ยังไม่อัปโหลดไฟล์รูปจากเครื่องขึ้น Firebase Storage อัตโนมัติ
+
+
+## Firebase Storage ที่เพิ่มใน v3.0.5
+เวอร์ชันนี้รองรับการอัปโหลดรูปจากเครื่องเข้าสู่ Firebase Storage แล้ว โดยจะเก็บไฟล์ไว้ใต้โฟลเดอร์:
+- `team_lesson_uploads/{uid}/...`
+
+### Storage Rules ที่แนะนำ
+```js
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /team_lesson_uploads/{userId}/{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
+
+### วิธีใช้ Image Upload
+1. ล็อกอินด้วยบัญชี Firebase
+2. กด `+ เพิ่มบทเรียน`
+3. ในหัวข้อย่อยแต่ละกล่อง กด `อัปโหลดรูปจากเครื่อง`
+4. เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป
+5. ระบบจะอัปโหลดไฟล์ขึ้น Firebase Storage และเติม URL ลงในช่องรูปภาพให้อัตโนมัติ
+6. กดบันทึกบทเรียนตามปกติ
+
+> โหมด Demo จะเก็บรูปเป็น data URL ในเครื่องนั้นแทน เพื่อให้ลองใช้งานได้แม้ไม่ล็อกอิน
