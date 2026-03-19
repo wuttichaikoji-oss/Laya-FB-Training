@@ -1,4 +1,3 @@
-
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyAaiMSOeGDahZuVDqWhgeuSHBf129wXv6g",
   authDomain: "laya-training.firebaseapp.com",
@@ -16,17 +15,28 @@ const db = firebase.firestore();
 const lessons = window.LESSONS_DATA || [];
 const ENGLISH_DATA = window.ENGLISH_DATA || {};
 const WINE_MEDIA = window.WINE_MEDIA || [];
-const ENGLISH_ORDER = ['restaurant','vegetables','fruits','orders','greeting'];
+const ENGLISH_ORDER = ['restaurant', 'vegetables', 'fruits', 'orders', 'greeting'];
+
+const defaultUserData = () => ({
+  done: [],
+  favorites: [],
+  notes: {},
+  progress: {},
+  englishProgress: {}
+});
 
 const state = {
   mode: 'login',
   user: null,
   isDemo: false,
-  userData: { done: [], favorites: [], notes: {} },
+  userData: defaultUserData(),
   currentLessonId: null,
   filter: 'All',
   search: '',
-  englishTab: 'restaurant'
+  englishTab: 'restaurant',
+  englishSearch: '',
+  saveTimer: null,
+  saving: false
 };
 
 const el = id => document.getElementById(id);
@@ -37,15 +47,34 @@ const readerSection = el('readerSection');
 const listSection = el('listSection');
 const backBtn = el('backBtn');
 
-function lessonCats(){
+function safeHTML(text) {
+  return String(text ?? '').replace(/[&<>"']/g, s => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s]));
+}
+
+function lessonCats() {
   return ['All', ...Array.from(new Set(lessons.map(l => l.category || 'General'))).sort()];
 }
 
-function safeHTML(text){
-  return String(text).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+function mergeUserData(raw = {}) {
+  const merged = defaultUserData();
+  merged.done = Array.isArray(raw.done) ? raw.done : [];
+  merged.favorites = Array.isArray(raw.favorites) ? raw.favorites : [];
+  merged.notes = raw.notes && typeof raw.notes === 'object' ? raw.notes : {};
+  merged.progress = raw.progress && typeof raw.progress === 'object' ? raw.progress : {};
+  merged.englishProgress = raw.englishProgress && typeof raw.englishProgress === 'object' ? raw.englishProgress : {};
+
+  merged.done.forEach(id => {
+    merged.progress[id] ||= {};
+    merged.progress[id].completed = true;
+  });
+  merged.favorites.forEach(id => {
+    merged.progress[id] ||= {};
+    merged.progress[id].favorite = true;
+  });
+  return merged;
 }
 
-function setAuthMode(mode){
+function setAuthMode(mode) {
   state.mode = mode;
   document.querySelectorAll('.auth-tabs .tab').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === mode));
   el('nameWrap').classList.toggle('hidden', mode !== 'register');
@@ -55,45 +84,77 @@ function setAuthMode(mode){
 
 document.querySelectorAll('.auth-tabs .tab').forEach(btn => btn.addEventListener('click', () => setAuthMode(btn.dataset.mode)));
 
-async function saveUserData(){
-  if (state.isDemo) {
-    localStorage.setItem('laya_demo_user_data', JSON.stringify(state.userData));
-    return;
+async function saveUserData(immediate = false) {
+  if (state.saveTimer) {
+    clearTimeout(state.saveTimer);
+    state.saveTimer = null;
   }
-  if (!state.user) return;
-  await db.collection('users').doc(state.user.uid).set({
-    email: state.user.email || '',
-    displayName: state.user.displayName || '',
-    done: state.userData.done,
-    favorites: state.userData.favorites,
-    notes: state.userData.notes,
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
-}
-
-async function loadUserData(){
-  if (state.isDemo) {
-    state.userData = JSON.parse(localStorage.getItem('laya_demo_user_data') || '{"done":[],"favorites":[],"notes":{}}');
-    return;
-  }
-  if (!state.user) return;
-  const ref = await db.collection('users').doc(state.user.uid).get();
-  const data = ref.exists ? ref.data() : {};
-  state.userData = {
-    done: data.done || [],
-    favorites: data.favorites || [],
-    notes: data.notes || {}
+  const doSave = async () => {
+    if (state.saving) return;
+    state.saving = true;
+    try {
+      if (state.isDemo) {
+        localStorage.setItem('laya_demo_user_data', JSON.stringify(state.userData));
+      } else if (state.user) {
+        await db.collection('users').doc(state.user.uid).set({
+          email: state.user.email || '',
+          displayName: state.user.displayName || '',
+          done: state.userData.done,
+          favorites: state.userData.favorites,
+          notes: state.userData.notes,
+          progress: state.userData.progress,
+          englishProgress: state.userData.englishProgress,
+          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+      }
+    } finally {
+      state.saving = false;
+      updateHeader();
+    }
   };
+
+  if (immediate) return doSave();
+  state.saveTimer = setTimeout(doSave, 500);
 }
 
-function updateHeader(){
+async function loadUserData() {
+  if (state.isDemo) {
+    state.userData = mergeUserData(JSON.parse(localStorage.getItem('laya_demo_user_data') || '{}'));
+    return;
+  }
+  if (!state.user) return;
+  const snap = await db.collection('users').doc(state.user.uid).get();
+  state.userData = mergeUserData(snap.exists ? snap.data() : {});
+}
+
+function updateHeader() {
   const name = state.isDemo ? 'Demo User' : (state.user?.displayName || state.user?.email || 'พนักงาน');
   el('welcomeName').textContent = name;
   el('doneCount').textContent = (state.userData.done || []).length;
   el('favCount').textContent = (state.userData.favorites || []).length;
+  const sync = el('syncStatus');
+  if (sync) sync.textContent = state.isDemo ? 'บันทึกในเครื่องนี้' : 'บันทึกในบัญชี Firebase';
 }
 
-function renderChips(){
+function lessonProgress(id) {
+  state.userData.progress[id] ||= { openedCount: 0, completed: false, favorite: false };
+  return state.userData.progress[id];
+}
+
+function englishProgress(tab) {
+  state.userData.englishProgress[tab] ||= { openedCount: 0, completed: false };
+  return state.userData.englishProgress[tab];
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleDateString('th-TH', { day: '2-digit', month: 'short', year: '2-digit' }) + ' ' +
+    d.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+}
+
+function renderChips() {
   const wrap = el('filterChips');
   wrap.innerHTML = '';
   lessonCats().forEach(cat => {
@@ -105,59 +166,69 @@ function renderChips(){
   });
 }
 
-function matchesLesson(lesson){
+function matchesLesson(lesson) {
   const q = state.search.trim().toLowerCase();
   const catOK = state.filter === 'All' || (lesson.category || 'General') === state.filter;
   const hay = `${lesson.title} ${lesson.summary} ${lesson.category || ''}`.toLowerCase();
   return catOK && (!q || hay.includes(q));
 }
 
-function renderLessons(){
+function renderLessons() {
   updateHeader();
   renderChips();
   lessonGrid.innerHTML = '';
+
   lessons.filter(matchesLesson).forEach(lesson => {
     const card = document.createElement('article');
     card.className = 'card';
-    const done = state.userData.done.includes(lesson.id);
-    const fav = state.userData.favorites.includes(lesson.id);
+    const prog = lessonProgress(lesson.id);
+    const done = !!prog.completed;
+    const fav = !!prog.favorite;
+    const extra = prog.lastOpenedAt ? `เปิดล่าสุด ${formatDate(prog.lastOpenedAt)}` : 'ยังไม่เคยเปิด';
+
     card.innerHTML = `
       <div class="tag-row">
         <span class="tag">${safeHTML(lesson.category || 'General')}</span>
         <span class="tag">${safeHTML(lesson.level || 'Core')}</span>
-        ${done ? '<span class="tag">อ่านจบแล้ว</span>' : ''}
+        ${done ? '<span class="tag success-tag">อ่านจบแล้ว</span>' : ''}
       </div>
       <div>
         <h3>${safeHTML(lesson.title)}</h3>
         <p>${safeHTML(lesson.summary || '')}</p>
       </div>
+      <div class="mini-meta">${safeHTML(extra)} · เปิด ${prog.openedCount || 0} ครั้ง</div>
       <div class="card-actions">
         <button class="primary-btn open-btn">เปิดอ่าน</button>
         <button class="icon-btn fav-btn">${fav ? '★ โปรด' : '☆ โปรด'}</button>
       </div>
     `;
+
     card.querySelector('.open-btn').onclick = () => openLesson(lesson.id);
     card.querySelector('.fav-btn').onclick = async () => {
-      state.userData.favorites = fav ? state.userData.favorites.filter(x => x !== lesson.id) : [...state.userData.favorites, lesson.id];
-      await saveUserData();
+      prog.favorite = !fav;
+      prog.favoriteAt = prog.favorite ? new Date().toISOString() : null;
+      state.userData.favorites = prog.favorite
+        ? Array.from(new Set([...state.userData.favorites, lesson.id]))
+        : state.userData.favorites.filter(x => x !== lesson.id);
+      await saveUserData(true);
       renderLessons();
     };
     lessonGrid.appendChild(card);
   });
 }
 
-function noteValue(id){ return state.userData.notes[id] || ''; }
+function noteValue(id) { return state.userData.notes[id] || ''; }
 
-function speak(text){
+function speak(text) {
   if (!('speechSynthesis' in window)) return;
-  speechSynthesis.cancel();
+  window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'en-US';
   u.rate = 0.9;
-  speechSynthesis.speak(u);
+  window.speechSynthesis.speak(u);
 }
 
-function englishTabTitle(key){
+function englishTabTitle(key) {
   const map = {
     restaurant: '1. คำศัพท์ในร้านอาหาร',
     vegetables: '2. คำศัพท์ผัก',
@@ -168,65 +239,104 @@ function englishTabTitle(key){
   return map[key] || key;
 }
 
-function renderEnglishPack(lesson){
+function filteredEnglishItems(tab) {
+  const items = (ENGLISH_DATA[tab]?.items || []);
+  const q = state.englishSearch.trim().toLowerCase();
+  if (!q) return items;
+  return items.filter(item => (`${item.term} ${item.reading} ${item.meaning}`).toLowerCase().includes(q));
+}
+
+function renderEnglishPack() {
   const key = state.englishTab in ENGLISH_DATA ? state.englishTab : 'restaurant';
   const cat = ENGLISH_DATA[key] || { items: [] };
-  const rows = cat.items.map(item => `
+  const prog = englishProgress(key);
+  const rows = filteredEnglishItems(key).map(item => `
     <div class="vocab-row">
       <div class="vocab-main">
         <div class="vocab-term">${safeHTML(item.term)}</div>
-        <div class="vocab-sub">(${safeHTML(item.reading)}) — ${safeHTML(item.meaning)}</div>
+        <div class="vocab-sub">${safeHTML(item.reading)} · ${safeHTML(item.meaning)}</div>
       </div>
-      <button class="speak-btn" data-speak="${safeHTML(item.term)}">🔊</button>
-      <button class="star-btn" data-copy="${safeHTML(item.term)} | ${safeHTML(item.reading)} | ${safeHTML(item.meaning)}">☆</button>
+      <button class="speak-btn" data-speak="${safeHTML(item.term)}">🔊 ฟัง</button>
     </div>
   `).join('');
 
   return `
-    <div class="english-box">
-      <h3>English: F&B</h3>
-      <p class="small">รวมคำศัพท์ 5 หมวดไว้ในหัวข้อเดียว แต่ละรายการมีคำศัพท์ คำอ่านไทย คำแปลไทย และปุ่มฟังเสียง</p>
-      <div class="english-tabs">
-        ${ENGLISH_ORDER.filter(k => ENGLISH_DATA[k]).map(k => `<button class="english-tab ${k===key?'active':''}" data-etab="${k}">${englishTabTitle(k)}</button>`).join('')}
+    <section class="english-panel">
+      <div class="english-hero">
+        <div>
+          <h3>English: F&B</h3>
+          <p class="small">แยกเป็น 5 แท็บย่อย เปิดอ่านง่ายขึ้น ค้นหาในแท็บได้ และมีปุ่มฟังเสียงทุกคำ</p>
+        </div>
+        <div class="english-progress-box">
+          <div><strong>${cat.items.length}</strong><span>คำในหมวดนี้</span></div>
+          <div><strong>${prog.openedCount || 0}</strong><span>เปิดอ่าน</span></div>
+          <div><strong>${prog.completed ? 'ครบ' : 'ยังไม่จบ'}</strong><span>สถานะ</span></div>
+        </div>
       </div>
-      <div class="vocab-list">${rows}</div>
-    </div>
+
+      <div class="english-tabs-wrap">
+        ${ENGLISH_ORDER.map(tab => {
+          const tp = englishProgress(tab);
+          return `<button class="english-tab ${tab === key ? 'active' : ''}" data-etab="${tab}">${safeHTML(englishTabTitle(tab))}${tp.completed ? ' ✓' : ''}</button>`;
+        }).join('')}
+      </div>
+
+      <div class="english-toolbar">
+        <div class="english-tab-title">${safeHTML(cat.title || englishTabTitle(key))}</div>
+        <input id="englishSearchInput" class="search english-search" type="search" placeholder="ค้นคำศัพท์ในแท็บนี้" value="${safeHTML(state.englishSearch)}">
+      </div>
+
+      <div class="vocab-list">${rows || '<div class="empty-box">ไม่พบคำศัพท์ที่ค้นหา</div>'}</div>
+
+      <div class="english-footer-row">
+        <div class="mini-meta">${prog.lastOpenedAt ? 'เปิดล่าสุด ' + safeHTML(formatDate(prog.lastOpenedAt)) : 'ยังไม่มีประวัติการเปิดในแท็บนี้'}</div>
+        <button id="englishDoneBtn" class="ghost-btn">${prog.completed ? 'ยกเลิกอ่านจบแท็บนี้' : 'ทำเครื่องหมายว่าอ่านจบแท็บนี้'}</button>
+      </div>
+    </section>
   `;
 }
 
-function renderSections(lesson){
-  return (lesson.sections || []).map(sec => `
+function renderSections(lesson) {
+  const sections = (lesson.sections || []).map(section => `
     <section class="section-box">
-      <h3>${safeHTML(sec.title)}</h3>
-      <ul>${(sec.items || []).map(item => `<li>${safeHTML(item)}</li>`).join('')}</ul>
+      <h3>${safeHTML(section.title)}</h3>
+      <ul>${(section.items || []).map(item => `<li>${safeHTML(item)}</li>`).join('')}</ul>
     </section>
   `).join('');
+  return sections;
 }
 
-function renderTips(lesson){
-  if (!lesson.tips || !lesson.tips.length) return '';
+function renderTips(lesson) {
+  if (!lesson.tips?.length) return '';
   return `
     <section class="section-box tips">
-      <h3>Key Takeaways</h3>
-      <ul>${lesson.tips.map(t => `<li>${safeHTML(t)}</li>`).join('')}</ul>
+      <h3>Key Takeaways / Tips</h3>
+      <ul>${lesson.tips.map(item => `<li>${safeHTML(item)}</li>`).join('')}</ul>
     </section>
   `;
 }
 
-function renderWineMedia(){
+function renderWineMedia() {
   return `
-    <section class="wine-box">
-      <h3>Wine Reference</h3>
+    <section class="wine-box wine-media-box">
+      <div class="wine-head">
+        <div>
+          <h3>Wine Reference Bottles</h3>
+          <p class="small">รวมรูปขวดจริงของไวน์หลักในรายการ เพื่อให้พนักงานจำฉลากและขวดได้ง่ายขึ้น</p>
+        </div>
+      </div>
       <div class="wine-grid">
         ${WINE_MEDIA.map(w => `
           <article class="wine-card">
-            <img src="${safeHTML(w.image)}" alt="${safeHTML(w.name)}">
+            <div class="wine-thumb-wrap">
+              <img src="${safeHTML(w.image)}" alt="${safeHTML(w.name)}" loading="lazy">
+            </div>
             <div class="wine-content">
               <h4>${safeHTML(w.name)}</h4>
-              <p>${safeHTML(w.pronunciation)}</p>
-              <p>${safeHTML(w.category)} • ${safeHTML(w.vineyard)}</p>
+              <p><strong>คำอ่าน:</strong> ${safeHTML(w.pronunciation)}</p>
+              <p><strong>ประเภท:</strong> ${safeHTML(w.category)} · ${safeHTML(w.vintage)}</p>
               <p><strong>รสชาติ:</strong> ${safeHTML(w.taste)}</p>
-              <p><strong>Pairing:</strong> ${safeHTML(w.pair)}</p>
+              <p><strong>จับคู่:</strong> ${safeHTML(w.pair)}</p>
             </div>
           </article>
         `).join('')}
@@ -235,34 +345,66 @@ function renderWineMedia(){
   `;
 }
 
-function openLesson(id){
-  const lesson = lessons.find(x => x.id === id);
+function recordLessonOpen(id) {
+  const prog = lessonProgress(id);
+  prog.openedCount = (prog.openedCount || 0) + 1;
+  prog.lastOpenedAt = new Date().toISOString();
+  saveUserData(false);
+}
+
+function recordEnglishOpen(tab) {
+  const prog = englishProgress(tab);
+  prog.openedCount = (prog.openedCount || 0) + 1;
+  prog.lastOpenedAt = new Date().toISOString();
+  saveUserData(false);
+}
+
+function openLesson(id, opts = {}) {
+  const lesson = lessons.find(l => l.id === id);
   if (!lesson) return;
+  if (!opts.keepEnglishSearch) state.englishSearch = '';
   state.currentLessonId = id;
+  recordLessonOpen(id);
+  if (lesson.type === 'english-pack') recordEnglishOpen(state.englishTab);
+
+  const prog = lessonProgress(id);
+  const note = noteValue(id);
+  const isDone = !!prog.completed;
+  const isFav = !!prog.favorite;
+
   listSection.classList.add('hidden');
   readerSection.classList.remove('hidden');
   backBtn.classList.remove('hidden');
-  const isDone = state.userData.done.includes(id);
-  const note = noteValue(id);
+
   readerSection.innerHTML = `
     <article class="reader-card">
       <div class="reader-head">
         <div class="tag-row">
           <span class="tag">${safeHTML(lesson.category || 'General')}</span>
           <span class="tag">${safeHTML(lesson.level || 'Core')}</span>
+          ${isDone ? '<span class="tag success-tag">อ่านจบแล้ว</span>' : ''}
+          ${isFav ? '<span class="tag fav-tag">รายการโปรด</span>' : ''}
         </div>
         <h1>${safeHTML(lesson.title)}</h1>
         <p>${safeHTML(lesson.summary || '')}</p>
       </div>
-      ${lesson.type === 'english-pack' ? renderEnglishPack(lesson) : renderSections(lesson)}
+
+      <div class="reader-meta-row">
+        <div class="mini-meta">เปิด ${prog.openedCount || 0} ครั้ง · ${prog.lastOpenedAt ? 'ล่าสุด ' + safeHTML(formatDate(prog.lastOpenedAt)) : 'ยังไม่มีประวัติ'}</div>
+      </div>
+
+      ${lesson.type === 'english-pack' ? renderEnglishPack() : renderSections(lesson)}
       ${lesson.id === 'wine-basic' ? renderWineMedia() : ''}
-      ${renderTips(lesson)}
+      ${lesson.type === 'english-pack' ? '' : renderTips(lesson)}
+
       <section class="note-box">
         <h3>โน้ตส่วนตัว</h3>
         <textarea id="noteInput" placeholder="จดสิ่งที่อยากจำของหัวข้อนี้...">${safeHTML(note)}</textarea>
       </section>
+
       <div class="reader-actions">
         <button id="saveNoteBtn" class="ghost-btn">บันทึกโน้ต</button>
+        <button id="lessonFavBtn" class="ghost-btn">${isFav ? 'เอาออกจากโปรด' : 'บันทึกเป็นรายการโปรด'}</button>
         <button id="doneBtn" class="primary-btn">${isDone ? 'ยกเลิกอ่านจบแล้ว' : 'ทำเครื่องหมายว่าอ่านจบแล้ว'}</button>
       </div>
     </article>
@@ -270,26 +412,59 @@ function openLesson(id){
 
   readerSection.querySelectorAll('[data-etab]').forEach(btn => btn.addEventListener('click', () => {
     state.englishTab = btn.dataset.etab;
-    openLesson(id);
+    openLesson(id, { keepEnglishSearch: false });
   }));
+
   readerSection.querySelectorAll('[data-speak]').forEach(btn => btn.addEventListener('click', () => speak(btn.dataset.speak)));
-  readerSection.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent = 'คัดลอกแล้ว'; setTimeout(() => btn.textContent='☆', 1000);} catch(e){}
-  }));
+
+  const searchInput = el('englishSearchInput');
+  if (searchInput) {
+    searchInput.addEventListener('input', e => {
+      state.englishSearch = e.target.value;
+      openLesson(id, { keepEnglishSearch: true });
+    });
+  }
+
+  const englishDoneBtn = el('englishDoneBtn');
+  if (englishDoneBtn) {
+    englishDoneBtn.onclick = async () => {
+      const ep = englishProgress(state.englishTab);
+      ep.completed = !ep.completed;
+      ep.completedAt = ep.completed ? new Date().toISOString() : null;
+      await saveUserData(true);
+      openLesson(id, { keepEnglishSearch: true });
+    };
+  }
+
   el('saveNoteBtn').onclick = async () => {
     state.userData.notes[id] = el('noteInput').value;
-    await saveUserData();
+    prog.noteUpdatedAt = new Date().toISOString();
+    await saveUserData(true);
+    openLesson(id, { keepEnglishSearch: true });
   };
+
+  el('lessonFavBtn').onclick = async () => {
+    prog.favorite = !prog.favorite;
+    prog.favoriteAt = prog.favorite ? new Date().toISOString() : null;
+    state.userData.favorites = prog.favorite
+      ? Array.from(new Set([...state.userData.favorites, id]))
+      : state.userData.favorites.filter(x => x !== id);
+    await saveUserData(true);
+    openLesson(id, { keepEnglishSearch: true });
+  };
+
   el('doneBtn').onclick = async () => {
-    if (state.userData.done.includes(id)) state.userData.done = state.userData.done.filter(x => x !== id);
-    else state.userData.done.push(id);
-    await saveUserData();
-    updateHeader();
-    openLesson(id);
+    prog.completed = !prog.completed;
+    prog.completedAt = prog.completed ? new Date().toISOString() : null;
+    state.userData.done = prog.completed
+      ? Array.from(new Set([...state.userData.done, id]))
+      : state.userData.done.filter(x => x !== id);
+    await saveUserData(true);
+    openLesson(id, { keepEnglishSearch: true });
   };
 }
 
-function closeLesson(){
+function closeLesson() {
   state.currentLessonId = null;
   readerSection.classList.add('hidden');
   listSection.classList.remove('hidden');
@@ -321,7 +496,12 @@ el('authForm').addEventListener('submit', async e => {
     } else {
       const cred = await auth.createUserWithEmailAndPassword(email, password);
       if (displayName) await cred.user.updateProfile({ displayName });
-      await db.collection('users').doc(cred.user.uid).set({ email, displayName, done: [], favorites: [], notes: {} }, { merge: true });
+      await db.collection('users').doc(cred.user.uid).set({
+        email,
+        displayName,
+        ...defaultUserData(),
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
     }
   } catch (err) {
     el('authMsg').textContent = err.message || 'เข้าสู่ระบบไม่สำเร็จ';
