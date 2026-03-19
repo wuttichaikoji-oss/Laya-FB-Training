@@ -3,132 +3,85 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Laya F&B Academy v3.0 Lite</title>
+  <title>Laya F&B Academy GitHub Ready</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div id="app">
-    <section id="authView" class="screen center-screen">
-      <div class="auth-card">
-        <div class="brand-row">
-          <div class="brand-badge">Laya</div>
-          <div>
-            <h1>Laya F&amp;B Academy v3.0 Lite</h1>
-            <p class="sub">เรียบง่าย อ่านง่าย ใช้งานจริงได้บนมือถือ</p>
-          </div>
-        </div>
+  <div id="authView" class="screen auth-screen">
+    <div class="auth-card">
+      <div class="logo">Laya</div>
+      <h1>Laya F&B Academy</h1>
+      <p class="sub">เวอร์ชันพร้อมอัป GitHub Pages และล็อกอินด้วย Firebase</p>
 
-        <div class="auth-switch">
-          <button class="pill active" data-mode="login">เข้าสู่ระบบ</button>
-          <button class="pill" data-mode="register">สมัครผู้ใช้ใหม่</button>
-        </div>
-
-        <form id="authForm" class="stack gap-12">
-          <label>
-            <span>อีเมล</span>
-            <input id="email" type="email" placeholder="name@example.com" required>
-          </label>
-          <label>
-            <span>รหัสผ่าน</span>
-            <input id="password" type="password" placeholder="อย่างน้อย 6 ตัวอักษร" required>
-          </label>
-          <label id="displayNameWrap" class="hidden">
-            <span>ชื่อพนักงาน</span>
-            <input id="displayName" type="text" placeholder="เช่น Noi / Beer / Parawi">
-          </label>
-          <button class="primary-btn" type="submit" id="authSubmit">เข้าสู่ระบบ</button>
-        </form>
-
-        <div class="mini-actions">
-          <button id="demoModeBtn" class="text-btn">เข้าแบบ Local Demo</button>
-          <button id="firebaseSetupBtn" class="text-btn">ดูค่า Firebase</button>
-        </div>
-
-        <div class="info-box">
-          <strong>พร้อมใช้งานกับ Firebase แล้ว</strong>
-          <p>พนักงานล็อกอินด้วยบัญชีของตัวเองเพื่อเก็บความคืบหน้า รายการโปรด และโน้ตส่วนตัวแยกตามบัญชี</p>
-          <p class="muted">ถ้าต้องการทดลองก่อน ก็ยังเข้าแบบ Local Demo ได้เช่นเดิม</p>
-        </div>
+      <div class="auth-tabs">
+        <button class="tab active" data-mode="login">เข้าสู่ระบบ</button>
+        <button class="tab" data-mode="register">สมัครผู้ใช้ใหม่</button>
       </div>
-    </section>
 
-    <section id="mainView" class="screen hidden">
-      <header class="topbar">
-        <div>
-          <div class="brand-inline">Laya F&amp;B Academy</div>
-          <h2>Quick Learning</h2>
-        </div>
-        <div class="topbar-actions">
-          <button id="openSettings" class="ghost-btn">ตั้งค่า</button>
-          <button id="logoutBtn" class="ghost-btn">ออกจากระบบ</button>
-        </div>
-      </header>
+      <form id="authForm" class="stack">
+        <label>อีเมล
+          <input id="email" type="email" required placeholder="name@example.com">
+        </label>
+        <label>รหัสผ่าน
+          <input id="password" type="password" required placeholder="อย่างน้อย 6 ตัวอักษร">
+        </label>
+        <label id="nameWrap" class="hidden">ชื่อพนักงาน
+          <input id="displayName" type="text" placeholder="เช่น Noi / Beer / Parawi">
+        </label>
+        <button class="primary-btn" type="submit" id="authSubmit">เข้าสู่ระบบ</button>
+      </form>
 
-      <section class="hero-card">
-        <div>
-          <p class="eyebrow">ยินดีต้อนรับ</p>
-          <h3 id="welcomeName">พนักงาน</h3>
-          <p class="hero-text">เลือกหมวดที่ต้องการอ่านได้ทันที เนื้อหาถูกออกแบบให้สั้น ชัด และใช้งานได้จริงในห้องอาหาร</p>
-        </div>
-        <div class="hero-stats">
-          <div class="stat-box"><span>อ่านจบ</span><strong id="doneCount">0</strong></div>
-          <div class="stat-box"><span>รายการโปรด</span><strong id="favCount">0</strong></div>
-          <div class="stat-box"><span>โน้ต</span><strong id="noteCount">0</strong></div>
-        </div>
-      </section>
-
-      <section class="toolbar">
-        <div class="search-wrap">
-          <input id="searchInput" type="search" placeholder="ค้นหาหัวข้อ เช่น allergy, wine, taking order">
-        </div>
-        <div class="chips" id="categoryChips"></div>
-      </section>
-
-      <section id="listView" class="content-grid"></section>
-      <section id="readerView" class="reader hidden"></section>
-    </section>
-  </div>
-
-  <dialog id="settingsModal" class="modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>ตั้งค่า</h3>
-        <button class="icon-btn" data-close="settingsModal">✕</button>
-      </div>
-      <div class="stack gap-16">
-        <div class="info-box">
-          <strong>Firebase Config</strong>
-          <p>ไฟล์นี้ฝังค่า Firebase ของโปรเจกต์ laya-training ไว้แล้ว พร้อมใช้งานทันที</p>
-        </div>
-        <textarea id="firebaseConfigInput" rows="10" placeholder='วาง JSON config ที่นี่ เช่น { "apiKey": "..." }'></textarea>
-        <div class="row gap-8">
-          <button id="saveFirebaseConfig" class="primary-btn">บันทึกค่า Firebase</button>
-          <button id="clearFirebaseConfig" class="ghost-btn">ล้างค่า</button>
-        </div>
+      <button id="demoBtn" class="text-btn" type="button">เข้าแบบ Demo ในเครื่องนี้</button>
+      <p id="authMsg" class="msg"></p>
+      <div class="tip-box">
+        <strong>หมายเหตุ</strong>
+        <p>ถ้านำไปอัป GitHub Pages แล้วล็อกอินไม่ได้ ให้เพิ่มโดเมน GitHub Pages ของคุณใน Firebase Authentication > Settings > Authorized domains</p>
       </div>
     </div>
-  </dialog>
+  </div>
 
-  <template id="cardTemplate">
-    <article class="lesson-card">
-      <div class="lesson-top">
-        <div>
-          <div class="tags"></div>
-          <h4 class="title"></h4>
-          <p class="summary"></p>
-        </div>
-        <button class="fav-btn">☆</button>
+  <div id="mainView" class="screen hidden">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Laya F&B Academy</div>
+        <h2 id="welcomeName">Quick Learning</h2>
       </div>
-      <div class="lesson-bottom">
-        <button class="open-btn primary-btn">เปิดอ่าน</button>
+      <div class="top-actions">
+        <button id="backBtn" class="ghost-btn hidden">← กลับ</button>
+        <button id="logoutBtn" class="ghost-btn">ออกจากระบบ</button>
       </div>
-    </article>
-  </template>
+    </header>
 
+    <section class="hero">
+      <div>
+        <h3>หัวข้อการเทรน</h3>
+        <p>เลือกหัวข้อแล้วกดเปิดอ่านได้ทันที เนื้อหาเน้นอ่านง่ายและใช้หน้างานจริง</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><span>อ่านจบ</span><strong id="doneCount">0</strong></div>
+        <div class="stat"><span>โปรด</span><strong id="favCount">0</strong></div>
+      </div>
+    </section>
+
+    <section id="listSection">
+      <div class="toolbar">
+        <input id="searchInput" class="search" type="search" placeholder="ค้นหาหัวข้อ เช่น English, allergy, hygiene, wine">
+        <div id="filterChips" class="chips"></div>
+      </div>
+      <div id="lessonGrid" class="grid"></div>
+    </section>
+
+    <section id="readerSection" class="reader hidden"></section>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="english-data.js"></script>
-  <script type="module" src="app.js"></script>
+  <script src="lessons-data.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
