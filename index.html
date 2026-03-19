@@ -1,423 +1,612 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Laya F&B Academy v2.3 Reader Mode</title>
-  <style>
-    :root {
-      --bg: #f4f7fb;
-      --card: rgba(255,255,255,0.96);
-      --text: #1f2937;
-      --muted: #667085;
-      --line: #e5e7eb;
-      --primary: #0f766e;
-      --primary-2: #14b8a6;
-      --navy: #0f172a;
-      --navy-2: #12263a;
-      --gold: #d3a84b;
-      --success: #166534;
-      --danger: #b91c1c;
-      --shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
-      --radius: 24px;
-    }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; font-family: Inter, Arial, Helvetica, sans-serif; background: linear-gradient(180deg, #eef4f8 0%, #f7f9fc 100%); color: var(--text); }
-    body { min-height: 100vh; }
-    button, input, select, textarea { font: inherit; }
-    .app { display: grid; grid-template-columns: 300px minmax(0, 1fr); min-height: 100vh; }
-    .sidebar {
-      background: linear-gradient(180deg, var(--navy) 0%, #0f2d41 100%);
-      color: #fff; padding: 24px 18px; position: sticky; top: 0; height: 100vh; overflow-y: auto;
-    }
-    .brand { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 22px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); margin-bottom: 22px; }
-    .brand-badge { width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center; background: linear-gradient(135deg, var(--gold), #f3d791); color: #18212f; font-weight: 900; }
-    .brand h1 { margin: 0; font-size: 18px; }
-    .brand p { margin: 4px 0 0; font-size: 12px; color: rgba(255,255,255,0.75); }
-    .user-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 16px; margin-bottom: 18px; }
-    .user-card input, .user-card select { width: 100%; margin-top: 8px; padding: 11px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.08); color: #fff; }
-    .user-card input::placeholder { color: rgba(255,255,255,0.58); }
-    .small { font-size: 12px; color: var(--muted); }
-    .sidebar .small { color: rgba(255,255,255,0.7); }
-    .menu-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.55); margin: 18px 10px 10px; }
-    .nav-btn {
-      width: 100%; border: 0; border-radius: 14px; background: transparent; color: #fff; text-align: left;
-      padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: .18s ease;
-    }
-    .nav-btn:hover, .nav-btn.active { background: rgba(255,255,255,0.12); }
-    .primary, .secondary, .ghost, .danger {
-      border: 0; border-radius: 14px; padding: 12px 15px; cursor: pointer; transition: .18s ease; font-weight: 700;
-    }
-    .primary { color: #fff; background: linear-gradient(135deg, var(--primary), var(--primary-2)); }
-    .secondary { background: #edf2f7; color: var(--text); }
-    .ghost { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.08); }
-    .danger { background: #fee2e2; color: #991b1b; }
-    .sidebar-footer { margin-top: 22px; padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.78); font-size: 12px; line-height: 1.6; }
-    .main { padding: 28px; }
-    .topbar { display: flex; justify-content: space-between; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
-    .topbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-    .view-section.hidden { display: none !important; }
-    .hero { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.9fr); gap: 18px; margin-bottom: 20px; }
-    .hero-card {
-      background: linear-gradient(135deg, #0f766e 0%, #0b5f6d 100%); color: #fff; border-radius: 30px; padding: 28px; position: relative; overflow: hidden; box-shadow: var(--shadow);
-    }
-    .hero-card::after { content: ''; position: absolute; right: -70px; top: -60px; width: 220px; height: 220px; border-radius: 999px; background: rgba(255,255,255,0.07); }
-    .hero-card h2 { margin: 10px 0 12px; font-size: 30px; max-width: 760px; }
-    .hero-card p { margin: 0; max-width: 760px; line-height: 1.7; color: rgba(255,255,255,0.92); }
-    .hero-badges, .chips, .lesson-tags, .pack-preview-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-    .badge, .chip, .mini-tag {
-      display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; font-size: 12px; white-space: nowrap;
-    }
-    .badge { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.1); }
-    .chip { background: #edf7f6; color: var(--primary); border: 1px solid #c9ece6; cursor: pointer; }
-    .mini-tag { background: #eef2f7; color: #334155; }
-    .card { background: var(--card); border: 1px solid rgba(255,255,255,0.85); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
-    .stats-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 18px; }
-    .stat-card .label { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
-    .stat-card .value { font-size: 30px; font-weight: 900; }
-    .stat-card .sub { color: var(--muted); font-size: 12px; margin-top: 8px; }
-    .section-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
-    .section-head h3 { margin: 0; }
-    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-    .toolbar input, .toolbar select, .field, textarea {
-      border: 1px solid var(--line); border-radius: 14px; background: #fff; color: var(--text); padding: 12px 13px;
-    }
-    .toolbar input { flex: 1 1 320px; }
-    .grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 18px; }
-    .pack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; }
-    .pack-card { border: 1px solid var(--line); border-radius: 24px; padding: 18px; background: #fff; display: flex; flex-direction: column; gap: 14px; }
-    .pack-icon { width: 52px; height: 52px; border-radius: 18px; display: grid; place-items: center; font-size: 24px; background: linear-gradient(135deg, #edf7f6, #f7fbfb); border: 1px solid #d4ece8; }
-    .pack-card h4 { margin: 0; font-size: 21px; }
-    .pack-card p { margin: 0; color: #334155; line-height: 1.65; }
-    .pack-card ul { margin: 0; padding-left: 18px; color: #475569; line-height: 1.55; }
-    .pack-card li { margin-bottom: 6px; }
-    .pack-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: auto; }
-    .progress-bar { width: 100%; height: 12px; border-radius: 999px; background: #e7edf4; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold), #f3ce7a); width: 0%; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Laya F&B Academy v2.8.3.1</title>
+<style>
+:root{
+  --bg:#0f172a; --panel:#111827; --card:#1f2937; --soft:#374151; --text:#f8fafc; --muted:#cbd5e1;
+  --accent:#22c55e; --accent2:#38bdf8; --warn:#f59e0b; --danger:#ef4444;
+}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#0b1220;color:var(--text)}
+header{padding:18px 16px;background:linear-gradient(135deg,#0f172a,#1e293b);position:sticky;top:0;z-index:5;border-bottom:1px solid #23304a}
+h1,h2,h3{margin:.2rem 0}
+.small{font-size:.9rem;color:var(--muted)}
+.container{max-width:1200px;margin:0 auto;padding:16px}
+.grid{display:grid;gap:14px}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.card{background:rgba(31,41,55,.94);border:1px solid #2a364d;border-radius:18px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+label{display:block;margin:10px 0 6px;color:#dbeafe}
+input,select,textarea,button{width:100%;padding:11px 12px;border-radius:12px;border:1px solid #3b4a63;background:#0f172a;color:var(--text)}
+textarea{min-height:90px;resize:vertical}
+button{cursor:pointer;background:#1d4ed8;border:none;font-weight:700}
+button.secondary{background:#334155}
+button.success{background:#15803d}
+button.warn{background:#b45309}
+button.danger{background:#b91c1c}
+button.inline{width:auto;padding:8px 12px;margin-right:6px;margin-top:6px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:inline-block;padding:4px 10px;border-radius:999px;background:#0f172a;border:1px solid #314158;font-size:.85rem;margin:3px 4px 0 0}
+.kpi{font-size:1.8rem;font-weight:800}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse}
+th,td{border-bottom:1px solid #314158;padding:10px 8px;text-align:left;font-size:.95rem;vertical-align:top}
+th{background:#162032;position:sticky;top:0}
+.notice{padding:12px;border-radius:14px;background:#132238;border:1px solid #28405f}
+.ok{color:#86efac}.warn-text{color:#fcd34d}.danger-text{color:#fca5a5}
+footer{padding:24px 16px;color:#94a3b8;text-align:center}
+.hidden{display:none}
+@media (max-width:640px){ header h1{font-size:1.25rem} .kpi{font-size:1.4rem}}
 
-    .reader-wrap { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 18px; align-items: start; }
-    .reader-sidebar { position: sticky; top: 24px; display: grid; gap: 18px; }
-    .reader-meta { padding: 18px; border-radius: 22px; background: linear-gradient(180deg, #0f172a 0%, #14324a 100%); color: #fff; }
-    .reader-meta h3 { margin: 10px 0 8px; font-size: 24px; }
-    .reader-meta p { margin: 0; line-height: 1.65; color: rgba(255,255,255,0.86); }
-    .reader-count { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 14px; }
-    .reader-count .mini-box { background: rgba(255,255,255,0.08); border-radius: 16px; padding: 12px; }
-    .reader-count strong { display: block; font-size: 24px; }
-    .reader-list { max-height: calc(100vh - 340px); overflow-y: auto; }
-    .lesson-nav-item {
-      width: 100%; text-align: left; border: 1px solid var(--line); background: #fff; border-radius: 18px; padding: 14px; margin-bottom: 10px; cursor: pointer;
-    }
-    .lesson-nav-item.active { border-color: #84ccc2; background: #eef9f7; }
-    .lesson-nav-item .idx { font-size: 12px; color: var(--muted); margin-bottom: 4px; display: block; }
-    .lesson-nav-item strong { display: block; margin-bottom: 4px; }
-    .lesson-nav-item small { color: var(--muted); display: block; line-height: 1.45; }
-    .reader-main { min-width: 0; }
-    .reader-article { padding: 22px; }
-    .reader-header { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 18px; }
-    .reader-header h2 { margin: 0; font-size: 30px; }
-    .reader-header p { margin: 10px 0 0; color: #475569; line-height: 1.65; }
-    .reader-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-    .lesson-body { color: #243241; line-height: 1.88; font-size: 16px; }
-    .lesson-body p { margin: 0 0 14px; }
-    .lesson-body .body-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 4px; }
-    .lesson-body ul { margin: 0 0 16px 0; padding-left: 24px; }
-    .lesson-body li { margin-bottom: 8px; }
-    .reader-bottom-nav { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--line); }
+.english-reader{background:#f8fafc;color:#0f172a;border-radius:22px;padding:18px;border:1px solid #dbe4f0;min-height:500px}
+.english-hero{padding:18px;border-radius:18px;background:linear-gradient(135deg,#eff6ff,#f8fafc);border:1px solid #dbeafe;margin-bottom:14px}
+.english-hero h3{font-size:2rem;line-height:1.15;margin:0 0 8px}
+.english-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.english-chip{display:inline-block;background:#eef2ff;color:#1e3a8a;border:1px solid #c7d2fe;padding:6px 10px;border-radius:999px;font-size:.88rem}
+.english-section{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px;margin-bottom:12px}
+.english-section h4{margin:0 0 10px;font-size:1.1rem;color:#0f172a}
+.english-list{display:grid;gap:10px}
+.english-item{padding:12px;border-radius:14px;background:#f8fafc;border:1px solid #e5e7eb}
+.english-term{font-weight:700;font-size:1.05rem;color:#111827}
+.english-meaning{color:#334155;margin-top:4px}
+.english-example{margin-top:8px;padding-top:8px;border-top:1px dashed #cbd5e1;color:#1e293b}
+.english-dialogue{display:grid;gap:10px}
+ .english-line{padding:12px 14px;border-radius:14px;background:#f8fafc;border:1px solid #e5e7eb}
+ .english-speaker{font-weight:700;color:#1d4ed8;margin-bottom:4px}
+ .english-thai{color:#475569;font-size:.95rem}
+ .topic-pill{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:14px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;margin:8px 0;cursor:pointer}
+ .topic-pill.active{background:#dbeafe;color:#0f172a;border-color:#93c5fd;font-weight:700}
+ @media (max-width:640px){.english-reader{padding:14px}.english-hero h3{font-size:1.6rem}}
 
-    .list { display: grid; gap: 12px; }
-    .list-item { display: flex; justify-content: space-between; gap: 12px; align-items: center; border: 1px solid var(--line); background: #fff; border-radius: 18px; padding: 14px; }
-    .list-item small { display: block; color: var(--muted); margin-top: 4px; line-height: 1.55; }
-    .note-box textarea { width: 100%; min-height: 220px; resize: vertical; }
-    .quiz-box .question { font-size: 18px; font-weight: 800; margin-bottom: 14px; }
-    .option { display: block; width: 100%; text-align: left; border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; }
-    .option.correct { background: #f0fdf4; border-color: #86efac; }
-    .option.wrong { background: #fef2f2; border-color: #fca5a5; }
-    .muted { color: var(--muted); }
-    .empty-state { border: 1px dashed #cbd5e1; border-radius: 22px; padding: 24px; text-align: center; color: var(--muted); background: #fff; }
-    code.block { display: block; overflow-x: auto; background: #0f172a; color: #d1fae5; padding: 14px; border-radius: 16px; }
-    .hidden { display: none !important; }
-    @media (max-width: 1200px) {
-      .hero, .grid, .reader-wrap { grid-template-columns: 1fr; }
-      .reader-sidebar { position: static; }
-      .reader-list { max-height: none; }
-    }
-    @media (max-width: 900px) {
-      .app { grid-template-columns: 1fr; }
-      .sidebar { position: relative; height: auto; }
-      .stats-row { grid-template-columns: repeat(2, minmax(0,1fr)); }
-    }
-    @media (max-width: 640px) {
-      .main { padding: 16px; }
-      .stats-row { grid-template-columns: 1fr; }
-      .hero-card h2, .reader-header h2 { font-size: 24px; }
-    }
-  </style>
+</style>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-badge">F&B</div>
-        <div>
-          <h1>Laya F&B Academy</h1>
-          <p>Reader Mode • Learning Packs • Quiz</p>
-        </div>
-      </div>
+<header>
+  <div class="container">
+    <h1>Laya F&B Academy v2.8.3.1</h1>
+    <div class="small">Attendance / Training Log · Retraining Reminder · Role Tracks · Outlet Certificates · English Readability Patch · Offline Save</div>
+  </div>
+</header>
 
-      <div class="user-card">
-        <div style="font-weight:700; margin-bottom:6px;">ข้อมูลผู้ใช้งาน</div>
-        <label class="small">ชื่อพนักงาน</label>
-        <input id="staffName" placeholder="เช่น Noi / Somchai" />
-        <label class="small" style="display:block; margin-top:10px;">แผนก</label>
-        <select id="staffDept">
-          <option>Service</option>
-          <option>Bar</option>
-          <option>Restaurant</option>
+<div class="container grid grid-2">
+  <section class="card">
+    <h2>โปรไฟล์พนักงาน</h2>
+    <div class="grid grid-2">
+      <div>
+        <label>ชื่อพนักงาน</label>
+        <input id="staffName" placeholder="เช่น Somchai" />
+      </div>
+      <div>
+        <label>ตำแหน่ง/Role</label>
+        <select id="staffRole">
+          <option>New Hire</option>
+          <option>Senior</option>
+          <option>Supervisor</option>
+        </select>
+      </div>
+      <div>
+        <label>Outlet</label>
+        <select id="staffOutlet">
+          <option>The Taste</option>
+          <option>Mangrove</option>
+          <option>Lounge / Bar</option>
           <option>Banquet</option>
           <option>Room Service</option>
-          <option>Management</option>
         </select>
-        <button class="primary" id="saveProfileBtn" style="width:100%; margin-top:12px;">บันทึกโปรไฟล์</button>
       </div>
-
-      <div class="menu-title">เมนูหลัก</div>
-      <button class="nav-btn active" data-view="dashboard">แดชบอร์ด</button>
-      <button class="nav-btn" data-view="library">Learning Packs</button>
-      <button class="nav-btn" data-view="reader">Reader Mode</button>
-      <button class="nav-btn" data-view="quiz">Quiz & คะแนน</button>
-      <button class="nav-btn" data-view="favorites">รายการโปรด</button>
-      <button class="nav-btn" data-view="notes">โน้ตส่วนตัว</button>
-      <button class="nav-btn" data-view="firebase">Firebase Setup</button>
-
-      <div class="sidebar-footer">
-        เวอร์ชันนี้เปลี่ยนการอ่านเป็นแบบ <strong>ชุดการเรียน</strong><br>
-        เหมาะกับบทความยาว เช่น English for F&B, Food Allergy, Hygiene และ Restaurant Service
+      <div>
+        <label>วันที่เริ่มงาน</label>
+        <input id="startDate" type="date" />
       </div>
-    </aside>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button class="inline success" onclick="saveProfile()">บันทึกโปรไฟล์</button>
+      <button class="inline secondary" onclick="loadSample()">โหลดตัวอย่าง</button>
+      <button class="inline warn" onclick="exportBackup()">Backup JSON</button>
+      <label class="inline" style="display:inline-block">
+        <input id="importFile" type="file" accept=".json" onchange="importBackup(event)" style="display:none">
+        <button class="inline secondary" onclick="document.getElementById('importFile').click()">Import JSON</button>
+      </label>
+    </div>
+    <p class="small" id="saveStatus">ข้อมูลจะถูกเก็บในเครื่องนี้เท่านั้น</p>
+  </section>
 
-    <main class="main">
-      <div class="topbar">
-        <div>
-          <div class="small">F&B Training System</div>
-          <div id="profileSummary" style="font-size:20px; font-weight:800; margin-top:4px;">ยังไม่ได้บันทึกชื่อพนักงาน</div>
-        </div>
-        <div class="topbar-actions">
-          <button class="secondary" id="exportBtn">Export Progress</button>
-          <button class="secondary" id="importBtn">Import Progress</button>
-          <input type="file" id="importFile" class="hidden" accept="application/json" />
-          <button class="danger" id="resetBtn">ล้างข้อมูลในเครื่อง</button>
-        </div>
+  <section class="card">
+    <h2>สรุปภาพรวม</h2>
+    <div class="grid grid-3">
+      <div class="card"><div class="small">Training Log</div><div class="kpi" id="kpiLogs">0</div></div>
+      <div class="card"><div class="small">หัวข้อครบกำหนดทบทวน</div><div class="kpi warn-text" id="kpiDue">0</div></div>
+      <div class="card"><div class="small">Certificate พร้อมพิมพ์</div><div class="kpi ok" id="kpiCerts">0</div></div>
+    </div>
+    <div class="notice" style="margin-top:10px" id="roleNotice"></div>
+  </section>
+</div>
+
+<div class="container grid grid-2">
+  <section class="card">
+    <h2>Training Attendance / Log</h2>
+    <div class="grid grid-2">
+      <div>
+        <label>วันที่อบรม</label>
+        <input id="logDate" type="date" />
       </div>
+      <div>
+        <label>สถานะ</label>
+        <select id="logStatus">
+          <option>Completed</option>
+          <option>Attended</option>
+          <option>Needs Review</option>
+          <option>Missed</option>
+        </select>
+      </div>
+      <div>
+        <label>หมวด</label>
+        <select id="logCategory">
+          <option>Food Allergy</option>
+          <option>Hygiene & Sanitation</option>
+          <option>English for F&B</option>
+          <option>SOP Checklist</option>
+          <option>Wine & Beverage</option>
+          <option>Guest Service</option>
+          <option>Outlet SOP</option>
+        </select>
+      </div>
+      <div>
+        <label>หัวข้อ</label>
+        <input id="logTopic" placeholder="เช่น Hand Washing Standard" />
+      </div>
+      <div>
+        <label>Trainer / Supervisor</label>
+        <input id="logTrainer" placeholder="เช่น Noi" />
+      </div>
+      <div>
+        <label>คะแนน (0-100)</label>
+        <input id="logScore" type="number" min="0" max="100" value="100" />
+      </div>
+      <div>
+        <label>วันทบทวนครั้งถัดไป</label>
+        <input id="reviewDate" type="date" />
+      </div>
+      <div>
+        <label>ความถี่ทบทวน</label>
+        <select id="reviewCycle">
+          <option value="30">30 วัน</option>
+          <option value="60">60 วัน</option>
+          <option value="90">90 วัน</option>
+          <option value="180">180 วัน</option>
+        </select>
+      </div>
+    </div>
+    <label>หมายเหตุ</label>
+    <textarea id="logNotes" placeholder="สิ่งที่ทำได้ดี / สิ่งที่ต้องพัฒนา"></textarea>
+    <div class="row" style="margin-top:12px">
+      <button class="inline success" onclick="addLog()">เพิ่ม Log</button>
+      <button class="inline secondary" onclick="seedLogs()">เพิ่มตัวอย่าง</button>
+      <button class="inline danger" onclick="clearLogs()">ลบ Log ทั้งหมด</button>
+    </div>
+  </section>
 
-      <section id="view-dashboard" class="view-section">
-        <div class="hero">
-          <div class="hero-card">
-            <div class="hero-badges">
-              <span class="badge">อ่านแบบเต็มหน้า</span>
-              <span class="badge">English Pack รวมในปุ่มเดียว</span>
-              <span class="badge">Offline พร้อมใช้</span>
-            </div>
-            <h2>เปลี่ยนคลังความรู้ให้เหมือนระบบ training ที่อ่านจริงได้</h2>
-            <p>เวอร์ชันนี้รวมบทเรียนเป็น Learning Packs แล้ว เช่น English for F&B, Allergy & Hygiene, Restaurant Service, Beverage Knowledge และ Banquet / Room Service เพื่อให้พนักงานเปิดอ่านเป็นหน้าเต็ม ไม่ใช่โชว์สั้น ๆ ใต้ลิสต์เหมือนเดิม</p>
-            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;">
-              <button class="primary" id="startReadingBtn">เปิด Learning Packs</button>
-              <button class="secondary" id="jumpEnglishBtn">เข้า English for F&B</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="section-head">
-              <h3>ความคืบหน้าโดยรวม</h3>
-              <span class="small">นับตามบทเรียนทั้งหมด</span>
-            </div>
-            <div class="progress-bar"><div class="progress-fill" id="overallProgress"></div></div>
-            <div class="small" id="progressText" style="margin-top:10px;">0%</div>
-            <div class="small" style="margin-top:12px; line-height:1.7;">แนะนำลำดับการเรียน: Restaurant Service → Allergy & Hygiene → English for F&B → Beverage Knowledge</div>
-            <div class="chips" id="packChips" style="margin-top:14px;"></div>
-          </div>
-        </div>
+  <section class="card">
+    <h2>Retraining Reminder</h2>
+    <div id="reminderList" class="grid"></div>
+  </section>
+</div>
 
-        <div class="stats-row">
-          <div class="card stat-card">
-            <div class="label">Learning Packs</div>
-            <div class="value" id="statPacks">0</div>
-            <div class="sub">ชุดการเรียนที่เปิดอ่านได้</div>
-          </div>
-          <div class="card stat-card">
-            <div class="label">บทเรียนทั้งหมด</div>
-            <div class="value" id="statLessons">0</div>
-            <div class="sub">ความรู้สาย F&B พร้อมใช้งาน</div>
-          </div>
-          <div class="card stat-card">
-            <div class="label">อ่านจบแล้ว</div>
-            <div class="value" id="statCompleted">0</div>
-            <div class="sub">บทเรียนที่ทำเครื่องหมายว่าอ่านจบ</div>
-          </div>
-          <div class="card stat-card">
-            <div class="label">รายการโปรด</div>
-            <div class="value" id="statFavorites">0</div>
-            <div class="sub">หัวข้อที่อยากทบทวนซ้ำ</div>
-          </div>
-        </div>
-      </section>
+<div class="container grid grid-2">
+  <section class="card">
+    <h2>Role-based Training Tracks</h2>
+    <div id="roleTracks"></div>
+  </section>
 
-      <section id="view-library" class="view-section hidden">
-        <div class="card">
-          <div class="section-head">
-            <div>
-              <h3>Learning Packs</h3>
-              <div class="small">กด 1 ครั้งเพื่อเข้าโหมดอ่านเต็มหน้า และค่อยเลือกหัวข้อย่อยด้านใน</div>
-            </div>
-            <span class="small">เหมาะกับบทความยาวและหมวดภาษาอังกฤษ</span>
-          </div>
-          <div class="toolbar">
-            <input id="packSearchInput" placeholder="ค้นหาชุดการเรียน เช่น English, allergy, hygiene, wine, breakfast" />
-          </div>
-          <div class="pack-grid" id="packGrid"></div>
-        </div>
-      </section>
+  <section class="card">
+    <h2>Outlet Certificate</h2>
+    <label>เลือกหมวด Certificate</label>
+    <select id="certCategory">
+      <option>Outlet Orientation</option>
+      <option>Food Allergy & Safety</option>
+      <option>Hygiene & Sanitation</option>
+      <option>English for F&B</option>
+      <option>Wine & Beverage Basics</option>
+      <option>Guest Service Standard</option>
+    </select>
+    <label>คะแนนผ่านขั้นต่ำ</label>
+    <input id="certPass" type="number" value="80" />
+    <div class="row" style="margin-top:12px">
+      <button class="inline success" onclick="generateCertificate()">สร้าง Certificate</button>
+      <button class="inline secondary" onclick="window.print()">Print / Save PDF</button>
+    </div>
+    <div id="certificateArea" class="card" style="margin-top:12px;background:#fff;color:#111827"></div>
+  </section>
+</div>
 
-      <section id="view-reader" class="view-section hidden">
-        <div class="reader-wrap">
-          <div class="reader-sidebar">
-            <div class="reader-meta" id="readerMetaBox">
-              <div class="badge" id="readerPackBadge">เลือกชุดการเรียนก่อน</div>
-              <h3 id="readerPackTitle">Reader Mode</h3>
-              <p id="readerPackDesc">เมื่อกดเปิดชุดการเรียนจากหน้า Learning Packs รายละเอียดจะขึ้นที่นี่ พร้อมหัวข้อย่อยทั้งหมดของชุดนั้น</p>
-              <div class="reader-count">
-                <div class="mini-box">
-                  <span class="small" style="color:rgba(255,255,255,0.72)">บทเรียนในชุด</span>
-                  <strong id="readerPackLessonCount">0</strong>
-                </div>
-                <div class="mini-box">
-                  <span class="small" style="color:rgba(255,255,255,0.72)">อ่านจบแล้ว</span>
-                  <strong id="readerPackCompleteCount">0</strong>
-                </div>
-              </div>
-              <div style="margin-top:14px;" class="progress-bar"><div class="progress-fill" id="readerPackProgress"></div></div>
-              <div class="small" id="readerPackProgressText" style="margin-top:10px; color:rgba(255,255,255,0.78)">0%</div>
-            </div>
-            <div class="card">
-              <div class="section-head">
-                <h3>หัวข้อในชุด</h3>
-                <button class="secondary" id="backToPacksBtn">กลับไปหน้า Packs</button>
-              </div>
-              <div class="reader-list" id="readerLessonList"></div>
-            </div>
-          </div>
-
-          <div class="reader-main">
-            <div class="card reader-article" id="readerArticleBox">
-              <div class="reader-header">
-                <div>
-                  <div class="lesson-tags" id="lessonMetaTags"></div>
-                  <h2 id="readerLessonTitle">ยังไม่ได้เลือกบทเรียน</h2>
-                  <p id="readerLessonSummary">เลือกชุดการเรียนจากหน้า Learning Packs แล้วคลิกหัวข้อย่อยที่ต้องการอ่าน</p>
-                </div>
-                <div class="reader-actions">
-                  <button class="secondary" id="prevLessonBtn">บทก่อนหน้า</button>
-                  <button class="secondary" id="nextLessonBtn">บทถัดไป</button>
-                </div>
-              </div>
-              <div class="lesson-body" id="readerLessonBody">เนื้อหาบทเรียนจะมาแสดงตรงนี้แบบเต็มหน้า</div>
-              <div class="reader-bottom-nav">
-                <div class="reader-actions">
-                  <button class="primary" id="completeLessonBtn">อ่านจบแล้ว</button>
-                  <button class="secondary" id="favoriteLessonBtn">บันทึกเป็นรายการโปรด</button>
-                </div>
-                <button class="secondary" id="openNotesFromReaderBtn">ไปที่โน้ตของบทนี้</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="view-quiz" class="view-section hidden">
-        <div class="grid">
-          <div class="card quiz-box">
-            <div class="section-head">
-              <h3>แบบทดสอบความรู้</h3>
-              <span class="small">สุ่มคำถามจากฐานความรู้ทั้งหมด</span>
-            </div>
-            <div id="quizArea"></div>
-            <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
-              <button class="primary" id="startQuizBtn">เริ่ม Quiz ใหม่</button>
-              <button class="secondary" id="nextQuestionBtn">คำถามถัดไป</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="section-head">
-              <h3>สรุปคะแนน</h3>
-              <span class="small">เก็บไว้ในเครื่อง</span>
-            </div>
-            <div class="list" id="quizHistoryList"></div>
-          </div>
-        </div>
-      </section>
-
-      <section id="view-favorites" class="view-section hidden">
-        <div class="card">
-          <div class="section-head">
-            <h3>รายการโปรด</h3>
-            <span class="small">หัวข้อที่อยากเปิดอ่านซ้ำบ่อย ๆ</span>
-          </div>
-          <div class="list" id="favoritesList"></div>
-        </div>
-      </section>
-
-      <section id="view-notes" class="view-section hidden">
-        <div class="grid">
-          <div class="card note-box">
-            <div class="section-head">
-              <h3>โน้ตส่วนตัว</h3>
-              <span class="small">ใช้จด key points จากการเทรน</span>
-            </div>
-            <select id="noteLessonSelect" class="field" style="width:100%; margin-bottom:12px;"></select>
-            <textarea id="noteArea" placeholder="จดสรุป เช่น allergy script, sequence of service, wine pairing, pronunciation หรือจุดที่ต้องสอนทีม"></textarea>
-            <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
-              <button class="primary" id="saveNoteBtn">บันทึกโน้ต</button>
-              <button class="secondary" id="loadNoteBtn">โหลดโน้ต</button>
-            </div>
-          </div>
-          <div class="card">
-            <div class="section-head">
-              <h3>แนวทางใช้ในโรงแรม</h3>
-              <span class="small">สำหรับ training ภายใน</span>
-            </div>
-            <div class="lesson-body">
-              <p>1. ให้พนักงานกรอกชื่อก่อนใช้งาน เพื่อเก็บ progress แยกตามเครื่อง</p>
-              <p>2. เปิดอ่านเป็นชุดการเรียน เช่น English for F&B หรือ Allergy & Hygiene ตาม outlet ที่ต้องใช้</p>
-              <p>3. ใช้ Reader Mode เปิดสอนบนจอหรือ iPad ได้ เพราะเนื้อหาจะขึ้นเต็มหน้าแล้ว</p>
-              <p>4. หลังจบแต่ละชุด ให้ทำ Quiz และให้หัวหน้างานทบทวนจาก Notes</p>
-              <p>5. ภายหลังสามารถเชื่อม Firebase เพื่อให้หลายเครื่องเห็น progress เดียวกันได้</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="view-firebase" class="view-section hidden">
-        <div class="card">
-          <div class="section-head">
-            <h3>Firebase Setup (โครงเตรียมไว้)</h3>
-            <span class="small">สำหรับทำเวอร์ชันหลายเครื่องในอนาคต</span>
-          </div>
-          <div class="lesson-body">
-            <p>ตอนนี้เวอร์ชันนี้ยังเก็บข้อมูลใน LocalStorage ของเครื่องเดิมก่อน เพื่อให้ใช้งานได้ทันทีแบบ offline</p>
-            <p>ถ้าจะเชื่อม Firebase ในเวอร์ชันถัดไป ให้เพิ่มข้อมูล config แล้วเปลี่ยนส่วน persist / load ให้ไปอ่านจาก Firestore แทน</p>
-          </div>
-          <code class="block">const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};</code>
-          <div class="small" style="margin-top:14px;">ถ้าหน่อยต้องการ เวอร์ชันถัดไปฉันสามารถทำต่อให้เป็น login จริง + sync progress + quiz score ข้ามหลายเครื่องได้</div>
-        </div>
-      </section>
-    </main>
+<div class="container card">
+  <h2>Training Log Records</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th><th>Category</th><th>Topic</th><th>Status</th><th>Score</th><th>Review</th><th>Notes</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="logTable"></tbody>
+    </table>
   </div>
+</div>
 
-  <script src="app.js"></script>
+
+<div class="container card">
+  <h2>English for F&amp;B Reader Mode</h2>
+  <p class="small">ปรับให้อ่านง่ายขึ้นสำหรับพนักงาน: แยกเป็นหัวข้อสั้น ๆ, คำศัพท์สำคัญ, ประโยคใช้งานจริง, บทสนทนาตัวอย่าง และเคล็ดลับหน้างาน</p>
+  <div class="grid grid-2" style="align-items:start">
+    <div>
+      <label>เลือกบทเรียนภาษาอังกฤษ</label>
+      <select id="englishTopicSelect" onchange="renderEnglishTopic()"></select>
+      <div class="row" style="margin-top:12px">
+        <button class="inline secondary" onclick="prevEnglishTopic()">บทก่อนหน้า</button>
+        <button class="inline secondary" onclick="nextEnglishTopic()">บทถัดไป</button>
+      </div>
+      <div id="englishTopicList" style="margin-top:12px"></div>
+    </div>
+    <div id="englishReader" class="english-reader"></div>
+  </div>
+</div>
+
+<footer>Offline-first • ข้อมูลเก็บในเครื่องผู้ใช้เอง • เหมาะสำหรับใช้งานบนมือถือส่วนตัว</footer>
+
+<script>
+const KEY = 'laya_fnb_academy_v2831';
+const TRACKS = {
+  "New Hire": [
+    "Hotel & Outlet Orientation",
+    "Food Allergy Basics",
+    "Hand Washing Standard",
+    "Service Greeting Script",
+    "Basic English for F&B",
+    "Opening Checklist"
+  ],
+  "Senior": [
+    "Advanced Guest Handling",
+    "Cross Contamination Prevention",
+    "Wine & Beverage Knowledge",
+    "Upselling English",
+    "Complaint Recovery",
+    "Outlet Deep SOP"
+  ],
+  "Supervisor": [
+    "Team Briefing Standard",
+    "Training Observation & Feedback",
+    "Incident / Allergy Escalation",
+    "Audit Checklist",
+    "Coaching Conversation",
+    "Sign-off & Documentation"
+  ]
+};
+
+
+const ENGLISH_TOPICS = [
+  {
+    id:'core-vocab',
+    title:'English for F&B: Core Restaurant Vocabulary',
+    level:'Beginner',
+    focus:'คำศัพท์พื้นฐานที่พนักงานห้องอาหารใช้ทุกวัน',
+    intro:'บทนี้ออกแบบให้อ่านง่ายเป็นช่วงสั้น ๆ พนักงานจะเห็นคำศัพท์หลัก ความหมายไทย และตัวอย่างประโยคที่ใช้ได้จริงหน้าร้าน',
+    vocab:[
+      ['Menu','เมนูอาหารหรือเครื่องดื่ม','Here is the menu for today. = นี่คือเมนูสำหรับวันนี้ค่ะ'],
+      ['Reservation','การจองโต๊ะ','Do you have a reservation? = คุณลูกค้าได้จองโต๊ะไว้ไหมคะ'],
+      ['Table','โต๊ะ','Your table is ready. = โต๊ะของคุณพร้อมแล้วค่ะ'],
+      ['Order','คำสั่งอาหาร','May I take your order? = ขออนุญาตรับออเดอร์นะคะ'],
+      ['Bill / Check','ใบเสร็จ / บิล','Would you like the bill now? = ต้องการรับบิลตอนนี้ไหมคะ'],
+      ['Available','มีขาย / พร้อมเสิร์ฟ','This dish is available today. = เมนูนี้มีขายวันนี้ค่ะ'],
+      ['Sold out','หมด','I am sorry, this item is sold out. = ขออภัย เมนูนี้หมดแล้วค่ะ']
+    ],
+    phrases:[
+      'Welcome to our restaurant. = ยินดีต้อนรับสู่ห้องอาหารของเรา',
+      'Are you ready to order? = พร้อมสั่งอาหารหรือยังคะ',
+      'Would you like still or sparkling water? = รับน้ำเปล่าหรือน้ำแร่มีแก๊สดีคะ',
+      'Please let me know if you need any recommendations. = แจ้งได้เลยนะคะ หากต้องการคำแนะนำเมนู'
+    ],
+    dialogue:[
+      ['Staff','Good evening. Welcome to our restaurant.','สวัสดีตอนเย็นค่ะ ยินดีต้อนรับสู่ห้องอาหารของเรา'],
+      ['Guest','Thank you. Do you have a table for two?','ขอบคุณครับ มีโต๊ะสำหรับ 2 ท่านไหม'],
+      ['Staff','Yes, certainly. Please follow me.','มีค่ะ เชิญตามมาได้เลยค่ะ']
+    ],
+    tips:['พยายามจำคำศัพท์เป็นชุด เช่น menu, order, bill จะใช้บ่อยมาก','ถ้าไม่แน่ใจคำศัพท์ ให้พูดช้า ชัด และยิ้มไว้ก่อน']
+  },
+  {
+    id:'allergy',
+    title:'English for F&B: Food Allergy & Dietary Terms',
+    level:'Intermediate',
+    focus:'คำศัพท์สำคัญเวลาพูดคุยเรื่องอาหารแพ้และข้อจำกัดด้านอาหาร',
+    intro:'หัวข้อนี้สำคัญมาก เพราะใช้กับความปลอดภัยของแขกโดยตรง ควรอ่านแบบทำความเข้าใจ ไม่ใช่ท่องอย่างเดียว',
+    vocab:[
+      ['Allergy','อาการแพ้อาหาร','Do you have any food allergies? = คุณลูกค้ามีอาการแพ้อาหารอะไรไหมคะ'],
+      ['Peanut','ถั่วลิสง','This sauce may contain peanut. = ซอสนี้อาจมีถั่วลิสง'],
+      ['Shellfish','อาหารทะเลเปลือกแข็ง','Are you allergic to shellfish? = คุณแพ้อาหารทะเลเปลือกแข็งไหมคะ'],
+      ['Dairy','นมและผลิตภัณฑ์นม','This dessert contains dairy. = ของหวานนี้มีส่วนผสมของนม'],
+      ['Gluten-free','ปราศจากกลูเตน','We have a gluten-free option. = เรามีตัวเลือกที่ไม่มีกลูเตน'],
+      ['Cross-contamination','การปนเปื้อนข้าม','We will avoid cross-contamination. = เราจะหลีกเลี่ยงการปนเปื้อนข้าม']
+    ],
+    phrases:[
+      'Let me check with the chef for you. = ขออนุญาตตรวจสอบกับเชฟให้นะคะ',
+      'Please do not guarantee before checking. = อย่ารับประกันกับแขกก่อนตรวจสอบจริง',
+      'This dish contains nuts, dairy, and soy. = เมนูนี้มีถั่ว นม และถั่วเหลือง'
+    ],
+    dialogue:[
+      ['Guest','I have a severe shellfish allergy.','ฉันแพ้อาหารทะเลอย่างรุนแรง'],
+      ['Staff','Thank you for telling me. I will inform the chef immediately.','ขอบคุณที่แจ้งนะคะ ฉันจะรีบแจ้งเชฟทันที'],
+      ['Staff','May I recommend a dish without shellfish?','ขออนุญาตแนะนำเมนูที่ไม่มีอาหารทะเลได้ไหมคะ']
+    ],
+    tips:['อย่าเดาเรื่อง allergen เอง','ต้องเช็กกับครัวทุกครั้งถ้าแขกแจ้งว่าแพ้อาหาร']
+  },
+  {
+    id:'service',
+    title:'English for F&B: Taking Orders & Recommending Dishes',
+    level:'Beginner',
+    focus:'ประโยคใช้จริงตอนรับออเดอร์และแนะนำเมนู',
+    intro:'พนักงานส่วนใหญ่มักติดตรงการเริ่มต้นประโยค หัวข้อนี้จึงเน้นประโยคสำเร็จรูปที่ใช้ได้ทันที',
+    vocab:[
+      ['Recommend','แนะนำ','May I recommend our signature dish? = ขออนุญาตแนะนำเมนูซิกเนเจอร์ของร้านนะคะ'],
+      ['Signature dish','เมนูเด่นของร้าน','Our signature dish is grilled seabass. = เมนูเด่นของเราคือปลากะพงย่าง'],
+      ['Spicy','รสเผ็ด','Would you like it spicy? = ต้องการรสเผ็ดไหมคะ'],
+      ['Side dish','เครื่องเคียง','Would you like a side dish with that? = รับเครื่องเคียงเพิ่มไหมคะ'],
+      ['Well-done','สุกมาก','How would you like your steak cooked? = ต้องการให้สเต๊กสุกระดับไหนคะ']
+    ],
+    phrases:[
+      'Would you like some recommendations? = ต้องการให้แนะนำเมนูไหมคะ',
+      'This dish is one of our best sellers. = เมนูนี้เป็นหนึ่งในเมนูขายดีของเรา',
+      'It goes well with white wine. = เมนูนี้เข้ากันได้ดีกับไวน์ขาว'
+    ],
+    dialogue:[
+      ['Staff','May I recommend our grilled salmon?','ขออนุญาตแนะนำแซลมอนย่างของเรานะคะ'],
+      ['Guest','Is it spicy?','มันเผ็ดไหม'],
+      ['Staff','No, it is mild, but we can make it spicy if you prefer.','ไม่เผ็ดค่ะ แต่เราสามารถทำให้เผ็ดได้ถ้าคุณลูกค้าต้องการ']
+    ],
+    tips:['ใช้โครงประโยคเดิมซ้ำ ๆ เพื่อให้คล่อง','เวลาพูดชื่อเมนู ควรพูดช้าและชัด']
+  }
+];
+
+function renderEnglishTopicList(){
+  const list = document.getElementById('englishTopicList');
+  const current = document.getElementById('englishTopicSelect').value;
+  list.innerHTML = ENGLISH_TOPICS.map(t => `<button class="topic-pill ${t.id===current?'active':''}" onclick="selectEnglishTopic('${t.id}')">${t.title}<br><span class="small">${t.focus}</span></button>`).join('');
+}
+function selectEnglishTopic(id){ document.getElementById('englishTopicSelect').value = id; renderEnglishTopic(); }
+function prevEnglishTopic(){ const sel = document.getElementById('englishTopicSelect'); const i = Math.max(0, sel.selectedIndex - 1); sel.selectedIndex = i; renderEnglishTopic(); }
+function nextEnglishTopic(){ const sel = document.getElementById('englishTopicSelect'); const i = Math.min(sel.options.length-1, sel.selectedIndex + 1); sel.selectedIndex = i; renderEnglishTopic(); }
+function renderEnglishTopic(){
+  const id = document.getElementById('englishTopicSelect').value;
+  const topic = ENGLISH_TOPICS.find(x=>x.id===id) || ENGLISH_TOPICS[0];
+  const reader = document.getElementById('englishReader');
+  if(!reader) return;
+  reader.innerHTML = `
+    <div class="english-hero">
+      <div class="english-meta"><span class="english-chip">English for F&amp;B</span><span class="english-chip">ระดับ ${topic.level}</span></div>
+      <h3>${topic.title}</h3>
+      <div class="english-meaning">${topic.focus}</div>
+      <p style="margin-top:10px;line-height:1.7;color:#334155">${topic.intro}</p>
+    </div>
+    <div class="english-section">
+      <h4>คำศัพท์สำคัญ</h4>
+      <div class="english-list">
+        ${topic.vocab.map(v=>`<div class="english-item"><div class="english-term">${v[0]}</div><div class="english-meaning">${v[1]}</div><div class="english-example">${v[2]}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="english-section">
+      <h4>ประโยคที่ใช้ได้จริง</h4>
+      <div class="english-list">
+        ${topic.phrases.map(p=>`<div class="english-item">${p}</div>`).join('')}
+      </div>
+    </div>
+    <div class="english-section">
+      <h4>บทสนทนาตัวอย่าง</h4>
+      <div class="english-dialogue">
+        ${topic.dialogue.map(d=>`<div class="english-line"><div class="english-speaker">${d[0]}</div><div>${d[1]}</div><div class="english-thai">${d[2]}</div></div>`).join('')}
+      </div>
+    </div>
+    <div class="english-section">
+      <h4>เคล็ดลับหน้างาน</h4>
+      <div class="english-list">
+        ${topic.tips.map(t=>`<div class="english-item">• ${t}</div>`).join('')}
+      </div>
+    </div>`;
+  renderEnglishTopicList();
+}
+
+let app = {
+  profile: {name:'', role:'New Hire', outlet:'The Taste', startDate:''},
+  logs: [],
+  certs: []
+};
+
+function today(){ return new Date().toISOString().slice(0,10); }
+function plusDays(base, days){
+  const d = new Date(base || today()); d.setDate(d.getDate()+Number(days)); return d.toISOString().slice(0,10);
+}
+function save(){ localStorage.setItem(KEY, JSON.stringify(app)); document.getElementById('saveStatus').textContent = 'บันทึกล่าสุด: ' + new Date().toLocaleString(); }
+function load(){
+  const raw = localStorage.getItem(KEY);
+  if(raw){ try{ app = JSON.parse(raw);}catch(e){} }
+  document.getElementById('staffName').value = app.profile.name || '';
+  document.getElementById('staffRole').value = app.profile.role || 'New Hire';
+  document.getElementById('staffOutlet').value = app.profile.outlet || 'The Taste';
+  document.getElementById('startDate').value = app.profile.startDate || '';
+  document.getElementById('logDate').value = today();
+  document.getElementById('reviewDate').value = plusDays(today(),30);
+  const sel = document.getElementById('englishTopicSelect');
+  if(sel && !sel.options.length){ sel.innerHTML = ENGLISH_TOPICS.map(t=>`<option value="${t.id}">${t.title}</option>`).join(''); }
+  if(sel && !sel.value){ sel.value = ENGLISH_TOPICS[0].id; }
+  render();
+  renderEnglishTopic();
+}
+function saveProfile(){
+  app.profile.name = document.getElementById('staffName').value.trim();
+  app.profile.role = document.getElementById('staffRole').value;
+  app.profile.outlet = document.getElementById('staffOutlet').value;
+  app.profile.startDate = document.getElementById('startDate').value;
+  save(); render();
+}
+function loadSample(){
+  app.profile = {name:'Somchai', role:'New Hire', outlet:'Mangrove', startDate:today()};
+  app.logs = [{
+    id: Date.now(),
+    date: today(),
+    status: 'Completed',
+    category: 'Hygiene & Sanitation',
+    topic: 'Hand Washing Standard',
+    trainer: 'Noi',
+    score: 92,
+    reviewDate: plusDays(today(),30),
+    reviewCycle: 30,
+    notes: 'ล้างมือครบ 7 ขั้นตอนและทำได้ถูกต้อง'
+  }];
+  save(); load();
+}
+function addLog(){
+  const entry = {
+    id: Date.now(),
+    date: document.getElementById('logDate').value || today(),
+    status: document.getElementById('logStatus').value,
+    category: document.getElementById('logCategory').value,
+    topic: document.getElementById('logTopic').value.trim(),
+    trainer: document.getElementById('logTrainer').value.trim(),
+    score: Number(document.getElementById('logScore').value || 0),
+    reviewDate: document.getElementById('reviewDate').value,
+    reviewCycle: Number(document.getElementById('reviewCycle').value || 30),
+    notes: document.getElementById('logNotes').value.trim()
+  };
+  if(!entry.topic){ alert('กรุณาใส่ชื่อหัวข้อ'); return; }
+  app.logs.unshift(entry);
+  save(); render();
+  document.getElementById('logTopic').value=''; document.getElementById('logTrainer').value=''; document.getElementById('logNotes').value='';
+}
+function seedLogs(){
+  const sample = [
+    ['Food Allergy','Common Allergens','Completed',88,30],
+    ['English for F&B','Greeting Guests','Attended',84,60],
+    ['Outlet SOP','Mangrove Opening Checklist','Needs Review',70,15]
+  ];
+  sample.forEach((s,i)=>{
+    app.logs.unshift({
+      id: Date.now()+i,
+      date: today(),
+      category:s[0], topic:s[1], status:s[2], score:s[3],
+      trainer:'Noi', reviewDate:plusDays(today(), s[4]), reviewCycle:s[4], notes:'ตัวอย่างข้อมูล'
+    })
+  });
+  save(); render();
+}
+function clearLogs(){
+  if(confirm('ลบ Training Log ทั้งหมด?')){ app.logs=[]; save(); render(); }
+}
+function deleteLog(id){
+  app.logs = app.logs.filter(x=>x.id!==id); save(); render();
+}
+function dueItems(){
+  const now = today();
+  return app.logs.filter(x => x.reviewDate && x.reviewDate <= now);
+}
+function upcomingItems(){
+  const now = new Date();
+  const in14 = new Date(); in14.setDate(now.getDate()+14);
+  return app.logs.filter(x => x.reviewDate && new Date(x.reviewDate) > now && new Date(x.reviewDate) <= in14);
+}
+function generateCertificate(){
+  const category = document.getElementById('certCategory').value;
+  const pass = Number(document.getElementById('certPass').value || 80);
+  const relevant = app.logs.filter(x => x.category === mapCertToCategory(category) || x.topic.includes(category) );
+  const best = relevant.length ? Math.max(...relevant.map(x=>Number(x.score||0))) : 0;
+  const passed = best >= pass;
+  const name = app.profile.name || '________________';
+  const area = document.getElementById('certificateArea');
+  area.innerHTML = `
+    <div style="border:4px solid #d4af37;padding:26px;border-radius:18px;background:linear-gradient(180deg,#fffdf5,#fff)">
+      <div style="text-align:center">
+        <div style="font-size:13px;letter-spacing:3px;color:#6b7280">LAYA F&B ACADEMY</div>
+        <h2 style="font-size:34px;margin:10px 0;color:#111827">CERTIFICATE OF COMPLETION</h2>
+        <p style="font-size:18px">This certifies that</p>
+        <div style="font-size:32px;font-weight:700;margin:10px 0;color:#0f172a">${name}</div>
+        <p>has completed <strong>${category}</strong><br>for outlet <strong>${app.profile.outlet || '________'}</strong></p>
+        <p>Role: <strong>${app.profile.role || '________'}</strong> &nbsp; | &nbsp; Best Score: <strong>${best}</strong></p>
+        <p>Status: <strong style="color:${passed ? '#15803d' : '#b91c1c'}">${passed ? 'PASSED' : 'NEEDS MORE TRAINING'}</strong></p>
+        <div style="margin-top:28px;display:flex;justify-content:space-between;gap:18px">
+          <div style="flex:1;border-top:1px solid #555;padding-top:8px">Supervisor Sign-off</div>
+          <div style="flex:1;border-top:1px solid #555;padding-top:8px">Date: ${today()}</div>
+        </div>
+      </div>
+    </div>`;
+}
+function mapCertToCategory(cert){
+  const map = {
+    'Outlet Orientation':'Outlet SOP',
+    'Food Allergy & Safety':'Food Allergy',
+    'Hygiene & Sanitation':'Hygiene & Sanitation',
+    'English for F&B':'English for F&B',
+    'Wine & Beverage Basics':'Wine & Beverage',
+    'Guest Service Standard':'Guest Service'
+  };
+  return map[cert] || cert;
+}
+function render(){
+  document.getElementById('kpiLogs').textContent = app.logs.length;
+  document.getElementById('kpiDue').textContent = dueItems().length;
+  document.getElementById('kpiCerts').textContent = Object.keys(TRACKS).length;
+  const due = dueItems();
+  const upcoming = upcomingItems();
+  const reminderList = document.getElementById('reminderList');
+  reminderList.innerHTML = '';
+  if(due.length===0 && upcoming.length===0){
+    reminderList.innerHTML = '<div class="notice ok">ยังไม่มีหัวข้อที่ถึงเวลาทบทวน</div>';
+  } else {
+    due.forEach(x => {
+      reminderList.insertAdjacentHTML('beforeend', `<div class="notice"><strong class="danger-text">ถึงกำหนดทบทวนแล้ว</strong><br>${x.topic} <span class="badge">${x.category}</span><br><span class="small">Review date: ${x.reviewDate}</span></div>`)
+    });
+    upcoming.forEach(x => {
+      reminderList.insertAdjacentHTML('beforeend', `<div class="notice"><strong class="warn-text">ใกล้ถึงกำหนดทบทวน</strong><br>${x.topic} <span class="badge">${x.category}</span><br><span class="small">Review date: ${x.reviewDate}</span></div>`)
+    });
+  }
+  const role = app.profile.role || 'New Hire';
+  document.getElementById('roleNotice').innerHTML = `<strong>Track สำหรับ ${role}</strong><br>${TRACKS[role].map(x=>`<span class="badge">${x}</span>`).join(' ')}`;
+  const rt = document.getElementById('roleTracks');
+  rt.innerHTML = Object.entries(TRACKS).map(([r, items]) => `
+    <div class="card" style="margin-bottom:10px;${r===role ? 'outline:2px solid #38bdf8' : ''}">
+      <h3>${r}</h3>
+      ${items.map(i=>`<div class="badge">${i}</div>`).join('')}
+    </div>`).join('');
+  const tbody = document.getElementById('logTable');
+  tbody.innerHTML = app.logs.map(x=>`
+    <tr>
+      <td>${x.date||''}</td>
+      <td>${x.category||''}</td>
+      <td>${x.topic||''}<br><span class="small">Trainer: ${x.trainer||'-'}</span></td>
+      <td>${x.status||''}</td>
+      <td>${x.score||0}</td>
+      <td>${x.reviewDate||'-'}</td>
+      <td>${x.notes||''}</td>
+      <td><button class="inline danger" onclick="deleteLog(${x.id})">ลบ</button></td>
+    </tr>`).join('');
+}
+function exportBackup(){
+  const blob = new Blob([JSON.stringify(app,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'laya_fnb_academy_v2831_backup.json';
+  a.click();
+}
+function importBackup(event){
+  const file = event.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      app = JSON.parse(reader.result);
+      save(); load();
+      alert('นำเข้าข้อมูลสำเร็จ');
+    }catch(e){ alert('ไฟล์ไม่ถูกต้อง'); }
+  };
+  reader.readAsText(file);
+}
+load();
+</script>
 </body>
 </html>
