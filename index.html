@@ -125,7 +125,7 @@
 
         <div class="editor-help-box">
           <strong>เขียนได้อิสระมากขึ้น</strong>
-          <p>ในแต่ละหัวข้อสามารถพิมพ์เป็นย่อหน้า, bullet, เว้นบรรทัด, แปะลิงก์รูปภาพ และลิงก์วิดีโอ YouTube/MP4 ได้ โดย 1 ลิงก์ต่อ 1 บรรทัด</p>
+          <p>ในแต่ละหัวข้อสามารถพิมพ์เป็นย่อหน้า, bullet, เว้นบรรทัด, แปะลิงก์รูปภาพ/ลิงก์วิดีโอ หรืออัปโหลดรูปและวิดีโอจากเครื่องได้ พร้อมมี preview ให้ดูก่อนบันทึก</p>
         </div>
 
         <div class="editor-grid two-col">
@@ -143,11 +143,18 @@
             <div class="upload-row">
               <label class="upload-box" for="section1ImageFiles">อัปโหลดรูปจากเครื่อง</label>
               <input id="section1ImageFiles" class="file-input" type="file" accept="image/*" multiple>
-              <div id="section1UploadMsg" class="upload-msg">เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ</div>
+              <div id="section1ImageUploadMsg" class="upload-msg">เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ</div>
             </div>
+            <div id="section1ImagePreview" class="editor-preview-grid"></div>
             <label>ลิงก์วิดีโอ (YouTube / MP4, 1 บรรทัด = 1 ลิงก์)
               <textarea id="section1Videos" class="editor-media-input" placeholder="https://youtu.be/...&#10;https://.../video.mp4"></textarea>
             </label>
+            <div class="upload-row">
+              <label class="upload-box" for="section1VideoFiles">อัปโหลดวิดีโอจากเครื่อง</label>
+              <input id="section1VideoFiles" class="file-input" type="file" accept="video/*" multiple>
+              <div id="section1VideoUploadMsg" class="upload-msg">เลือกลิงก์วิดีโอเองหรืออัปโหลดไฟล์วิดีโอจากเครื่อง ระบบจะอัปขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องวิดีโอให้อัตโนมัติ</div>
+            </div>
+            <div id="section1VideoPreview" class="editor-preview-grid video-preview-grid"></div>
           </div>
           <div class="editor-block">
             <h4>หัวข้อที่ 2</h4>
@@ -163,11 +170,18 @@
             <div class="upload-row">
               <label class="upload-box" for="section2ImageFiles">อัปโหลดรูปจากเครื่อง</label>
               <input id="section2ImageFiles" class="file-input" type="file" accept="image/*" multiple>
-              <div id="section2UploadMsg" class="upload-msg">เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ</div>
+              <div id="section2ImageUploadMsg" class="upload-msg">เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ</div>
             </div>
+            <div id="section2ImagePreview" class="editor-preview-grid"></div>
             <label>ลิงก์วิดีโอ (YouTube / MP4, 1 บรรทัด = 1 ลิงก์)
               <textarea id="section2Videos" class="editor-media-input" placeholder="https://youtu.be/...&#10;https://.../video.mp4"></textarea>
             </label>
+            <div class="upload-row">
+              <label class="upload-box" for="section2VideoFiles">อัปโหลดวิดีโอจากเครื่อง</label>
+              <input id="section2VideoFiles" class="file-input" type="file" accept="video/*" multiple>
+              <div id="section2VideoUploadMsg" class="upload-msg">เลือกลิงก์วิดีโอเองหรืออัปโหลดไฟล์วิดีโอจากเครื่อง ระบบจะอัปขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องวิดีโอให้อัตโนมัติ</div>
+            </div>
+            <div id="section2VideoPreview" class="editor-preview-grid video-preview-grid"></div>
           </div>
         </div>
 
@@ -186,11 +200,18 @@
             <div class="upload-row">
               <label class="upload-box" for="section3ImageFiles">อัปโหลดรูปจากเครื่อง</label>
               <input id="section3ImageFiles" class="file-input" type="file" accept="image/*" multiple>
-              <div id="section3UploadMsg" class="upload-msg">เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ</div>
+              <div id="section3ImageUploadMsg" class="upload-msg">เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ</div>
             </div>
+            <div id="section3ImagePreview" class="editor-preview-grid"></div>
             <label>ลิงก์วิดีโอ (YouTube / MP4, 1 บรรทัด = 1 ลิงก์)
               <textarea id="section3Videos" class="editor-media-input" placeholder="https://youtu.be/...&#10;https://.../video.mp4"></textarea>
             </label>
+            <div class="upload-row">
+              <label class="upload-box" for="section3VideoFiles">อัปโหลดวิดีโอจากเครื่อง</label>
+              <input id="section3VideoFiles" class="file-input" type="file" accept="video/*" multiple>
+              <div id="section3VideoUploadMsg" class="upload-msg">เลือกลิงก์วิดีโอเองหรืออัปโหลดไฟล์วิดีโอจากเครื่อง ระบบจะอัปขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องวิดีโอให้อัตโนมัติ</div>
+            </div>
+            <div id="section3VideoPreview" class="editor-preview-grid video-preview-grid"></div>
           </div>
           <div class="editor-block">
             <h4>หัวข้อที่ 4</h4>
@@ -206,11 +227,18 @@
             <div class="upload-row">
               <label class="upload-box" for="section4ImageFiles">อัปโหลดรูปจากเครื่อง</label>
               <input id="section4ImageFiles" class="file-input" type="file" accept="image/*" multiple>
-              <div id="section4UploadMsg" class="upload-msg">เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ</div>
+              <div id="section4ImageUploadMsg" class="upload-msg">เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ</div>
             </div>
+            <div id="section4ImagePreview" class="editor-preview-grid"></div>
             <label>ลิงก์วิดีโอ (YouTube / MP4, 1 บรรทัด = 1 ลิงก์)
               <textarea id="section4Videos" class="editor-media-input" placeholder="https://youtu.be/...&#10;https://.../video.mp4"></textarea>
             </label>
+            <div class="upload-row">
+              <label class="upload-box" for="section4VideoFiles">อัปโหลดวิดีโอจากเครื่อง</label>
+              <input id="section4VideoFiles" class="file-input" type="file" accept="video/*" multiple>
+              <div id="section4VideoUploadMsg" class="upload-msg">เลือกลิงก์วิดีโอเองหรืออัปโหลดไฟล์วิดีโอจากเครื่อง ระบบจะอัปขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องวิดีโอให้อัตโนมัติ</div>
+            </div>
+            <div id="section4VideoPreview" class="editor-preview-grid video-preview-grid"></div>
           </div>
         </div>
 

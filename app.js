@@ -121,7 +121,7 @@ function splitLines(text) {
 
 
 function splitMediaLines(text) {
-  return splitLines(text).filter(line => /^https?:\/\//i.test(line) || /^data:image\//i.test(line));
+  return splitLines(text).filter(line => /^https?:\/\//i.test(line) || /^data:image\//i.test(line) || /^data:video\//i.test(line) || /^blob:/i.test(line));
 }
 
 function extractBulletItems(text) {
@@ -133,79 +133,163 @@ function extractBulletItems(text) {
 function sanitizeUrl(url) {
   const value = String(url || '').trim();
   if (!value) return '';
-  if (/^https?:\/\//i.test(value) || /^data:image\//i.test(value) || /^blob:/i.test(value)) return value;
+  if (/^https?:\/\//i.test(value) || /^data:image\//i.test(value) || /^data:video\//i.test(value) || /^blob:/i.test(value)) return value;
   return '';
 }
 
 
+
 function safeFileName(name) {
-  return String(name || 'image')
+  return String(name || 'file')
     .toLowerCase()
     .replace(/[^a-z0-9._-]+/g, '-')
     .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '') || 'image';
+    .replace(/^-|-$/g, '') || 'file';
 }
 
 function appendLineToTextarea(id, value) {
   const node = el(id);
   if (!node || !value) return;
   const current = node.value.trim();
-  node.value = current ? `${current}\n${value}` : value;
+  node.value = current ? `${current}
+${value}` : value;
 }
 
-function setUploadMessage(sectionNum, message, tone = '') {
-  const node = el(`section${sectionNum}UploadMsg`);
+function mediaTextareaId(sectionNum, kind) {
+  return `section${sectionNum}${kind === 'image' ? 'Images' : 'Videos'}`;
+}
+
+function mediaPreviewId(sectionNum, kind) {
+  return `section${sectionNum}${kind === 'image' ? 'ImagePreview' : 'VideoPreview'}`;
+}
+
+function mediaInputId(sectionNum, kind) {
+  return `section${sectionNum}${kind === 'image' ? 'ImageFiles' : 'VideoFiles'}`;
+}
+
+function mediaUploadMsgId(sectionNum, kind) {
+  return `section${sectionNum}${kind === 'image' ? 'ImageUploadMsg' : 'VideoUploadMsg'}`;
+}
+
+function setUploadMessage(sectionNum, kind, message, tone = '') {
+  const node = el(mediaUploadMsgId(sectionNum, kind));
   if (!node) return;
   node.textContent = message;
   node.classList.remove('error', 'success');
   if (tone) node.classList.add(tone);
 }
 
-function refreshUploadHint(sectionNum) {
-  const count = splitMediaLines(el(`section${sectionNum}Images`)?.value || '').length;
-  if (!count) {
-    setUploadMessage(sectionNum, 'เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ');
-    return;
-  }
-  setUploadMessage(sectionNum, `มีลิงก์รูปภาพแล้ว ${count} รูป`, 'success');
+function defaultUploadHint(kind) {
+  return kind === 'image'
+    ? 'เลือกรูปจากมือถือหรือคอมพิวเตอร์ได้หลายรูป ระบบจะอัปโหลดขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องรูปภาพให้อัตโนมัติ'
+    : 'เลือกลิงก์วิดีโอเองหรืออัปโหลดไฟล์วิดีโอจากเครื่อง ระบบจะอัปขึ้น Firebase Storage แล้วเติมลิงก์ลงช่องวิดีโอให้อัตโนมัติ';
 }
 
-function fileToDataUrl(file) {
+function refreshUploadHint(sectionNum, kind) {
+  const count = splitMediaLines(el(mediaTextareaId(sectionNum, kind))?.value || '').length;
+  if (!count) {
+    setUploadMessage(sectionNum, kind, defaultUploadHint(kind));
+    return;
+  }
+  const label = kind === 'image' ? 'รูปภาพ' : 'วิดีโอ';
+  setUploadMessage(sectionNum, kind, `มีลิงก์${label}แล้ว ${count} รายการ`, 'success');
+}
+
+function fileToDataUrl(file, kind = 'image') {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(String(reader.result || ''));
-    reader.onerror = () => reject(new Error('อ่านไฟล์รูปไม่สำเร็จ'));
+    reader.onerror = () => reject(new Error(kind === 'image' ? 'อ่านไฟล์รูปไม่สำเร็จ' : 'อ่านไฟล์วิดีโอไม่สำเร็จ'));
     reader.readAsDataURL(file);
   });
 }
 
-async function uploadImageFile(file) {
-  if (state.isDemo) return await fileToDataUrl(file);
-  if (!state.user) throw new Error('กรุณาเข้าสู่ระบบก่อนอัปโหลดรูป');
+function buildEditorPreviewHTML(kind, urls) {
+  if (!urls.length) {
+    const text = kind === 'image' ? 'ยังไม่มีรูปในหัวข้อนี้' : 'ยังไม่มีวิดีโอในหัวข้อนี้';
+    return `<div class="preview-empty">${text}</div>`;
+  }
+  return urls.map(url => {
+    const safe = safeHTML(url);
+    if (kind === 'image') {
+      return `
+        <a class="editor-preview-card image-preview-card" href="${safe}" target="_blank" rel="noopener">
+          <img src="${safe}" alt="preview image" loading="lazy">
+          <span>เปิดรูป</span>
+        </a>
+      `;
+    }
+    const yt = toYouTubeEmbed(url);
+    if (yt) {
+      return `
+        <div class="editor-preview-card video-preview-card">
+          <iframe src="${safeHTML(yt)}" title="video preview" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <span>YouTube</span>
+        </div>
+      `;
+    }
+    if (isDirectVideoUrl(url)) {
+      return `
+        <div class="editor-preview-card video-preview-card">
+          <video controls preload="metadata" src="${safe}"></video>
+          <span>วิดีโอ</span>
+        </div>
+      `;
+    }
+    return `
+      <a class="editor-preview-card video-link-preview-card" href="${safe}" target="_blank" rel="noopener">
+        <div class="preview-link-icon">▶</div>
+        <span>เปิดลิงก์วิดีโอ</span>
+      </a>
+    `;
+  }).join('');
+}
+
+function refreshMediaPreview(sectionNum, kind) {
+  const node = el(mediaPreviewId(sectionNum, kind));
+  if (!node) return;
+  const urls = splitMediaLines(el(mediaTextareaId(sectionNum, kind))?.value || '');
+  node.innerHTML = buildEditorPreviewHTML(kind, urls);
+}
+
+function refreshSectionPreviews(sectionNum) {
+  refreshUploadHint(sectionNum, 'image');
+  refreshUploadHint(sectionNum, 'video');
+  refreshMediaPreview(sectionNum, 'image');
+  refreshMediaPreview(sectionNum, 'video');
+}
+
+async function uploadMediaFile(file, kind) {
+  if (state.isDemo) return await fileToDataUrl(file, kind);
+  if (!state.user) throw new Error(`กรุณาเข้าสู่ระบบก่อนอัปโหลด${kind === 'image' ? 'รูป' : 'วิดีโอ'}`);
   if (!storage) throw new Error('Firebase Storage ยังไม่พร้อมใช้งาน');
-  const path = `team_lesson_uploads/${state.user.uid}/${Date.now()}-${safeFileName(file.name)}`;
+  const folder = kind === 'image' ? 'images' : 'videos';
+  const fallbackType = kind === 'image' ? 'image/jpeg' : 'video/mp4';
+  const path = `team_lesson_uploads/${state.user.uid}/${folder}/${Date.now()}-${safeFileName(file.name)}`;
   const ref = storage.ref().child(path);
-  const snapshot = await ref.put(file, { contentType: file.type || 'image/jpeg' });
+  const snapshot = await ref.put(file, { contentType: file.type || fallbackType });
   return await snapshot.ref.getDownloadURL();
 }
 
-async function handleSectionImageUpload(sectionNum, files) {
+async function handleSectionMediaUpload(sectionNum, kind, files) {
   const picked = Array.from(files || []).filter(Boolean);
   if (!picked.length) return;
-  setUploadMessage(sectionNum, `กำลังเตรียมอัปโหลด ${picked.length} รูป...`);
+  const label = kind === 'image' ? 'รูป' : 'วิดีโอ';
+  setUploadMessage(sectionNum, kind, `กำลังเตรียมอัปโหลด ${picked.length} ${label}...`);
   try {
     for (let i = 0; i < picked.length; i += 1) {
       const file = picked[i];
-      setUploadMessage(sectionNum, `กำลังอัปโหลด ${i + 1}/${picked.length}: ${file.name}`);
-      const url = await uploadImageFile(file);
-      appendLineToTextarea(`section${sectionNum}Images`, url);
+      setUploadMessage(sectionNum, kind, `กำลังอัปโหลด ${i + 1}/${picked.length}: ${file.name}`);
+      const url = await uploadMediaFile(file, kind);
+      appendLineToTextarea(mediaTextareaId(sectionNum, kind), url);
+      refreshMediaPreview(sectionNum, kind);
     }
-    refreshUploadHint(sectionNum);
+    refreshSectionPreviews(sectionNum);
   } catch (err) {
     console.error(err);
-    setUploadMessage(sectionNum, err.message || 'อัปโหลดรูปไม่สำเร็จ', 'error');
+    setUploadMessage(sectionNum, kind, err.message || `อัปโหลด${label}ไม่สำเร็จ`, 'error');
   } finally {
-    const input = el(`section${sectionNum}ImageFiles`);
+    const input = el(mediaInputId(sectionNum, kind));
     if (input) input.value = '';
   }
 }
@@ -233,6 +317,12 @@ function toYouTubeEmbed(url) {
   }
   return '';
 }
+
+function isDirectVideoUrl(url) {
+  const value = String(url || '').trim();
+  return /^data:video\//i.test(value) || /^blob:/i.test(value) || /\.(mp4|mov|webm|m4v|ogg|ogv)(\?|$)/i.test(value);
+}
+
 
 function buildRichTextHTML(text) {
   const raw = String(text || '').replace(/\r/g, '');
@@ -269,7 +359,7 @@ function renderSectionMedia(section) {
             ${videos.map(url => {
               const yt = toYouTubeEmbed(url);
               if (yt) return `<div class="media-card video-card"><iframe src="${safeHTML(yt)}" title="lesson video" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>`;
-              if (/\.mp4($|\?)/i.test(url)) return `<div class="media-card video-card"><video controls preload="metadata" src="${safeHTML(url)}"></video></div>`;
+              if (isDirectVideoUrl(url)) return `<div class="media-card video-card"><video controls preload="metadata" src="${safeHTML(url)}"></video></div>`;
               return `<a class="media-card video-link-card" href="${safeHTML(url)}" target="_blank" rel="noopener">เปิดวิดีโอ</a>`;
             }).join('')}
           </div>
@@ -863,7 +953,7 @@ function resetEditorForm() {
   el('lessonEditorForm').reset();
   el('editorLessonLevel').value = 'Team';
   el('deleteLessonBtn').classList.add('hidden');
-  [1,2,3,4].forEach(refreshUploadHint);
+  [1,2,3,4].forEach(refreshSectionPreviews);
 }
 
 function openEditor() {
@@ -889,7 +979,7 @@ function fillEditorFromLesson(lesson) {
   });
   el('editorLessonTips').value = (lesson.tips || []).join('\n');
   el('deleteLessonBtn').classList.remove('hidden');
-  [1,2,3,4].forEach(refreshUploadHint);
+  [1,2,3,4].forEach(refreshSectionPreviews);
 }
 
 function openEditorForLesson(lesson) {
@@ -1016,9 +1106,13 @@ el('lessonEditorForm').addEventListener('submit', async e => {
 
 [1,2,3,4].forEach(sectionNum => {
   el(`section${sectionNum}ImageFiles`).addEventListener('change', e => {
-    handleSectionImageUpload(sectionNum, e.target.files);
+    handleSectionMediaUpload(sectionNum, 'image', e.target.files);
   });
-  el(`section${sectionNum}Images`).addEventListener('input', () => refreshUploadHint(sectionNum));
+  el(`section${sectionNum}Images`).addEventListener('input', () => refreshSectionPreviews(sectionNum));
+  el(`section${sectionNum}VideoFiles`).addEventListener('change', e => {
+    handleSectionMediaUpload(sectionNum, 'video', e.target.files);
+  });
+  el(`section${sectionNum}Videos`).addEventListener('input', () => refreshSectionPreviews(sectionNum));
 });
 
 el('demoBtn').addEventListener('click', async () => {
