@@ -258,6 +258,77 @@
     </div>
   </div>
 
+
+  <div id="wineModal" class="modal hidden">
+    <div class="modal-backdrop" data-close-wine="true"></div>
+    <div class="modal-card wine-modal-card">
+      <div class="modal-head">
+        <div>
+          <div class="eyebrow">Wine Reference</div>
+          <h3 id="wineEditorTitle">แก้ไขข้อมูลไวน์</h3>
+          <p id="wineEditorSubtitle" class="small">เติมข้อมูลของขวดที่ยังไม่ครบ แล้วกดบันทึกเพื่อให้ทีมเห็นข้อมูลเดียวกัน</p>
+        </div>
+        <button id="closeWineBtn" class="ghost-btn" type="button">ปิด</button>
+      </div>
+
+      <form id="wineForm" class="editor-form">
+        <div class="wine-preview-box" id="winePreviewBox"></div>
+
+        <div class="editor-grid two-col">
+          <label>ชื่อไวน์
+            <input id="wineName" type="text" placeholder="เช่น Nicolas Feuillatte Brut Reserve">
+          </label>
+          <label>คำอ่าน
+            <input id="winePronunciation" type="text" placeholder="เช่น นิโกลาส เฟยญาต บรูท เรแซร์ฟ">
+          </label>
+        </div>
+
+        <div class="editor-grid two-col">
+          <label>ประเภท / สไตล์
+            <input id="wineCategory" type="text" placeholder="เช่น White / Red / Rosé / Sparkling / Champagne">
+          </label>
+          <label>Vintage / Lot
+            <input id="wineVintage" type="text" placeholder="เช่น 2022 / NV / Varies by lot">
+          </label>
+        </div>
+
+        <div class="editor-grid two-col">
+          <label>แหล่งผลิต / Vineyard
+            <input id="wineVineyard" type="text" placeholder="เช่น Champagne, France">
+          </label>
+          <label>องุ่น
+            <input id="wineGrape" type="text" placeholder="เช่น Chardonnay / Pinot Noir">
+          </label>
+        </div>
+
+        <label>รสชาติ / Tasting note
+          <textarea id="wineTaste" placeholder="เช่น กลิ่นผลไม้ขาว ซิตรัส โครงสร้างสดและสะอาด"></textarea>
+        </label>
+
+        <label>จับคู่อาหาร
+          <textarea id="winePair" placeholder="เช่น Oyster / Seafood / Light appetizer"></textarea>
+        </label>
+
+        <label>วิธีพูดกับแขก
+          <textarea id="wineEn" placeholder="เช่น Crisp and refreshing white wine that works very well with seafood."></textarea>
+        </label>
+
+        <label>ลิงก์รูปขวด (ถ้าต้องการเปลี่ยน)
+          <input id="wineImage" type="url" placeholder="https://... หรือปล่อยว่างเพื่อใช้รูปเดิม">
+        </label>
+
+        <div class="editor-actions">
+          <button type="button" id="resetWineBtn" class="ghost-btn">ล้างข้อมูลที่กรอกเพิ่ม</button>
+          <div class="editor-actions-right">
+            <button type="button" id="cancelWineBtn" class="ghost-btn">ยกเลิก</button>
+            <button type="submit" class="primary-btn" id="saveWineBtn">บันทึกข้อมูลไวน์</button>
+          </div>
+        </div>
+        <p id="wineMsg" class="msg"></p>
+      </form>
+    </div>
+  </div>
+
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>

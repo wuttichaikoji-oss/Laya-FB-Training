@@ -37,6 +37,10 @@ service cloud.firestore {
       allow update, delete: if request.auth != null
         && resource.data.authorId == request.auth.uid;
     }
+
+    match /wine_reference/{wineId} {
+      allow read, write: if request.auth != null;
+    }
   }
 }
 ```
@@ -106,3 +110,10 @@ service firebase.storage {
 6. กดบันทึกบทเรียนตามปกติ
 
 > โหมด Demo จะเก็บไฟล์เป็น data URL ในเครื่องนั้นแทนเพื่อให้ทดลองใช้งานได้ทันที แต่ไฟล์วิดีโอขนาดใหญ่อาจทำให้เบราว์เซอร์หน่วงได้ ควรใช้ไฟล์สั้นหรือบีบอัดก่อน
+
+
+## การแก้ไขข้อมูลไวน์
+เวอร์ชันนี้มีปุ่ม **แก้ไขข้อมูลไวน์** ในหัวข้อ Wine Basic Service แล้ว
+- ข้อมูลที่กรอกเพิ่มจะถูกบันทึกไว้ใน `wine_reference/{wineId}`
+- ผู้ใช้ที่ล็อกอินทุกคนสามารถช่วยกันเติมข้อมูลไวน์ที่ยังไม่ครบได้
+- ถ้าใช้ Demo Mode ระบบจะบันทึกข้อมูลเพิ่มไว้ในเครื่องนี้แทน

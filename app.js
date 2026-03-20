@@ -16,8 +16,114 @@ try { storage = firebase.storage(); } catch (err) { console.warn('Firebase Stora
 
 const baseLessons = window.LESSONS_DATA || [];
 const ENGLISH_DATA = window.ENGLISH_DATA || {};
-const WINE_MEDIA = window.WINE_MEDIA || [];
+const RAW_WINE_MEDIA = window.WINE_MEDIA || [];
 const ENGLISH_ORDER = ['restaurant', 'vegetables', 'fruits', 'orders', 'greeting'];
+
+function imageFileName(path = '') {
+  try {
+    return decodeURIComponent(String(path || '').split('/').pop() || '');
+  } catch (err) {
+    return String(path || '').split('/').pop() || '';
+  }
+}
+
+function titleCaseWord(word) {
+  const raw = String(word || '');
+  if (!raw) return '';
+  const lower = raw.toLowerCase();
+  const lookup = {
+    nv: 'NV',
+    aoc: 'AOC',
+    igp: 'IGP',
+    docg: 'DOCG',
+    doc: 'DOC',
+    brut: 'Brut',
+    rose: 'Rosé',
+    'rosé': 'Rosé',
+    pinot: 'Pinot',
+    riesling: 'Riesling',
+    grigio: 'Grigio',
+    noir: 'Noir',
+    chianti: 'Chianti',
+    margaux: 'Margaux',
+    sauvignon: 'Sauvignon',
+    blanc: 'Blanc'
+  };
+  if (lookup[lower]) return lookup[lower];
+  return raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
+}
+
+function humanizeWineFileName(fileName = '') {
+  let stem = String(fileName || '').replace(/\.[^.]+$/, '').trim();
+  if (!stem) return '';
+  if (/^[a-f0-9]{8,}$/i.test(stem) || /^[0-9a-f_~-]+$/i.test(stem)) return '';
+  stem = stem
+    .replace(/[,_]+/g, ' ')
+    .replace(/[-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!stem || /^[0-9a-f ]{10,}$/i.test(stem)) return '';
+  return stem.split(' ').map(titleCaseWord).join(' ').trim();
+}
+
+function wineNameLooksPlaceholder(name = '') {
+  const value = String(name || '').trim();
+  if (!value) return true;
+  return /unknown label/i.test(value)
+    || /^ขวดยังไม่ตั้งชื่อ/i.test(value)
+    || /^[a-f0-9]{8,}$/i.test(value.replace(/\s+/g, ''))
+    || /^[0-9a-f_-]{10,}$/i.test(value)
+    || /^(18035a|911285|5b7d39|e6db4ea)/i.test(value)
+    || /^[a-z0-9-]{22,}$/i.test(value)
+    || (value.includes('-') && value === value.toLowerCase())
+    || /^[A-Za-z]{18,}\s+Redwine$/i.test(value);
+}
+
+function wineValueIsPlaceholder(value = '') {
+  const text = String(value || '').trim();
+  if (!text || text === '-') return true;
+  return /ดูที่ฉลากขวด|ดูจากฉลากขวด|ข้อมูลจากขวดที่อัปโหลด|ใช้เป็น reference bottle/i.test(text);
+}
+
+function normalizeWineKey(raw = {}, index = 0) {
+  const seed = String(raw.id || raw.name || imageFileName(raw.image) || `wine-${index + 1}`);
+  const normalized = seed
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return normalized || `wine-${index + 1}`;
+}
+
+function normalizeWineItem(raw = {}, index = 0) {
+  const sourceFile = imageFileName(raw.image || '');
+  const fileLabel = humanizeWineFileName(sourceFile);
+  const originalName = String(raw.name || '').trim();
+  const name = (!wineNameLooksPlaceholder(originalName) && originalName)
+    ? originalName
+    : (fileLabel || `ขวดยังไม่ตั้งชื่อ ${index + 1}`);
+  const normalized = {
+    id: normalizeWineKey(raw, index),
+    order: index,
+    sourceFile,
+    image: String(raw.image || '').trim(),
+    category: String(raw.category || 'Wine').trim() || 'Wine',
+    name,
+    pronunciation: String(raw.pronunciation || '').trim(),
+    vintage: String(raw.vintage || '').trim(),
+    vineyard: String(raw.vineyard || '').trim(),
+    taste: String(raw.taste || '').trim(),
+    grape: String(raw.grape || '').trim(),
+    en: String(raw.en || '').trim(),
+    pair: String(raw.pair || '').trim()
+  };
+  normalized.incomplete = wineNameLooksPlaceholder(originalName)
+    || ['pronunciation', 'vintage', 'vineyard', 'taste', 'grape', 'en', 'pair'].some(key => wineValueIsPlaceholder(normalized[key]));
+  return normalized;
+}
+
+const BASE_WINE_MEDIA = RAW_WINE_MEDIA.map((item, index) => normalizeWineItem(item, index));
 
 const defaultUserData = () => ({
   done: [],
@@ -42,6 +148,11 @@ const state = {
   saving: false,
   communityLessons: [],
   communityUnsub: null,
+  wineCatalog: BASE_WINE_MEDIA.slice(),
+  wineOverrides: {},
+  wineUnsub: null,
+  editingWineId: null,
+  savingWine: false,
   editorLessonId: null,
   deletingLesson: false
 };
@@ -56,6 +167,7 @@ const backBtn = el('backBtn');
 const addLessonBtn = el('addLessonBtn');
 const openEditorSecondaryBtn = el('openEditorSecondaryBtn');
 const editorModal = el('editorModal');
+const wineModal = el('wineModal');
 
 function safeHTML(text) {
   return String(text ?? '').replace(/[&<>"']/g, s => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s]));
@@ -94,6 +206,129 @@ function mergeUserData(raw = {}) {
     merged.progress[id].favorite = true;
   });
   return merged;
+}
+
+
+function currentWineList() {
+  return state.wineCatalog.length ? state.wineCatalog : BASE_WINE_MEDIA;
+}
+
+function currentWine() {
+  return currentWineList()[state.currentWineIndex] || currentWineList()[0] || null;
+}
+
+function editableWineValue(key, value = '') {
+  if (key === 'name') return wineNameLooksPlaceholder(value) ? '' : String(value || '').trim();
+  return wineValueIsPlaceholder(value) ? '' : String(value || '').trim();
+}
+
+function mergeWineCatalog(overrides = {}) {
+  state.wineOverrides = overrides && typeof overrides === 'object' ? overrides : {};
+  state.wineCatalog = BASE_WINE_MEDIA.map((base, index) => {
+    const extra = state.wineOverrides[base.id] || {};
+    return normalizeWineItem({
+      ...base,
+      ...extra,
+      id: base.id,
+      image: sanitizeUrl(extra.image || base.image) || base.image
+    }, index);
+  });
+  if (state.currentWineIndex >= state.wineCatalog.length) state.currentWineIndex = 0;
+}
+
+function syncWineViewIfOpen() {
+  if (state.currentLessonId === 'wine-basic') {
+    openLesson('wine-basic', { keepEnglishSearch: true, skipRecord: true });
+  }
+}
+
+function loadDemoWineOverrides() {
+  const raw = JSON.parse(localStorage.getItem('laya_demo_wine_overrides') || '{}');
+  mergeWineCatalog(raw);
+  syncWineViewIfOpen();
+}
+
+function stopWineSubscription() {
+  if (typeof state.wineUnsub === 'function') {
+    state.wineUnsub();
+    state.wineUnsub = null;
+  }
+}
+
+function subscribeWineReference() {
+  stopWineSubscription();
+  if (state.isDemo) {
+    loadDemoWineOverrides();
+    return;
+  }
+  if (!state.user) {
+    mergeWineCatalog({});
+    return;
+  }
+  state.wineUnsub = db.collection('wine_reference').onSnapshot(snapshot => {
+    const overrides = {};
+    snapshot.docs.forEach(doc => {
+      overrides[doc.id] = doc.data() || {};
+    });
+    mergeWineCatalog(overrides);
+    syncWineViewIfOpen();
+  }, err => {
+    console.error(err);
+  });
+}
+
+async function saveWineOverride(wineId, payload) {
+  const data = {
+    ...payload,
+    updatedById: state.user?.uid || 'demo-user',
+    updatedByName: userLabel()
+  };
+  if (state.isDemo) {
+    const raw = JSON.parse(localStorage.getItem('laya_demo_wine_overrides') || '{}');
+    raw[wineId] = {
+      ...(raw[wineId] || {}),
+      ...data,
+      updatedAt: new Date().toISOString()
+    };
+    localStorage.setItem('laya_demo_wine_overrides', JSON.stringify(raw));
+    mergeWineCatalog(raw);
+    syncWineViewIfOpen();
+    return;
+  }
+  await db.collection('wine_reference').doc(wineId).set({
+    ...data,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+}
+
+async function clearWineOverride(wineId) {
+  if (state.isDemo) {
+    const raw = JSON.parse(localStorage.getItem('laya_demo_wine_overrides') || '{}');
+    delete raw[wineId];
+    localStorage.setItem('laya_demo_wine_overrides', JSON.stringify(raw));
+    mergeWineCatalog(raw);
+    syncWineViewIfOpen();
+    return;
+  }
+  await db.collection('wine_reference').doc(wineId).delete();
+}
+
+function attachImageFallback(img, label = 'รูปไม่พร้อมแสดง') {
+  if (!img || img.dataset.boundError) return;
+  img.dataset.boundError = '1';
+  img.addEventListener('error', () => {
+    const wrap = img.parentElement;
+    if (wrap) {
+      wrap.classList.add('img-broken');
+      if (!wrap.querySelector('.img-fallback-label')) {
+        const span = document.createElement('span');
+        span.className = 'img-fallback-label';
+        span.textContent = label;
+        wrap.appendChild(span);
+      }
+    }
+    img.remove();
+  }, { once: true });
 }
 
 function timestampToISO(value) {
@@ -721,21 +956,31 @@ function renderTips(lesson) {
   `;
 }
 
+
 function renderWineDetail(wine) {
   if (!wine) return '<div class="empty-box">ยังไม่มีข้อมูลไวน์</div>';
+  const alert = wine.incomplete
+    ? `<div class="wine-edit-alert">ข้อมูลขวดนี้ยังไม่ครบ กดปุ่ม <strong>แก้ไขข้อมูลไวน์</strong> เพื่อใส่ชื่อไวน์ คำอ่าน และรายละเอียดเพิ่มเติมได้</div>`
+    : '';
+  const updatedText = wine.updatedAt ? `อัปเดตล่าสุด ${safeHTML(formatDate(wine.updatedAt))}` : '';
   return `
     <div class="wine-detail-card">
       <div class="wine-detail-image-wrap">
         <img src="${safeHTML(wine.image)}" alt="${safeHTML(wine.name)}" loading="lazy">
       </div>
       <div class="wine-detail-copy">
-        <div class="tag-row">
-          <span class="tag">${safeHTML(wine.category || 'Wine')}</span>
-          <span class="tag">${safeHTML(wine.vintage || 'NV')}</span>
-          <span class="tag">${safeHTML(wine.vineyard || '-')}</span>
+        <div class="wine-detail-top">
+          <div class="tag-row">
+            <span class="tag">${safeHTML(wine.category || 'Wine')}</span>
+            <span class="tag">${safeHTML(wine.vintage || 'NV')}</span>
+            <span class="tag">${safeHTML(wine.vineyard || '-')}</span>
+            ${wine.incomplete ? '<span class="tag incomplete-tag">ข้อมูลยังไม่ครบ</span>' : ''}
+          </div>
+          <button id="editWineBtn" class="ghost-btn wine-edit-btn" type="button">แก้ไขข้อมูลไวน์</button>
         </div>
         <h4>${safeHTML(wine.name)}</h4>
         <p class="wine-detail-pronounce">คำอ่าน: ${safeHTML(wine.pronunciation || '-')}</p>
+        ${alert}
         <div class="wine-detail-grid">
           <div class="wine-detail-item"><span>องุ่น</span><strong>${safeHTML(wine.grape || '-')}</strong></div>
           <div class="wine-detail-item"><span>สไตล์</span><strong>${safeHTML(wine.category || '-')}</strong></div>
@@ -743,28 +988,31 @@ function renderWineDetail(wine) {
           <div class="wine-detail-item wide"><span>จับคู่อาหาร</span><strong>${safeHTML(wine.pair || '-')}</strong></div>
           <div class="wine-detail-item wide"><span>วิธีพูดกับแขก</span><strong>${safeHTML(wine.en || '-')}</strong></div>
         </div>
+        <div class="mini-meta">${safeHTML(updatedText || `ไฟล์อ้างอิง: ${wine.sourceFile || '-'}`)}</div>
       </div>
     </div>
   `;
 }
 
 function renderWineMedia() {
-  const selected = WINE_MEDIA[state.currentWineIndex] || WINE_MEDIA[0];
+  const wines = currentWineList();
+  const selected = wines[state.currentWineIndex] || wines[0];
   return `
     <section class="wine-box">
       <div class="wine-head wine-head-modern">
         <div>
-          <h3>Wine Reference Bottles (40 ขวด)</h3>
-          <p class="small">รวมรูปขวดไวน์ทั้งหมดที่อัปโหลดไว้ในบทเดียว กดที่ขวดเพื่อเปิดรายละเอียดด้านล่าง ช่วยให้พนักงานจำฉลากและชื่อไวน์ได้ง่ายขึ้น</p>
+          <h3>Wine Reference Bottles (${wines.length} ขวด)</h3>
+          <p class="small">รวมรูปขวดไวน์ทั้งหมดที่อัปโหลดไว้ในบทเดียว กดที่ขวดเพื่อเปิดรายละเอียดด้านล่าง และถ้าข้อมูลยังไม่ครบสามารถกดแก้ไขแล้วบันทึกเข้า Firebase ได้เลย</p>
         </div>
         <div class="wine-hint">แตะรูปขวดเพื่อดูรายละเอียด</div>
       </div>
       <div class="wine-grid">
-        ${WINE_MEDIA.map((wine, index) => `
+        ${wines.map((wine, index) => `
           <button class="wine-tile ${index === state.currentWineIndex ? 'active' : ''}" data-wine-index="${index}" type="button">
             <div class="wine-tile-image">
               <img src="${safeHTML(wine.image)}" alt="${safeHTML(wine.name)}" loading="lazy">
             </div>
+            ${wine.incomplete ? '<div class="wine-tile-status">ต้องเพิ่มข้อมูล</div>' : ''}
             <div class="wine-tile-name">${safeHTML(wine.name)}</div>
             <div class="wine-tile-meta">${safeHTML(wine.category || 'Wine')}</div>
           </button>
@@ -778,16 +1026,28 @@ function renderWineMedia() {
 function bindWineInteractions() {
   const panel = document.getElementById('wineDetailPanel');
   if (!panel) return;
+
+  const wireCurrentDetail = () => {
+    panel.querySelectorAll('.wine-detail-image-wrap img').forEach(img => attachImageFallback(img, 'รูปขวดไม่พร้อมแสดง'));
+    const editBtn = document.getElementById('editWineBtn');
+    if (editBtn) editBtn.onclick = () => openWineEditor(currentWine());
+  };
+
+  readerSection.querySelectorAll('.wine-tile-image img').forEach(img => attachImageFallback(img, 'รูปขวดไม่พร้อมแสดง'));
+
   readerSection.querySelectorAll('[data-wine-index]').forEach(btn => {
     btn.addEventListener('click', () => {
       const index = Number(btn.dataset.wineIndex || 0);
       state.currentWineIndex = index;
-      const wine = WINE_MEDIA[index] || WINE_MEDIA[0];
+      const wine = currentWineList()[index] || currentWineList()[0];
       readerSection.querySelectorAll('[data-wine-index]').forEach(tile => tile.classList.toggle('active', tile === btn));
       panel.innerHTML = renderWineDetail(wine);
+      wireCurrentDetail();
       panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
   });
+
+  wireCurrentDetail();
 }
 
 function recordLessonOpen(id) {
@@ -1072,6 +1332,84 @@ async function deleteCommunityLesson() {
   closeLesson();
 }
 
+
+function fillWineEditor(wine) {
+  if (!wine) return;
+  state.editingWineId = wine.id;
+  el('wineEditorTitle').textContent = `แก้ไขข้อมูลไวน์: ${wine.name}`;
+  el('wineEditorSubtitle').textContent = wine.incomplete
+    ? 'ขวดนี้ยังมีข้อมูลไม่ครบ สามารถเติมชื่อไวน์ คำอ่าน รสชาติ หรือจับคู่อาหาร แล้วกดบันทึกได้เลย'
+    : 'แก้ไขรายละเอียดไวน์ขวดนี้ แล้วกดบันทึกเพื่ออัปเดตคลังความรู้ร่วมกัน';
+  el('wineName').value = editableWineValue('name', wine.name);
+  el('winePronunciation').value = editableWineValue('pronunciation', wine.pronunciation);
+  el('wineCategory').value = editableWineValue('category', wine.category || 'Wine');
+  el('wineVintage').value = editableWineValue('vintage', wine.vintage);
+  el('wineVineyard').value = editableWineValue('vineyard', wine.vineyard);
+  el('wineGrape').value = editableWineValue('grape', wine.grape);
+  el('wineTaste').value = editableWineValue('taste', wine.taste);
+  el('winePair').value = editableWineValue('pair', wine.pair);
+  el('wineEn').value = editableWineValue('en', wine.en);
+  el('wineImage').value = wine.image || '';
+  el('wineMsg').textContent = '';
+  el('winePreviewBox').innerHTML = wine.image
+    ? `<img src="${safeHTML(wine.image)}" alt="${safeHTML(wine.name)}" loading="lazy"><div class="mini-meta">${safeHTML(wine.sourceFile || 'รูปขวดไวน์')}</div>`
+    : '<div class="preview-empty">ยังไม่มีรูปขวดในรายการนี้</div>';
+  el('winePreviewBox').querySelectorAll('img').forEach(img => attachImageFallback(img, 'รูปขวดไม่พร้อมแสดง'));
+}
+
+function openWineEditor(wine) {
+  if (!wine) return;
+  if (!state.isDemo && !state.user) {
+    alert('กรุณาเข้าสู่ระบบก่อนแก้ไขข้อมูลไวน์');
+    return;
+  }
+  fillWineEditor(wine);
+  wineModal.classList.remove('hidden');
+}
+
+function closeWineEditor() {
+  state.editingWineId = null;
+  el('wineForm').reset();
+  el('wineMsg').textContent = '';
+  el('winePreviewBox').innerHTML = '';
+  wineModal.classList.add('hidden');
+}
+
+function buildWinePayload() {
+  const payload = {
+    name: el('wineName').value.trim(),
+    pronunciation: el('winePronunciation').value.trim(),
+    category: el('wineCategory').value.trim() || 'Wine',
+    vintage: el('wineVintage').value.trim(),
+    vineyard: el('wineVineyard').value.trim(),
+    grape: el('wineGrape').value.trim(),
+    taste: el('wineTaste').value.trim(),
+    pair: el('winePair').value.trim(),
+    en: el('wineEn').value.trim(),
+    image: sanitizeUrl(el('wineImage').value.trim()) || ''
+  };
+  if (!payload.image) {
+    const current = currentWine();
+    payload.image = current?.image || '';
+  }
+  return payload;
+}
+
+async function handleWineSave() {
+  if (!state.editingWineId || state.savingWine) return;
+  state.savingWine = true;
+  el('wineMsg').textContent = '';
+  try {
+    const payload = buildWinePayload();
+    await saveWineOverride(state.editingWineId, payload);
+    closeWineEditor();
+  } catch (err) {
+    el('wineMsg').textContent = err.message || 'บันทึกข้อมูลไวน์ไม่สำเร็จ';
+  } finally {
+    state.savingWine = false;
+  }
+}
+
 backBtn.addEventListener('click', closeLesson);
 el('searchInput').addEventListener('input', e => { state.search = e.target.value; renderLessons(); });
 addLessonBtn.addEventListener('click', openEditor);
@@ -1090,6 +1428,30 @@ el('deleteLessonBtn').addEventListener('click', async () => {
   }
 });
 editorModal.querySelectorAll('[data-close-editor="true"]').forEach(node => node.addEventListener('click', closeEditor));
+el('closeWineBtn').addEventListener('click', closeWineEditor);
+el('cancelWineBtn').addEventListener('click', closeWineEditor);
+wineModal.querySelectorAll('[data-close-wine="true"]').forEach(node => node.addEventListener('click', closeWineEditor));
+el('wineImage').addEventListener('input', () => {
+  const url = sanitizeUrl(el('wineImage').value.trim());
+  el('winePreviewBox').innerHTML = url
+    ? `<img src="${safeHTML(url)}" alt="wine preview" loading="lazy"><div class="mini-meta">Preview รูปขวดใหม่</div>`
+    : '<div class="preview-empty">ยังไม่มีรูปใหม่สำหรับขวดนี้</div>';
+  el('winePreviewBox').querySelectorAll('img').forEach(img => attachImageFallback(img, 'รูปขวดไม่พร้อมแสดง'));
+});
+el('resetWineBtn').addEventListener('click', async () => {
+  if (!state.editingWineId) return;
+  if (!confirm('ต้องการล้างข้อมูลที่กรอกเพิ่มของขวดนี้ แล้วกลับไปใช้ข้อมูลตั้งต้นใช่หรือไม่')) return;
+  try {
+    await clearWineOverride(state.editingWineId);
+    closeWineEditor();
+  } catch (err) {
+    el('wineMsg').textContent = err.message || 'ล้างข้อมูลเพิ่มไม่สำเร็จ';
+  }
+});
+el('wineForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  await handleWineSave();
+});
 
 el('lessonEditorForm').addEventListener('submit', async e => {
   e.preventDefault();
@@ -1120,6 +1482,7 @@ el('demoBtn').addEventListener('click', async () => {
   state.user = { uid: 'demo-user', displayName: 'Demo User', email: 'demo@local' };
   await loadUserData();
   subscribeCommunityLessons();
+  subscribeWineReference();
   authView.classList.add('hidden');
   mainView.classList.remove('hidden');
   closeLesson();
@@ -1151,13 +1514,16 @@ el('authForm').addEventListener('submit', async e => {
 
 el('logoutBtn').addEventListener('click', async () => {
   stopCommunitySubscription();
+  stopWineSubscription();
   if (state.isDemo) {
     state.isDemo = false;
     state.user = null;
     state.communityLessons = [];
+    mergeWineCatalog({});
     authView.classList.remove('hidden');
     mainView.classList.add('hidden');
     closeEditor();
+    closeWineEditor();
     return;
   }
   await auth.signOut();
@@ -1165,21 +1531,25 @@ el('logoutBtn').addEventListener('click', async () => {
 
 auth.onAuthStateChanged(async user => {
   stopCommunitySubscription();
+  stopWineSubscription();
   if (user) {
     state.isDemo = false;
     state.user = user;
     await loadUserData();
     subscribeCommunityLessons();
+    subscribeWineReference();
     authView.classList.add('hidden');
     mainView.classList.remove('hidden');
     closeLesson();
   } else if (!state.isDemo) {
     state.user = null;
     state.communityLessons = [];
+    mergeWineCatalog({});
     authView.classList.remove('hidden');
     mainView.classList.add('hidden');
   }
 });
 
 setAuthMode('login');
+mergeWineCatalog({});
 renderLessons();
