@@ -754,8 +754,8 @@ function renderWineMedia() {
     <section class="wine-box">
       <div class="wine-head wine-head-modern">
         <div>
-          <h3>Wine Reference Bottles</h3>
-          <p class="small">โชว์เฉพาะขวดก่อน แล้วกดเพื่อเปิดรายละเอียดด้านล่าง ช่วยให้พนักงานจำฉลากและชื่อไวน์ได้ง่ายขึ้น</p>
+          <h3>Wine Reference Bottles (40 ขวด)</h3>
+          <p class="small">รวมรูปขวดไวน์ทั้งหมดที่อัปโหลดไว้ในบทเดียว กดที่ขวดเพื่อเปิดรายละเอียดด้านล่าง ช่วยให้พนักงานจำฉลากและชื่อไวน์ได้ง่ายขึ้น</p>
         </div>
         <div class="wine-hint">แตะรูปขวดเพื่อดูรายละเอียด</div>
       </div>
