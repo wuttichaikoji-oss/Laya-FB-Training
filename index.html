@@ -54,6 +54,7 @@
         <button id="addLessonBtn" class="primary-btn">+ เพิ่มบทเรียน</button>
         <button id="openQuizBtn" class="ghost-btn">Quiz</button>
         <button id="openAdminQuizBtn" class="ghost-btn hidden">คะแนนทีม</button>
+        <button id="openAdminDashboardBtn" class="ghost-btn hidden">Admin Dashboard</button>
         <button id="logoutBtn" class="ghost-btn">ออกจากระบบ</button>
       </div>
     </header>
@@ -400,7 +401,21 @@
     </div>
     <div id="adminQuizSummary" class="admin-summary-grid"></div>
     <div class="section-box">
-      <h3>ศักยภาพรายคน</h3>
+      <h3>จัดการการสอบ</h3>
+      <div class="admin-toggle-row">
+        <div>
+          <strong id="adminQuizControlStatus">กำลังโหลดสถานะ...</strong>
+          <div class="mini-meta">แอดมินสามารถเปิดหรือปิดการสอบได้ตลอดเวลา</div>
+        </div>
+        <button id="toggleQuizStatusBtn" class="primary-btn" type="button">กำลังโหลด...</button>
+      </div>
+    </div>
+    <div class="section-box">
+      <h3>บัญชีทั้งหมด</h3>
+      <div id="adminAllAccounts" class="admin-user-list"></div>
+    </div>
+    <div class="section-box">
+      <h3>รายงานการอ่านและศักยภาพรายคน</h3>
       <div id="adminQuizUsers" class="admin-user-list"></div>
     </div>
     <div class="section-box">

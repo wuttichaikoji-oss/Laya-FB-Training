@@ -135,3 +135,47 @@ service firebase.storage {
 - เมื่อผู้ใช้ล็อกอินแล้วและเปิดหัวข้อ Wine Basic Service ระบบจะพยายามเพิ่มรายการขวดทั้งหมดเข้า `wine_catalog` ให้อัตโนมัติถ้ายังไม่มี
 - ถ้าต้องการกดเอง สามารถใช้ปุ่ม `เพิ่มรายการส่วนนี้เข้า Firebase` ในหน้า Wine Basic Service ได้
 - ข้อมูลที่ทีมช่วยกันเติม เช่น คำอ่าน รสชาติ การจับคู่อาหาร และวิธีพูดกับแขก จะถูกเก็บใน `wine_reference/{wineId}`
+
+
+ADMIN / QUIZ CONTROL RULES
+เพิ่มส่วนนี้ใน Firestore Rules เพื่อให้ admin/supervisor เปิดหรือปิดการสอบได้ และดูข้อมูลทีมได้
+
+match /app_settings/{docId} {
+  allow read: if request.auth != null;
+  allow create, update, delete: if request.auth != null &&
+    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin'];
+}
+
+match /quiz_attempts/{attemptId} {
+  allow create: if request.auth != null;
+  allow read: if request.auth != null && (
+    resource.data.userUid == request.auth.uid ||
+    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin']
+  );
+  allow update, delete: if request.auth != null &&
+    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin'];
+}
+
+และใน users/{uid} ควรมี role เช่น
+- staff
+- supervisor
+- admin
+
+
+## Admin Dashboard แยกเฉพาะ
+ไฟล์นี้เพิ่มหน้า `admin.html` สำหรับ supervisor/admin โดยเฉพาะ
+- ดูบัญชีทั้งหมด
+- เปิด/ปิดการสอบ
+- ดูรายงานการอ่านของแต่ละไอดี
+- ดูคะแนนสอบและศักยภาพรายคน
+- Export JSON ได้
+
+หน้า `admin.html` ไม่ไปกระทบ flow เดิมของหน้า `index.html`
+
+### Firestore Rules ที่ต้องมีเพิ่มสำหรับ Admin Dashboard
+ถ้าต้องการให้ supervisor/admin เห็นบัญชีทั้งหมดและผลสอบทั้งหมด ควรใช้ rules แบบ role-based
+เพื่อให้:
+- staff เห็นข้อมูลตัวเอง
+- supervisor/admin เห็นข้อมูลรวม
+- supervisor/admin เปิด/ปิดการสอบได้
+

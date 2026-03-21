@@ -279,4 +279,34 @@ textarea{min-height:130px;resize:vertical}
 .admin-user-list,.admin-attempt-list{display:grid;gap:10px}
 .admin-user-card{display:grid;gap:8px}
 .admin-user-skills{display:grid;gap:6px;color:var(--muted);font-size:.94rem}
+.admin-toggle-row{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap}
+.ghost-btn:disabled,.primary-btn:disabled{opacity:.6;cursor:not-allowed}
 @media (max-width:720px){.quiz-setup-grid{grid-template-columns:1fr}.quiz-history-item,.admin-attempt-card{flex-direction:column}}
+
+
+/* Admin Dashboard */
+.admin-page{background:linear-gradient(180deg,#f8fbff,#eef3fb)}
+.admin-layout{display:grid;gap:18px;margin:18px}
+.section-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:12px}
+.section-head h3{margin:0 0 4px}
+.section-head .small{margin:0;color:var(--muted)}
+.admin-table-wrap{overflow:auto}
+.admin-table{width:100%;border-collapse:collapse;font-size:.95rem}
+.admin-table th,.admin-table td{padding:12px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.admin-table th{font-size:.82rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:#f8fbff;position:sticky;top:0}
+.admin-user-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}
+.admin-user-list{display:grid;gap:12px}
+.card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}
+.card-head h4{margin:0 0 4px}
+.status-pill{display:inline-flex;align-items:center;gap:6px;background:var(--soft);border:1px solid #bce7e2;color:var(--brand-dark);padding:8px 10px;border-radius:999px;font-weight:700}
+.attempt-item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
+.attempt-top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:6px}
+.attempt-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
+.attempt-grid div{background:#f8fbff;border:1px solid var(--line);border-radius:12px;padding:10px}
+.attempt-grid span{display:block;color:var(--muted);font-size:.82rem;margin-bottom:4px}
+.admin-summary-grid.compact{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.danger-btn{background:var(--danger);color:#fff;border-color:var(--danger)}
+@media (max-width: 900px){
+  .admin-layout{margin:12px}
+  .admin-table th,.admin-table td{padding:10px 8px;font-size:.9rem}
+}

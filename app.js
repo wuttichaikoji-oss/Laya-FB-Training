@@ -183,7 +183,10 @@ const state = {
   userProfile: null,
   quizBank: [],
   quizSession: null,
-  adminQuizData: []
+  adminQuizData: [],
+  adminUsersData: [],
+  quizEnabled: true,
+  settingsUnsub: null
 };
 
 const el = id => document.getElementById(id);
@@ -871,6 +874,46 @@ function stopCommunitySubscription() {
   }
 }
 
+function stopSettingsSubscription() {
+  if (typeof state.settingsUnsub === 'function') {
+    state.settingsUnsub();
+    state.settingsUnsub = null;
+  }
+}
+
+function subscribeQuizSettings() {
+  stopSettingsSubscription();
+  if (state.isDemo) {
+    const raw = localStorage.getItem('laya_demo_quiz_settings');
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        state.quizEnabled = parsed?.isOpen !== false;
+      } catch (err) {
+        state.quizEnabled = true;
+      }
+    } else {
+      state.quizEnabled = true;
+    }
+    updateHeader();
+    return;
+  }
+  if (!state.user) return;
+  state.settingsUnsub = db.collection('app_settings').doc('quiz_controls').onSnapshot(snap => {
+    const raw = snap.exists ? (snap.data() || {}) : {};
+    state.quizEnabled = raw.isOpen !== false;
+    updateHeader();
+    if (!state.quizEnabled && !isAdminLike() && !quizModal.classList.contains('hidden')) {
+      closeQuizModal();
+      alert('แอดมินปิดการสอบชั่วคราว');
+    }
+  }, err => {
+    console.warn('quiz settings unavailable', err);
+    state.quizEnabled = true;
+    updateHeader();
+  });
+}
+
 function subscribeCommunityLessons() {
   stopCommunitySubscription();
   if (state.isDemo) {
@@ -907,6 +950,14 @@ function updateHeader() {
   el('quizBestStat').textContent = state.userData?.quiz?.bestScore ? `${state.userData.quiz.bestScore}%` : '-';
   const adminBtn = el('openAdminQuizBtn');
   if (adminBtn) adminBtn.classList.toggle('hidden', !isAdminLike());
+  const adminDashboardBtn = el('openAdminDashboardBtn');
+  if (adminDashboardBtn) adminDashboardBtn.classList.toggle('hidden', !isAdminLike());
+  const quizBtn = el('openQuizBtn');
+  if (quizBtn) {
+    const locked = !state.quizEnabled && !isAdminLike();
+    quizBtn.disabled = locked;
+    quizBtn.textContent = locked ? 'Quiz (ปิดชั่วคราว)' : 'Quiz';
+  }
 }
 
 
@@ -1061,6 +1112,10 @@ function quizHistoryHTML() {
 }
 
 function openQuizModal() {
+  if (!state.quizEnabled && !isAdminLike()) {
+    alert('แอดมินปิดการสอบชั่วคราว');
+    return;
+  }
   buildQuizBank();
   el('quizBankCount').textContent = `พร้อมใช้ ${state.quizBank.length} คำถาม`;
   el('quizHistoryBox').innerHTML = quizHistoryHTML();
@@ -1224,48 +1279,156 @@ async function loadAdminQuizDashboard() {
   if (!isAdminLike()) return;
   el('adminQuizMeta').textContent = 'กำลังโหลดข้อมูล...';
   if (state.isDemo) {
+    const quizRaw = localStorage.getItem('laya_demo_quiz_settings');
+    let demoOpen = true;
+    if (quizRaw) {
+      try { demoOpen = JSON.parse(quizRaw)?.isOpen !== false; } catch (err) {}
+    }
+    state.quizEnabled = demoOpen;
+    el('adminQuizControlStatus').textContent = demoOpen ? 'เปิดสอบอยู่' : 'ปิดสอบอยู่';
+    el('toggleQuizStatusBtn').textContent = demoOpen ? 'ปิดการสอบ' : 'เปิดการสอบ';
     el('adminQuizMeta').textContent = 'Demo mode ไม่มีข้อมูลทีมใน Firebase';
-    el('adminQuizSummary').innerHTML = '<div class="empty-box">ไม่มีข้อมูล</div>';
-    el('adminQuizUsers').innerHTML = '<div class="empty-box">ไม่มีข้อมูล</div>';
-    el('adminQuizAttempts').innerHTML = '<div class="empty-box">ไม่มีข้อมูล</div>';
+    el('adminQuizSummary').innerHTML = '<div class="stat-card"><span>โหมด</span><strong>Demo</strong></div>';
+    el('adminAllAccounts').innerHTML = '<div class="empty-box">Demo mode ไม่มีรายชื่อพนักงานทั้งหมด</div>';
+    el('adminQuizUsers').innerHTML = '<div class="empty-box">Demo mode ไม่มีรายงานการอ่านทีม</div>';
+    el('adminQuizAttempts').innerHTML = '<div class="empty-box">Demo mode ไม่มีข้อมูลคะแนนทีม</div>';
     return;
   }
-  const snap = await db.collection('quiz_attempts').orderBy('createdAt', 'desc').limit(200).get();
-  state.adminQuizData = snap.docs.map(doc => ({ id: doc.id, ...(doc.data() || {}) }));
+
+  const [attemptSnap, userSnap, settingSnap] = await Promise.all([
+    db.collection('quiz_attempts').orderBy('createdAt', 'desc').limit(300).get().catch(() => ({ docs: [] })),
+    db.collection('users').orderBy('employeeCodeNorm').limit(500).get().catch(() => ({ docs: [] })),
+    db.collection('app_settings').doc('quiz_controls').get().catch(() => ({ exists: false, data: () => ({}) }))
+  ]);
+
+  state.adminQuizData = (attemptSnap.docs || []).map(doc => ({ id: doc.id, ...(doc.data() || {}) }));
+  state.adminUsersData = (userSnap.docs || []).map(doc => ({ id: doc.id, ...(doc.data() || {}) }));
+  const settings = settingSnap.exists ? (settingSnap.data() || {}) : {};
+  state.quizEnabled = settings.isOpen !== false;
+
+  el('adminQuizControlStatus').textContent = state.quizEnabled ? 'เปิดสอบอยู่' : 'ปิดสอบอยู่';
+  el('toggleQuizStatusBtn').textContent = state.quizEnabled ? 'ปิดการสอบ' : 'เปิดการสอบ';
+
   const attempts = state.adminQuizData;
-  el('adminQuizMeta').textContent = `ดึงข้อมูล ${attempts.length} รายการล่าสุด`;
+  const users = state.adminUsersData;
+  el('adminQuizMeta').textContent = `บัญชี ${users.length} คน · ข้อมูลสอบ ${attempts.length} รายการ`;
+
   const avg = attempts.length ? Math.round(attempts.reduce((s,a)=>s+Number(a.pct||0),0)/attempts.length) : 0;
-  const users = {};
+  const completedReaders = users.filter(u => Array.isArray(u.done) && u.done.length).length;
+  const activeReaders = users.filter(u => Object.keys(u.progress || {}).length || Object.keys(u.englishProgress || {}).length).length;
+  el('adminQuizSummary').innerHTML = `
+    <div class="stat-card"><span>บัญชีทั้งหมด</span><strong>${users.length}</strong></div>
+    <div class="stat-card"><span>ผู้ทำแบบทดสอบ</span><strong>${new Set(attempts.map(a => a.userUid || a.employeeCode || a.userName)).size}</strong></div>
+    <div class="stat-card"><span>คะแนนเฉลี่ยทีม</span><strong>${avg}%</strong></div>
+    <div class="stat-card"><span>ผู้มีความคืบหน้าการอ่าน</span><strong>${activeReaders}</strong></div>
+    <div class="stat-card"><span>อ่านจบอย่างน้อย 1 บท</span><strong>${completedReaders}</strong></div>
+  `;
+
+  const userMap = {};
+  users.forEach(u => {
+    const key = u.id;
+    const lessonProgress = u.progress || {};
+    const englishProgress = u.englishProgress || {};
+    const lessonOpened = Object.values(lessonProgress).reduce((sum, item) => sum + Number(item?.openedCount || 0), 0);
+    const englishOpened = Object.values(englishProgress).reduce((sum, item) => sum + Number(item?.openedCount || 0), 0);
+    const allDates = [];
+    Object.values(lessonProgress).forEach(item => { if (item?.lastOpenedAt) allDates.push(item.lastOpenedAt); if (item?.completedAt) allDates.push(item.completedAt); });
+    Object.values(englishProgress).forEach(item => { if (item?.lastOpenedAt) allDates.push(item.lastOpenedAt); if (item?.completedAt) allDates.push(item.completedAt); });
+    if (u.quiz?.lastAttemptAt) allDates.push(u.quiz.lastAttemptAt);
+    const categoryBuckets = {};
+    userMap[key] = {
+      uid: key,
+      employeeCode: u.employeeCode || '-',
+      displayName: u.displayName || '',
+      role: u.role || 'staff',
+      doneCount: Array.isArray(u.done) ? u.done.length : 0,
+      favoriteCount: Array.isArray(u.favorites) ? u.favorites.length : 0,
+      lessonOpened,
+      englishOpened,
+      totalOpened: lessonOpened + englishOpened,
+      best: Number(u.quiz?.bestScore || 0),
+      latest: Number(u.quiz?.lastScore || 0),
+      attempts: Array.isArray(u.quiz?.attempts) ? u.quiz.attempts.length : 0,
+      lastActivity: allDates.length ? allDates.sort().slice(-1)[0] : '',
+      categories: categoryBuckets
+    };
+  });
+
   attempts.forEach(a => {
-    const key = a.userUid || a.userEmail || a.userName || 'unknown';
-    users[key] ||= { name: a.userName || a.userEmail || key, attempts: 0, best: 0, latest: Number(a.pct || 0), categories: {} };
-    users[key].attempts += 1;
-    users[key].best = Math.max(users[key].best, Number(a.pct||0));
+    const key = a.userUid || '';
+    if (!userMap[key]) {
+      userMap[key] = {
+        uid: key,
+        employeeCode: a.employeeCode || '-',
+        displayName: a.userName || '',
+        role: a.role || 'staff',
+        doneCount: 0,
+        favoriteCount: 0,
+        lessonOpened: 0,
+        englishOpened: 0,
+        totalOpened: 0,
+        best: 0, latest: 0, attempts: 0, lastActivity: '', categories: {}
+      };
+    }
+    userMap[key].best = Math.max(userMap[key].best, Number(a.pct || 0));
+    userMap[key].latest = Math.max(userMap[key].latest, Number(a.pct || 0));
+    userMap[key].attempts += 1;
+    userMap[key].lastActivity = a.createdAt || userMap[key].lastActivity;
     Object.entries(a.categoryStats || {}).forEach(([cat, stat]) => {
-      users[key].categories[cat] ||= { correct: 0, total: 0 };
-      users[key].categories[cat].correct += Number(stat.correct || 0);
-      users[key].categories[cat].total += Number(stat.total || 0);
+      userMap[key].categories[cat] ||= { correct: 0, total: 0 };
+      userMap[key].categories[cat].correct += Number(stat.correct || 0);
+      userMap[key].categories[cat].total += Number(stat.total || 0);
     });
   });
-  const userList = Object.values(users).map(u => {
+
+  const userList = Object.values(userMap).map(u => {
     const ranking = Object.entries(u.categories).map(([cat, stat]) => ({ cat, pct: Math.round((stat.correct / Math.max(stat.total,1))*100) })).sort((a,b)=>b.pct-a.pct);
-    return { ...u, strengths: ranking.slice(0,2).map(x=>`${x.cat} ${x.pct}%`), needs: ranking.slice(-2).map(x=>`${x.cat} ${x.pct}%`) };
-  }).sort((a,b)=>b.best-a.best);
-  el('adminQuizSummary').innerHTML = `
-    <div class="stat-card"><span>ผู้ทำแบบทดสอบ</span><strong>${userList.length}</strong></div>
-    <div class="stat-card"><span>จำนวนครั้งทั้งหมด</span><strong>${attempts.length}</strong></div>
-    <div class="stat-card"><span>คะแนนเฉลี่ยทีม</span><strong>${avg}%</strong></div>
-  `;
+    return {
+      ...u,
+      strengths: ranking.slice(0,2).map(x=>`${x.cat} ${x.pct}%`),
+      needs: ranking.slice(-2).map(x=>`${x.cat} ${x.pct}%`)
+    };
+  }).sort((a,b)=> (b.best || 0) - (a.best || 0) || String(a.employeeCode).localeCompare(String(b.employeeCode)));
+
+  el('adminAllAccounts').innerHTML = userList.length ? userList.map(u => `
+    <div class="admin-user-card">
+      <div><strong>${safeHTML(u.employeeCode || '-')}</strong><div class="mini-meta">${safeHTML(u.displayName || 'ไม่มีชื่อ')} · ${safeHTML(String(u.role || 'staff'))}</div></div>
+      <div class="admin-user-skills"><span><strong>UID:</strong> ${safeHTML(u.uid || '-')}</span><span><strong>สถานะสอบ:</strong> ${u.attempts ? 'เคยสอบ' : 'ยังไม่เคยสอบ'}</span></div>
+    </div>`).join('') : '<div class="empty-box">ยังไม่มีรายชื่อพนักงาน</div>';
+
   el('adminQuizUsers').innerHTML = userList.length ? userList.map(u => `
     <div class="admin-user-card">
-      <div><strong>${safeHTML(u.name)}</strong><div class="mini-meta">ทำ ${u.attempts} ครั้ง · คะแนนสูงสุด ${u.best}%</div></div>
-      <div class="admin-user-skills"><span><strong>เด่น:</strong> ${safeHTML(u.strengths.join(', ') || '-')}</span><span><strong>ควรพัฒนา:</strong> ${safeHTML(u.needs.join(', ') || '-')}</span></div>
-    </div>`).join('') : '<div class="empty-box">ยังไม่มีข้อมูลคะแนนทีม</div>';
-  el('adminQuizAttempts').innerHTML = attempts.length ? attempts.slice(0,30).map(a => `
+      <div><strong>${safeHTML(u.employeeCode || '-')} · ${safeHTML(u.displayName || 'ไม่มีชื่อ')}</strong><div class="mini-meta">บทอ่านจบ ${u.doneCount} · โปรด ${u.favoriteCount} · เปิดอ่าน ${u.totalOpened} ครั้ง · ล่าสุด ${safeHTML(formatDate(u.lastActivity) || '-')}</div></div>
+      <div class="admin-user-skills">
+        <span><strong>เด่น:</strong> ${safeHTML(u.strengths.join(', ') || '-')}</span>
+        <span><strong>ควรพัฒนา:</strong> ${safeHTML(u.needs.join(', ') || '-')}</span>
+        <span><strong>Quiz:</strong> ล่าสุด ${u.latest || 0}% · สูงสุด ${u.best || 0}% · ${u.attempts} ครั้ง</span>
+      </div>
+    </div>`).join('') : '<div class="empty-box">ยังไม่มีรายงานการอ่านทีม</div>';
+
+  el('adminQuizAttempts').innerHTML = attempts.length ? attempts.slice(0,50).map(a => `
     <div class="admin-attempt-card">
-      <strong>${safeHTML(a.userName || a.employeeCode || a.userEmail || 'Unknown')}</strong>
+      <strong>${safeHTML(a.employeeCode || a.userName || a.userEmail || 'Unknown')}</strong>
       <span>${a.score}/${a.total} (${a.pct}%) · ${safeHTML(a.scopeLabel || 'ทุกหัวข้อ')} · ${safeHTML(formatDate(a.createdAt) || '')}</span>
     </div>`).join('') : '<div class="empty-box">ยังไม่มีประวัติการทำ Quiz</div>';
+}
+
+async function toggleQuizAvailability() {
+  if (!isAdminLike()) return;
+  const next = !state.quizEnabled;
+  if (state.isDemo) {
+    state.quizEnabled = next;
+    localStorage.setItem('laya_demo_quiz_settings', JSON.stringify({ isOpen: next, updatedAt: new Date().toISOString() }));
+    updateHeader();
+    await loadAdminQuizDashboard();
+    return;
+  }
+  await db.collection('app_settings').doc('quiz_controls').set({
+    isOpen: next,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedByUid: state.user?.uid || '',
+    updatedByCode: state.userProfile?.employeeCode || ''
+  }, { merge: true });
 }
 
 function openAdminQuizModal() {
@@ -1964,9 +2127,11 @@ el('closeQuizBtn').addEventListener('click', closeQuizModal);
 quizModal.querySelectorAll('[data-close-quiz="true"]').forEach(node => node.addEventListener('click', closeQuizModal));
 el('startQuizBtn').addEventListener('click', startQuizSession);
 el('openAdminQuizBtn').addEventListener('click', openAdminQuizModal);
+el('openAdminDashboardBtn')?.addEventListener('click', () => window.open('admin.html', '_blank'));
 el('closeAdminQuizBtn').addEventListener('click', closeAdminQuizModal);
 adminQuizModal.querySelectorAll('[data-close-admin-quiz="true"]').forEach(node => node.addEventListener('click', closeAdminQuizModal));
 el('refreshAdminQuizBtn').addEventListener('click', () => loadAdminQuizDashboard());
+el('toggleQuizStatusBtn').addEventListener('click', () => toggleQuizAvailability().catch(err => alert(err.message || 'เปลี่ยนสถานะสอบไม่สำเร็จ')));
 el('exportAdminQuizBtn').addEventListener('click', () => {
   const data = JSON.stringify(state.adminQuizData || [], null, 2);
   const blob = new Blob([data], { type: 'application/json' });
@@ -2045,6 +2210,7 @@ el('demoBtn').addEventListener('click', async () => {
   subscribeCommunityLessons();
   subscribeWineCatalog();
   subscribeWineReference();
+  subscribeQuizSettings();
   authView.classList.add('hidden');
   mainView.classList.remove('hidden');
   closeLesson();
@@ -2083,6 +2249,7 @@ el('logoutBtn').addEventListener('click', async () => {
   stopCommunitySubscription();
   stopWineSubscription();
   stopWineCatalogSubscription();
+  stopSettingsSubscription();
   if (state.isDemo) {
     state.isDemo = false;
     state.user = null;
@@ -2105,6 +2272,7 @@ auth.onAuthStateChanged(async user => {
   stopCommunitySubscription();
   stopWineSubscription();
   stopWineCatalogSubscription();
+  stopSettingsSubscription();
   if (user) {
     state.isDemo = false;
     state.user = user;
@@ -2113,6 +2281,7 @@ auth.onAuthStateChanged(async user => {
     subscribeCommunityLessons();
     subscribeWineCatalog();
     subscribeWineReference();
+    subscribeQuizSettings();
     authView.classList.add('hidden');
     mainView.classList.remove('hidden');
     closeLesson();

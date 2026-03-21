@@ -36,3 +36,28 @@ match /quiz_attempts/{attemptId} {
   allow update, delete: if request.auth != null &&
     get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin'];
 }
+
+
+ADMIN / QUIZ CONTROL RULES
+เพิ่มส่วนนี้ใน Firestore Rules เพื่อให้ admin/supervisor เปิดหรือปิดการสอบได้ และดูข้อมูลทีมได้
+
+match /app_settings/{docId} {
+  allow read: if request.auth != null;
+  allow create, update, delete: if request.auth != null &&
+    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin'];
+}
+
+match /quiz_attempts/{attemptId} {
+  allow create: if request.auth != null;
+  allow read: if request.auth != null && (
+    resource.data.userUid == request.auth.uid ||
+    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin']
+  );
+  allow update, delete: if request.auth != null &&
+    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin'];
+}
+
+และใน users/{uid} ควรมี role เช่น
+- staff
+- supervisor
+- admin
