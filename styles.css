@@ -337,3 +337,66 @@ textarea{min-height:130px;resize:vertical}
 
 
 #quizBtn.is-disabled{opacity:.6;cursor:not-allowed;}
+
+
+/* ===== Admin Dashboard polish ===== */
+body.admin-page{background:linear-gradient(180deg,#f7fbff 0%,#eef4fb 100%)}
+.admin-shell{max-width:1400px;margin:0 auto;padding:18px}
+.admin-page .topbar{position:sticky;top:0;border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.88);box-shadow:0 14px 36px rgba(20,32,51,.06);margin-bottom:18px;padding:18px 22px}
+.admin-page .topbar h2{font-size:2rem;line-height:1.1}
+.admin-page .eyebrow{font-weight:700;color:#7c8aa4;letter-spacing:.12em}
+.admin-page .top-actions .ghost-btn,.admin-page .top-actions .primary-btn{min-height:46px;padding:12px 16px;border-radius:14px}
+.admin-page .admin-hero{margin:0 0 18px;border-radius:28px;padding:24px 26px;align-items:stretch;gap:22px}
+.admin-page .admin-hero h3{font-size:1.55rem}
+.admin-page .admin-hero p{max-width:760px;font-size:.98rem}
+.admin-page .stats{display:grid;grid-template-columns:repeat(5,minmax(110px,1fr));gap:12px;align-self:start}
+.admin-page .stat{min-width:0;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.22);padding:14px 16px;border-radius:18px;backdrop-filter:blur(4px)}
+.admin-page .stat span{font-size:.78rem;font-weight:700;letter-spacing:.02em}
+.admin-page .stat strong{font-size:1.35rem;margin-top:6px;display:block}
+.admin-layout{display:grid;gap:18px}
+.admin-page .section-box{margin-top:0;padding:20px 22px;border-radius:24px;box-shadow:0 12px 30px rgba(20,32,51,.05)}
+.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.section-head h3{margin:0;font-size:1.15rem}
+.admin-toggle-row{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,#fbfdff,#f5f9ff)}
+.admin-page #toggleQuizBtn{min-width:180px;min-height:48px;border-radius:14px}
+.admin-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:18px;background:#fbfdff}
+.admin-table{width:100%;border-collapse:separate;border-spacing:0}
+.admin-table thead th{position:sticky;top:0;background:#f5f9ff;color:#72819a;font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;padding:14px 16px;border-bottom:1px solid var(--line);z-index:1}
+.admin-table tbody td{padding:14px 16px;border-bottom:1px solid #eaf0f7;font-size:.95rem;vertical-align:middle}
+.admin-table tbody tr:hover{background:#f9fcff}
+.admin-table tbody tr:last-child td{border-bottom:none}
+.admin-table .tag{display:inline-flex;align-items:center;justify-content:center;min-width:68px;padding:7px 12px;border-radius:999px;font-size:.78rem;font-weight:800}
+.admin-user-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}
+.admin-user-card{border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,#ffffff,#fbfdff);padding:18px;display:grid;gap:14px;box-shadow:0 8px 22px rgba(20,32,51,.05)}
+.admin-user-card .card-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.admin-user-card .card-head h4{margin:0;font-size:1.1rem}
+.status-pill{display:inline-flex;align-items:center;justify-content:center;min-width:78px;padding:8px 12px;border-radius:999px;background:#eefaf8;color:var(--brand-dark);font-weight:800;font-size:.82rem;border:1px solid #bfe9e4}
+.admin-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.admin-summary-grid.compact .stat-card{padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:#fff}
+.stat-card span{display:block;font-size:.78rem;color:var(--muted);margin-bottom:4px}
+.stat-card strong{font-size:1rem;line-height:1.4}
+.quiz-info-box{padding:13px 14px;border-radius:16px;background:#f8fbff;border:1px solid var(--line);line-height:1.65;color:#31415a}
+.admin-attempt-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.attempt-item{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,#fff,#fbfdff);padding:16px;display:grid;gap:10px;box-shadow:0 8px 20px rgba(20,32,51,.04)}
+.attempt-top{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.attempt-top strong{font-size:1.02rem}
+.attempt-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.attempt-grid>div{padding:11px 12px;border-radius:14px;background:#fff;border:1px solid var(--line);display:grid;gap:5px}
+.attempt-grid span{font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.attempt-grid strong{font-size:.92rem;line-height:1.45}
+.admin-page .empty-box{background:#f9fbff}
+@media (max-width: 980px){
+  .admin-page .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .admin-toggle-row{flex-direction:column;align-items:stretch}
+  .admin-page #toggleQuizBtn{width:100%}
+}
+@media (max-width: 720px){
+  .admin-shell{padding:12px}
+  .admin-page .topbar{padding:16px;border-radius:20px}
+  .admin-page .topbar h2{font-size:1.55rem}
+  .admin-page .admin-hero{padding:18px}
+  .admin-page .stats{grid-template-columns:1fr 1fr}
+  .admin-summary-grid,.attempt-grid{grid-template-columns:1fr}
+  .admin-user-list,.admin-attempt-list{grid-template-columns:1fr}
+  .admin-table thead th,.admin-table tbody td{padding:12px 10px;font-size:.88rem}
+}
