@@ -992,9 +992,7 @@ function subscribeQuizSettings() {
 
 function quizSourceOptions() {
   return [
-    { value: 'curated', label: 'คลังข้อสอบหลัก' },
-    { value: 'team', label: 'สร้างจากบทเรียนทีม' },
-    { value: 'smart', label: 'Smart Mix ทุกความรู้' }
+    { value: 'curated', label: 'คลังข้อสอบหลัก (Stable)' }
   ];
 }
 
@@ -1138,16 +1136,23 @@ function buildWineQuestions() {
   return questions;
 }
 
-function generatedQuizBank(sourceMode = 'smart') {
-  const teamLessons = state.communityLessons || [];
-  const coreLessons = baseLessons || [];
-  const teamQs = buildLessonGeneratedQuestions(teamLessons, 'team');
-  const coreQs = buildLessonGeneratedQuestions(coreLessons, 'core');
-  const englishQs = buildEnglishQuestions();
-  const wineQs = buildWineQuestions();
-  if (sourceMode === 'team') return shuffle(teamQs);
-  if (sourceMode === 'curated') return QUIZ_BANK.slice();
-  return shuffle([...QUIZ_BANK, ...teamQs, ...coreQs, ...englishQs, ...wineQs]);
+function generatedQuizBank(sourceMode = 'curated') {
+  try {
+    const curated = Array.isArray(QUIZ_BANK) ? QUIZ_BANK.slice() : [];
+    const normalized = curated.filter(item => item && item.id && item.prompt && Array.isArray(item.choices) && item.choices.length >= 2 && Number.isInteger(item.answer));
+    const deduped = [];
+    const seen = new Set();
+    normalized.forEach(item => {
+      const key = String(item.id || item.prompt || '').trim().toLowerCase();
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+      deduped.push({ ...item, source: 'curated' });
+    });
+    return deduped;
+  } catch (err) {
+    console.error('generatedQuizBank failed', err);
+    return [];
+  }
 }
 
 function buildCategoryAnalytics(quiz) {
@@ -1240,7 +1245,20 @@ window.__openQuizFromInline = function () {
             </div>
           </div>`;
         const startBtn = body.querySelector('#startQuizBtnFallback');
-        if (startBtn) startBtn.addEventListener('click', () => startQuiz('All', 10, 'smart'));
+        if (startBtn) startBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          try {
+            startQuiz('All', 10, 'curated');
+          } catch (quizErr) {
+            console.error('fallback startQuiz failed', quizErr);
+            try {
+              startQuiz('All', 10, 'curated');
+            } catch (curatedErr) {
+              console.error('curated fallback failed', curatedErr);
+              alert('เริ่ม Quiz ไม่สำเร็จ กรุณารีเฟรชหน้าแล้วลองอีกครั้ง');
+            }
+          }
+        });
       }
       modal.classList.remove('hidden');
     } catch (innerErr) {
@@ -1266,7 +1284,7 @@ function renderQuizLauncher() {
   const attempts = state.userData.quizSummary?.attempts || 0;
   const bestScore = Math.round(state.userData.quizSummary?.bestScore || 0);
   const lastScore = Math.round(state.userData.quizSummary?.lastScore || 0);
-  const defaultSource = 'smart';
+  const defaultSource = 'curated';
   const cats = quizCategories(defaultSource);
   body.innerHTML = `
     <div class="quiz-launcher">
@@ -1277,6 +1295,7 @@ function renderQuizLauncher() {
       </div>
       <div class="analysis-note">Smart Analysis Edition จะสร้างคำถามจากบทเรียนทีม, บทเรียนหลัก, English และ Wine เพื่อวัดจุดแข็งรายหมวด</div>
       <div class="quiz-setup-grid">
+        <div class="analysis-note">ระบบใช้คลังข้อสอบหลักแบบคงที่ เพื่อให้ข้อสอบครบจำนวนและไม่ซ้ำในรอบเดียว</div>
         <label>แหล่งคำถาม
           <select id="quizSourceSelect">
             ${quizSourceOptions().map(opt => `<option value="${safeHTML(opt.value)}" ${opt.value === defaultSource ? 'selected' : ''}>${safeHTML(opt.label)}</option>`).join('')}
@@ -1318,31 +1337,62 @@ function renderQuizLauncher() {
   `;
   const sourceSelect = el('quizSourceSelect');
   const categorySelect = el('quizCategorySelect');
+  if (sourceSelect && sourceSelect.options.length <= 1) {
+    sourceSelect.disabled = true;
+  }
   sourceSelect.addEventListener('change', () => {
-    const sourceCats = quizCategories(sourceSelect.value);
+    const sourceCats = quizCategories('curated');
     categorySelect.innerHTML = sourceCats.map(cat => `<option value="${safeHTML(cat)}">${safeHTML(cat === 'All' ? 'สุ่มทุกหมวด' : cat)}</option>`).join('');
   });
-  el('startQuizBtn').addEventListener('click', () => {
-    startQuiz(categorySelect.value, Number(el('quizCountSelect').value || 10), sourceSelect.value);
+  el('startQuizBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    try {
+      startQuiz(categorySelect.value, Number(el('quizCountSelect').value || 10), sourceSelect.value);
+    } catch (err) {
+      console.error('startQuizBtn failed', err);
+      try {
+        startQuiz('All', Number(el('quizCountSelect').value || 10), 'curated');
+      } catch (innerErr) {
+        console.error('startQuizBtn curated fallback failed', innerErr);
+        const quizBody = getQuizBody();
+        if (quizBody) quizBody.innerHTML = `<div class="empty-box">เริ่ม Quiz ไม่สำเร็จ กรุณารีเฟรชหน้าแล้วลองอีกครั้ง</div>`;
+      }
+    }
   });
 }
 
 function startQuiz(category = 'All', count = 10, sourceMode = 'curated') {
-  const bank = generatedQuizBank(sourceMode);
-  const pool = category === 'All' ? bank : bank.filter(item => item.category === category);
-  const selected = shuffle(pool).slice(0, Math.min(count, pool.length));
+  sourceMode = 'curated';
+  const bank = generatedQuizBank('curated');
+  const normalizedBank = (Array.isArray(bank) ? bank : []).filter(item => item && item.prompt && Array.isArray(item.choices) && item.choices.length >= 2 && Number.isInteger(item.answer));
+  const pool = category === 'All' ? normalizedBank : normalizedBank.filter(item => item.category === category);
+  const uniquePool = [];
+  const seen = new Set();
+  pool.forEach(item => {
+    const key = String(item.id || item.prompt || '').trim().toLowerCase();
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    uniquePool.push(item);
+  });
+  const requestedCount = Number(count || 10);
+  const actualCount = Math.min(requestedCount, uniquePool.length);
+  const selected = shuffle(uniquePool).slice(0, actualCount);
+  const body = getQuizBody();
   if (!selected.length) {
-    const body = getQuizBody();
-    if (body) body.innerHTML = `<div class="empty-box">ยังไม่มีคำถามในหมวดนี้</div>`;
+    if (body) body.innerHTML = `<div class="empty-box">ยังไม่มีข้อสอบพร้อมใช้ในคลังข้อสอบหลัก</div>`;
     return;
   }
   state.currentQuiz = {
     category,
     sourceMode,
+    requestedCount,
     questions: selected,
     index: 0,
     answers: []
   };
+  if (body && actualCount < requestedCount) {
+    body.innerHTML = `<div class="analysis-note">คลังข้อสอบในหมวดนี้มีพร้อมใช้ ${actualCount} ข้อ จากที่ขอ ${requestedCount} ข้อ ระบบจะเริ่มสอบด้วยจำนวนข้อที่มีจริง</div>`;
+  }
   renderQuizQuestion();
 }
 
@@ -1445,7 +1495,7 @@ async function finishQuiz() {
     <div class="quiz-result-card">
       <div class="quiz-score-circle ${scorePercent >= 80 ? 'good' : scorePercent >= 60 ? 'mid' : 'low'}">${Math.round(scorePercent)}%</div>
       <h3>สรุปผลแบบทดสอบ</h3>
-      <p>ตอบถูก ${correct} จาก ${total} ข้อ · แหล่งคำถาม: ${safeHTML((quizSourceOptions().find(item => item.value === (quiz.sourceMode || 'curated')) || {}).label || 'คลังข้อสอบหลัก')}</p>
+      <p>ตอบถูก ${correct} จาก ${total} ข้อ · แหล่งคำถาม: ${safeHTML((quizSourceOptions().find(item => item.value === (quiz.sourceMode || 'curated')) || {}).label || 'คลังข้อสอบหลัก (Stable)')}</p>
       <div class="analysis-summary">
         <div><strong>จุดแข็ง:</strong> ${analytics.strengths.length ? analytics.strengths.map(safeHTML).join(', ') : 'ยังไม่มีหมวดที่เด่นชัด'}</div>
         <div><strong>ควรพัฒนา:</strong> ${analytics.focus.length ? analytics.focus.map(safeHTML).join(', ') : 'ทำได้สมดุลดี'}</div>
