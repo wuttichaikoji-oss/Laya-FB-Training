@@ -14,7 +14,7 @@
     <div class="auth-card">
       <div class="logo">Laya</div>
       <h1>Laya F&B Academy</h1>
-      <p class="sub">เวอร์ชันพร้อมอัป GitHub Pages และล็อกอินด้วย Firebase โดยใช้รหัสพนักงาน</p>
+      <p class="sub">เวอร์ชันพร้อมอัป GitHub Pages, ล็อกอินด้วยรหัสพนักงาน และให้ทุกคนเพิ่มบทเรียนเข้าคลังความรู้ทีมได้</p>
 
       <div class="auth-tabs">
         <button class="tab active" data-mode="login">เข้าสู่ระบบ</button>
@@ -38,7 +38,7 @@
       <p id="authMsg" class="msg"></p>
       <div class="tip-box">
         <strong>หมายเหตุ</strong>
-        <p>ระบบนี้ใช้ “รหัสพนักงาน + รหัสผ่าน” แต่จะสร้างอีเมลภายในระบบให้อัตโนมัติบน Firebase หากอัป GitHub Pages แล้วล็อกอินไม่ได้ ให้เพิ่มโดเมน GitHub Pages ของคุณใน Firebase Authentication &gt; Settings &gt; Authorized domains</p>
+        <p>ระบบนี้ใช้ “รหัสพนักงาน + รหัสผ่าน” และทุกคนที่ล็อกอินแล้วสามารถกด “+ เพิ่มบทเรียน” เพื่อเขียนบทเรียนใหม่เข้าคลังความรู้ทีมได้ หากอัป GitHub Pages แล้วล็อกอินไม่ได้ ให้เพิ่มโดเมน GitHub Pages ของคุณใน Firebase Authentication &gt; Settings &gt; Authorized domains</p>
       </div>
     </div>
   </div>
@@ -51,10 +51,9 @@
       </div>
       <div class="top-actions">
         <button id="backBtn" class="ghost-btn hidden">← กลับ</button>
+        <button id="quizBtn" class="ghost-btn">Quiz</button>
         <button id="addLessonBtn" class="primary-btn">+ เพิ่มบทเรียน</button>
-        <button id="openQuizBtn" class="ghost-btn">Quiz</button>
-        <button id="openAdminQuizBtn" class="ghost-btn hidden">คะแนนทีม</button>
-        <button id="openAdminDashboardBtn" class="ghost-btn hidden">Admin Dashboard</button>
+        <button id="adminDashBtn" class="ghost-btn hidden">Admin Dashboard</button>
         <button id="logoutBtn" class="ghost-btn">ออกจากระบบ</button>
       </div>
     </header>
@@ -68,8 +67,8 @@
         <div class="stat"><span>อ่านจบ</span><strong id="doneCount">0</strong></div>
         <div class="stat"><span>โปรด</span><strong id="favCount">0</strong></div>
         <div class="stat"><span>บทเรียนทีม</span><strong id="teamLessonCount">0</strong></div>
+        <div class="stat"><span>Quiz สูงสุด</span><strong id="quizBestScore">0%</strong></div>
         <div class="stat"><span>การบันทึก</span><strong id="syncStatus">-</strong></div>
-        <div class="stat"><span>Quiz สูงสุด</span><strong id="quizBestStat">-</strong></div>
       </div>
     </section>
 
@@ -263,6 +262,22 @@
   </div>
 
 
+
+  <div id="quizModal" class="modal hidden">
+    <div class="modal-backdrop" data-close-quiz="true"></div>
+    <div class="modal-card quiz-modal-card">
+      <div class="modal-head">
+        <div>
+          <div class="eyebrow">Quiz Mode</div>
+          <h3>แบบทดสอบวัดความรู้</h3>
+          <p class="small">สุ่มคำถามจากคลังความรู้เพื่อให้พนักงานฝึกและวัดความเข้าใจได้ทันที</p>
+        </div>
+        <button id="closeQuizBtn" class="ghost-btn">ปิด</button>
+      </div>
+      <div id="quizBody"></div>
+    </div>
+  </div>
+
   <div id="wineModal" class="modal hidden">
     <div class="modal-backdrop" data-close-wine="true"></div>
     <div class="modal-card wine-modal-card">
@@ -334,103 +349,13 @@
     </div>
   </div>
 
-
-<div id="quizModal" class="modal hidden">
-  <div class="modal-backdrop" data-close-quiz="true"></div>
-  <div class="modal-card quiz-modal-card">
-    <div class="modal-head">
-      <div>
-        <div class="eyebrow">Quiz Mode</div>
-        <h3>แบบทดสอบสุ่มจากบทเรียนทั้งหมด</h3>
-        <p class="small">สุ่มคำถามจากไวน์ English: F&B และบทเรียนอื่น ๆ โดยไม่กระทบกับบทเรียนเดิม</p>
-      </div>
-      <button id="closeQuizBtn" class="ghost-btn" type="button">ปิด</button>
-    </div>
-    <div id="quizHome" class="quiz-home">
-      <div class="quiz-setup-grid">
-        <label>จำนวนข้อ
-          <select id="quizCountSelect">
-            <option value="5">5 ข้อ</option>
-            <option value="10" selected>10 ข้อ</option>
-            <option value="15">15 ข้อ</option>
-            <option value="20">20 ข้อ</option>
-          </select>
-        </label>
-        <label>หมวดคำถาม
-          <select id="quizScopeSelect">
-            <option value="all">ทุกหัวข้อ</option>
-            <option value="wine">เฉพาะไวน์</option>
-            <option value="english">เฉพาะ English: F&B</option>
-            <option value="lessons">เฉพาะบทเรียนอื่น ๆ</option>
-          </select>
-        </label>
-      </div>
-      <div class="quiz-info-box">
-        <strong>ระบบจะสุ่มจากข้อมูลจริงในแอป</strong>
-        <p>คำถามไวน์จะดึงจากข้อมูลขวดทั้งหมดในคลัง ส่วนคำถามบทเรียนจะสุ่มจากเนื้อหาในหัวข้อต่าง ๆ และสามารถส่งคะแนนขึ้น Firebase เพื่อให้ admin ดูผลรวมของทีมได้</p>
-      </div>
-      <div class="editor-actions">
-        <div class="mini-meta" id="quizBankCount">กำลังเตรียมคลังคำถาม...</div>
-        <div class="editor-actions-right">
-          <button id="startQuizBtn" class="primary-btn" type="button">เริ่มทำ Quiz</button>
-        </div>
-      </div>
-      <div id="quizHistoryBox" class="quiz-history-box"></div>
-    </div>
-    <div id="quizRunner" class="hidden"></div>
-  </div>
-</div>
-
-<div id="adminQuizModal" class="modal hidden">
-  <div class="modal-backdrop" data-close-admin-quiz="true"></div>
-  <div class="modal-card quiz-modal-card">
-    <div class="modal-head">
-      <div>
-        <div class="eyebrow">Admin Quiz Dashboard</div>
-        <h3>คะแนนและศักยภาพของทีม</h3>
-        <p class="small">ดูคะแนนล่าสุด สรุปจุดแข็งรายคน และส่งออกข้อมูลเพื่อนำไปวิเคราะห์ต่อได้</p>
-      </div>
-      <button id="closeAdminQuizBtn" class="ghost-btn" type="button">ปิด</button>
-    </div>
-    <div class="editor-actions">
-      <div class="mini-meta" id="adminQuizMeta">กำลังโหลดข้อมูล...</div>
-      <div class="editor-actions-right">
-        <button id="refreshAdminQuizBtn" class="ghost-btn" type="button">รีเฟรช</button>
-        <button id="exportAdminQuizBtn" class="primary-btn" type="button">Export JSON</button>
-      </div>
-    </div>
-    <div id="adminQuizSummary" class="admin-summary-grid"></div>
-    <div class="section-box">
-      <h3>จัดการการสอบ</h3>
-      <div class="admin-toggle-row">
-        <div>
-          <strong id="adminQuizControlStatus">กำลังโหลดสถานะ...</strong>
-          <div class="mini-meta">แอดมินสามารถเปิดหรือปิดการสอบได้ตลอดเวลา</div>
-        </div>
-        <button id="toggleQuizStatusBtn" class="primary-btn" type="button">กำลังโหลด...</button>
-      </div>
-    </div>
-    <div class="section-box">
-      <h3>บัญชีทั้งหมด</h3>
-      <div id="adminAllAccounts" class="admin-user-list"></div>
-    </div>
-    <div class="section-box">
-      <h3>รายงานการอ่านและศักยภาพรายคน</h3>
-      <div id="adminQuizUsers" class="admin-user-list"></div>
-    </div>
-    <div class="section-box">
-      <h3>ประวัติการทำล่าสุด</h3>
-      <div id="adminQuizAttempts" class="admin-attempt-list"></div>
-    </div>
-  </div>
-</div>
-
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
   <script src="english-data.js"></script>
   <script src="lessons-data.js"></script>
+  <script src="quiz-data.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

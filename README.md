@@ -137,45 +137,16 @@ service firebase.storage {
 - ข้อมูลที่ทีมช่วยกันเติม เช่น คำอ่าน รสชาติ การจับคู่อาหาร และวิธีพูดกับแขก จะถูกเก็บใน `wine_reference/{wineId}`
 
 
-ADMIN / QUIZ CONTROL RULES
-เพิ่มส่วนนี้ใน Firestore Rules เพื่อให้ admin/supervisor เปิดหรือปิดการสอบได้ และดูข้อมูลทีมได้
-
-match /app_settings/{docId} {
-  allow read: if request.auth != null;
-  allow create, update, delete: if request.auth != null &&
-    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin'];
-}
-
-match /quiz_attempts/{attemptId} {
-  allow create: if request.auth != null;
-  allow read: if request.auth != null && (
-    resource.data.userUid == request.auth.uid ||
-    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin']
-  );
-  allow update, delete: if request.auth != null &&
-    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin'];
-}
-
-และใน users/{uid} ควรมี role เช่น
-- staff
-- supervisor
-- admin
+ล็อกอินเวอร์ชันนี้ใช้ “รหัสพนักงาน + รหัสผ่าน” โดยแอปจะสร้างอีเมลภายในระบบให้อัตโนมัติบน Firebase Authentication เช่น FB001 -> emp.fb001@laya-training.local
 
 
-## Admin Dashboard แยกเฉพาะ
-ไฟล์นี้เพิ่มหน้า `admin.html` สำหรับ supervisor/admin โดยเฉพาะ
-- ดูบัญชีทั้งหมด
-- เปิด/ปิดการสอบ
-- ดูรายงานการอ่านของแต่ละไอดี
-- ดูคะแนนสอบและศักยภาพรายคน
-- Export JSON ได้
+## Team Knowledge
 
-หน้า `admin.html` ไม่ไปกระทบ flow เดิมของหน้า `index.html`
+- ทุกคนที่ล็อกอินแล้วกด “+ เพิ่มบทเรียน” ได้
+- บทเรียนใหม่จะถูกบันทึกใน `community_lessons`
+- เจ้าของบทเรียนแก้ไขและลบของตัวเองได้
 
-### Firestore Rules ที่ต้องมีเพิ่มสำหรับ Admin Dashboard
-ถ้าต้องการให้ supervisor/admin เห็นบัญชีทั้งหมดและผลสอบทั้งหมด ควรใช้ rules แบบ role-based
-เพื่อให้:
-- staff เห็นข้อมูลตัวเอง
-- supervisor/admin เห็นข้อมูลรวม
-- supervisor/admin เปิด/ปิดการสอบได้
 
+## Quiz Mode
+- ปุ่ม **Quiz** ที่หน้าแอปใช้สุ่มคำถามจากคลังความรู้ในระบบ
+- ระบบบันทึกประวัติการทำแบบทดสอบและคะแนนสูงสุดลงใน Firestore ของผู้ใช้แต่ละคน

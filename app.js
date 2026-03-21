@@ -17,6 +17,7 @@ try { storage = firebase.storage(); } catch (err) { console.warn('Firebase Stora
 const baseLessons = window.LESSONS_DATA || [];
 const ENGLISH_DATA = window.ENGLISH_DATA || {};
 const RAW_WINE_MEDIA = window.WINE_MEDIA || [];
+const QUIZ_BANK = window.QUIZ_BANK || [];
 const ENGLISH_ORDER = ['restaurant', 'vegetables', 'fruits', 'orders', 'greeting'];
 
 function imageFileName(path = '') {
@@ -131,9 +132,9 @@ const defaultUserData = () => ({
   notes: {},
   progress: {},
   englishProgress: {},
-  quiz: { attempts: [], bestScore: 0, lastScore: 0, lastAttemptAt: '' }
+  quizHistory: [],
+  quizSummary: { attempts: 0, bestScore: 0, lastScore: 0, byCategory: {} }
 });
-
 
 function normalizeEmployeeCode(raw = '') {
   const value = String(raw || '').trim();
@@ -157,6 +158,7 @@ function employeeCodeFromEmail(email = '') {
 const state = {
   mode: 'login',
   user: null,
+  accountProfile: null,
   isDemo: false,
   userData: defaultUserData(),
   currentLessonId: null,
@@ -180,13 +182,8 @@ const state = {
   savingWine: false,
   editorLessonId: null,
   deletingLesson: false,
-  userProfile: null,
-  quizBank: [],
-  quizSession: null,
-  adminQuizData: [],
-  adminUsersData: [],
-  quizEnabled: true,
-  settingsUnsub: null
+  currentQuiz: null,
+  smartGeneratedQuiz: []
 };
 
 const el = id => document.getElementById(id);
@@ -201,7 +198,6 @@ const openEditorSecondaryBtn = el('openEditorSecondaryBtn');
 const editorModal = el('editorModal');
 const wineModal = el('wineModal');
 const quizModal = el('quizModal');
-const adminQuizModal = el('adminQuizModal');
 
 function safeHTML(text) {
   return String(text ?? '').replace(/[&<>"']/g, s => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s]));
@@ -209,9 +205,9 @@ function safeHTML(text) {
 
 function userLabel() {
   if (state.isDemo) return 'Demo User';
-  return state.userProfile?.displayName
-    || state.user?.displayName
-    || state.userProfile?.employeeCode
+  return state.user?.displayName
+    || state.accountProfile?.displayName
+    || state.accountProfile?.employeeCode
     || employeeCodeFromEmail(state.user?.email)
     || 'พนักงาน';
 }
@@ -235,7 +231,8 @@ function mergeUserData(raw = {}) {
   merged.notes = raw.notes && typeof raw.notes === 'object' ? raw.notes : {};
   merged.progress = raw.progress && typeof raw.progress === 'object' ? raw.progress : {};
   merged.englishProgress = raw.englishProgress && typeof raw.englishProgress === 'object' ? raw.englishProgress : {};
-  merged.quiz = raw.quiz && typeof raw.quiz === 'object' ? { attempts: Array.isArray(raw.quiz.attempts) ? raw.quiz.attempts : [], bestScore: Number(raw.quiz.bestScore || 0), lastScore: Number(raw.quiz.lastScore || 0), lastAttemptAt: raw.quiz.lastAttemptAt || '' } : { attempts: [], bestScore: 0, lastScore: 0, lastAttemptAt: '' };
+  merged.quizHistory = Array.isArray(raw.quizHistory) ? raw.quizHistory : [];
+  merged.quizSummary = raw.quizSummary && typeof raw.quizSummary === 'object' ? raw.quizSummary : { attempts: 0, bestScore: 0, lastScore: 0, byCategory: {} };
 
   merged.done.forEach(id => {
     merged.progress[id] ||= {};
@@ -772,15 +769,17 @@ async function saveUserData(immediate = false) {
       } else if (state.user) {
         await db.collection('users').doc(state.user.uid).set({
           email: state.user.email || '',
-          employeeCode: state.userProfile?.employeeCode || employeeCodeFromEmail(state.user.email),
-          employeeCodeNorm: (state.userProfile?.employeeCode || employeeCodeFromEmail(state.user.email) || '').toUpperCase(),
-          displayName: state.userProfile?.displayName || state.user.displayName || '',
+          displayName: state.user.displayName || state.accountProfile?.displayName || '',
+          employeeCode: state.accountProfile?.employeeCode || employeeCodeFromEmail(state.user.email),
+          employeeCodeNorm: (state.accountProfile?.employeeCode || employeeCodeFromEmail(state.user.email) || '').toUpperCase(),
+          role: state.accountProfile?.role || 'staff',
           done: state.userData.done,
           favorites: state.userData.favorites,
           notes: state.userData.notes,
           progress: state.userData.progress,
           englishProgress: state.userData.englishProgress,
-          quiz: state.userData.quiz,
+          quizHistory: state.userData.quizHistory,
+          quizSummary: state.userData.quizSummary,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
       }
@@ -800,38 +799,17 @@ async function loadUserData() {
     return;
   }
   if (!state.user) return;
-
   const snap = await db.collection('users').doc(state.user.uid).get();
   const raw = snap.exists ? snap.data() : {};
-  state.userProfile = { ...(raw || {}), employeeCode: raw.employeeCode || employeeCodeFromEmail(state.user.email) };
-  state.userData = mergeUserData(raw);
-}
-
-
-async function ensureUserDocument() {
-  if (state.isDemo || !state.user) return;
-  const employeeCode = (state.userProfile?.employeeCode || employeeCodeFromEmail(state.user.email) || '').toUpperCase();
-  const payload = {
-    email: state.user.email || '',
-    employeeCode,
-    employeeCodeNorm: employeeCode,
-    displayName: state.userProfile?.displayName || state.user.displayName || employeeCode || '',
-    role: state.userProfile?.role || 'staff',
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  state.accountProfile = {
+    employeeCode: raw.employeeCode || employeeCodeFromEmail(state.user.email),
+    displayName: raw.displayName || state.user.displayName || '',
+    role: raw.role || 'staff'
   };
-  if (!state.userProfile?.createdAt) {
-    payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+  if (!raw.role && state.user) {
+    db.collection('users').doc(state.user.uid).set({ role: 'staff' }, { merge: true }).catch(() => {});
   }
-  await db.collection('users').doc(state.user.uid).set(payload, { merge: true });
-  state.userProfile = { ...(state.userProfile || {}), ...payload };
-}
-
-function userRole() {
-  return String(state.userProfile?.role || 'staff').toLowerCase();
-}
-
-function isAdminLike() {
-  return ['supervisor', 'admin'].includes(userRole());
+  state.userData = mergeUserData(raw);
 }
 
 function transformCommunityLesson(docId, raw = {}) {
@@ -893,46 +871,6 @@ function stopCommunitySubscription() {
   }
 }
 
-function stopSettingsSubscription() {
-  if (typeof state.settingsUnsub === 'function') {
-    state.settingsUnsub();
-    state.settingsUnsub = null;
-  }
-}
-
-function subscribeQuizSettings() {
-  stopSettingsSubscription();
-  if (state.isDemo) {
-    const raw = localStorage.getItem('laya_demo_quiz_settings');
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        state.quizEnabled = parsed?.isOpen !== false;
-      } catch (err) {
-        state.quizEnabled = true;
-      }
-    } else {
-      state.quizEnabled = true;
-    }
-    updateHeader();
-    return;
-  }
-  if (!state.user) return;
-  state.settingsUnsub = db.collection('app_settings').doc('quiz_controls').onSnapshot(snap => {
-    const raw = snap.exists ? (snap.data() || {}) : {};
-    state.quizEnabled = raw.isOpen !== false;
-    updateHeader();
-    if (!state.quizEnabled && !isAdminLike() && !quizModal.classList.contains('hidden')) {
-      closeQuizModal();
-      alert('แอดมินปิดการสอบชั่วคราว');
-    }
-  }, err => {
-    console.warn('quiz settings unavailable', err);
-    state.quizEnabled = true;
-    updateHeader();
-  });
-}
-
 function subscribeCommunityLessons() {
   stopCommunitySubscription();
   if (state.isDemo) {
@@ -959,508 +897,463 @@ function subscribeCommunityLessons() {
   });
 }
 
-
 function updateHeader() {
-  el('welcomeName').textContent = state.isDemo ? 'Quick Learning (Demo)' : `สวัสดี, ${userLabel()}`;
-  el('doneCount').textContent = String(state.userData.done.length || 0);
-  el('favCount').textContent = String(state.userData.favorites.length || 0);
-  el('teamLessonCount').textContent = String(state.communityLessons.length || 0);
-  el('syncStatus').textContent = state.isDemo ? 'เครื่องนี้' : (state.saving ? 'กำลังบันทึก...' : 'Firebase');
-  el('quizBestStat').textContent = state.userData?.quiz?.bestScore ? `${state.userData.quiz.bestScore}%` : '-';
-  const adminBtn = el('openAdminQuizBtn');
+  el('welcomeName').textContent = userLabel();
+  el('doneCount').textContent = (state.userData.done || []).length;
+  el('favCount').textContent = (state.userData.favorites || []).length;
+  el('teamLessonCount').textContent = state.communityLessons.length;
+  el('quizBestScore').textContent = `${Math.round(state.userData.quizSummary?.bestScore || 0)}%`;
+  const sync = el('syncStatus');
+  if (state.saving) sync.textContent = 'กำลังบันทึก...';
+  else sync.textContent = state.isDemo ? 'บันทึกในเครื่องนี้' : 'บันทึกในบัญชี Firebase';
+  const adminBtn = el('adminDashBtn');
   if (adminBtn) adminBtn.classList.toggle('hidden', !isAdminLike());
-  const adminDashboardBtn = el('openAdminDashboardBtn');
-  if (adminDashboardBtn) adminDashboardBtn.classList.toggle('hidden', !isAdminLike());
-  const quizBtn = el('openQuizBtn');
-  if (quizBtn) {
-    const locked = !state.quizEnabled && !isAdminLike();
-    quizBtn.disabled = locked;
-    quizBtn.textContent = locked ? 'Quiz (ปิดชั่วคราว)' : 'Quiz';
-  }
 }
 
 
 
-function shuffleArray(list = []) {
+function isAdminLike() {
+  return ['admin', 'supervisor'].includes((state.accountProfile?.role || '').toLowerCase());
+}
+
+function quizSourceOptions() {
+  return [
+    { value: 'curated', label: 'คลังข้อสอบหลัก' },
+    { value: 'team', label: 'สร้างจากบทเรียนทีม' },
+    { value: 'smart', label: 'Smart Mix ทุกความรู้' }
+  ];
+}
+
+function uniqueNonEmpty(list = []) {
+  return Array.from(new Set((list || []).map(item => String(item || '').trim()).filter(Boolean)));
+}
+
+function collectLessonFacts(lessons = []) {
+  return lessons.flatMap(lesson => {
+    const facts = [];
+    (lesson.sections || []).forEach(section => {
+      const sectionTitle = String(section.title || '').trim();
+      const contentLines = String(section.content || '')
+        .split(/\n+/)
+        .map(line => line.replace(/^[-•\d\.\)\s]+/, '').trim())
+        .filter(line => line.length > 4);
+      const itemLines = (section.items || []).map(item => String(item || '').replace(/^[-•\d\.\)\s]+/, '').trim()).filter(Boolean);
+      [...contentLines, ...itemLines].forEach(line => {
+        facts.push({
+          lessonId: lesson.id,
+          lessonTitle: lesson.title,
+          category: lesson.category || 'Team Knowledge',
+          sectionTitle: sectionTitle || 'Key Point',
+          value: line
+        });
+      });
+    });
+    return facts;
+  });
+}
+
+function buildLessonGeneratedQuestions(lessons = [], sourceTag = 'team') {
+  const facts = collectLessonFacts(lessons);
+  const allFactValues = uniqueNonEmpty(facts.map(f => f.value));
+  const questions = [];
+  let counter = 1;
+  facts.forEach(fact => {
+    const distractors = uniqueNonEmpty(allFactValues.filter(item => item !== fact.value)).slice(0, 3);
+    if (distractors.length < 3) return;
+    const choices = shuffle([fact.value, ...distractors]).slice(0, 4);
+    questions.push({
+      id: `${sourceTag}-lesson-${counter++}`,
+      category: fact.category || 'Team Knowledge',
+      lessonId: fact.lessonId,
+      prompt: `ข้อใดเป็นข้อมูลที่อยู่ในหัวข้อ "${fact.sectionTitle}" ของบทเรียน "${fact.lessonTitle}"?`,
+      choices,
+      answer: choices.indexOf(fact.value),
+      explanation: `คำตอบมาจากบทเรียน "${fact.lessonTitle}" ในหัวข้อ "${fact.sectionTitle}".`,
+      source: sourceTag
+    });
+  });
+  return questions;
+}
+
+function buildEnglishQuestions() {
+  const questions = [];
+  let counter = 1;
+  Object.entries(ENGLISH_DATA || {}).forEach(([tab, rows]) => {
+    (rows || []).slice(0, 80).forEach(row => {
+      const term = String(row.term || row.word || '').trim();
+      const thai = String(row.thai || row.translation || '').trim();
+      if (!term || !thai) return;
+      const pool = Object.values(ENGLISH_DATA || {}).flat().map(item => String(item.thai || item.translation || '').trim()).filter(Boolean);
+      const distractors = uniqueNonEmpty(pool.filter(item => item !== thai)).slice(0, 3);
+      if (distractors.length < 3) return;
+      const choices = shuffle([thai, ...distractors]).slice(0, 4);
+      questions.push({
+        id: `smart-eng-${counter++}`,
+        category: 'English',
+        lessonId: 'english-fb',
+        prompt: `"${term}" แปลว่าอะไรในงาน F&B?`,
+        choices,
+        answer: choices.indexOf(thai),
+        explanation: `${term} = ${thai}`,
+        source: 'smart'
+      });
+    });
+  });
+  return questions;
+}
+
+function buildWineQuestions() {
+  const wines = currentWineList();
+  const questions = [];
+  let counter = 1;
+  wines.forEach(wine => {
+    const name = String(wine.name || '').trim();
+    if (!name) return;
+    if (wine.grape) {
+      const correct = wine.grape;
+      const distractors = uniqueNonEmpty(wines.map(item => item.grape).filter(Boolean)).filter(item => item !== correct).slice(0, 3);
+      if (distractors.length >= 3) {
+        const choices = shuffle([correct, ...distractors]).slice(0, 4);
+        questions.push({
+          id: `smart-wine-${counter++}`,
+          category: 'Wine',
+          lessonId: 'wine-basic',
+          prompt: `องุ่นหลักของ "${name}" คือข้อใด?`,
+          choices,
+          answer: choices.indexOf(correct),
+          explanation: `${name} ใช้องุ่น ${correct}.`,
+          source: 'smart'
+        });
+      }
+    }
+    if (wine.pair) {
+      const correct = wine.pair;
+      const distractors = uniqueNonEmpty(wines.map(item => item.pair).filter(Boolean)).filter(item => item !== correct).slice(0, 3);
+      if (distractors.length >= 3) {
+        const choices = shuffle([correct, ...distractors]).slice(0, 4);
+        questions.push({
+          id: `smart-wine-${counter++}`,
+          category: 'Wine',
+          lessonId: 'wine-basic',
+          prompt: `"${name}" เหมาะจับคู่กับอาหารแบบใดมากที่สุด?`,
+          choices,
+          answer: choices.indexOf(correct),
+          explanation: `Food pairing ที่แนะนำของ ${name} คือ ${correct}.`,
+          source: 'smart'
+        });
+      }
+    }
+    if (wine.taste) {
+      const correct = wine.taste;
+      const distractors = uniqueNonEmpty(wines.map(item => item.taste).filter(Boolean)).filter(item => item !== correct).slice(0, 3);
+      if (distractors.length >= 3) {
+        const choices = shuffle([correct, ...distractors]).slice(0, 4);
+        questions.push({
+          id: `smart-wine-${counter++}`,
+          category: 'Wine',
+          lessonId: 'wine-basic',
+          prompt: `ลักษณะรสชาติของ "${name}" ใกล้เคียงข้อใดที่สุด?`,
+          choices,
+          answer: choices.indexOf(correct),
+          explanation: `Taste note ของ ${name} คือ ${correct}.`,
+          source: 'smart'
+        });
+      }
+    }
+  });
+  return questions;
+}
+
+function generatedQuizBank(sourceMode = 'smart') {
+  const teamLessons = state.communityLessons || [];
+  const coreLessons = baseLessons || [];
+  const teamQs = buildLessonGeneratedQuestions(teamLessons, 'team');
+  const coreQs = buildLessonGeneratedQuestions(coreLessons, 'core');
+  const englishQs = buildEnglishQuestions();
+  const wineQs = buildWineQuestions();
+  if (sourceMode === 'team') return shuffle(teamQs);
+  if (sourceMode === 'curated') return QUIZ_BANK.slice();
+  return shuffle([...QUIZ_BANK, ...teamQs, ...coreQs, ...englishQs, ...wineQs]);
+}
+
+function buildCategoryAnalytics(quiz) {
+  const map = {};
+  (quiz.answers || []).forEach((ans, idx) => {
+    const q = quiz.questions[idx] || {};
+    const cat = q.category || ans.category || 'General';
+    map[cat] ||= { total: 0, correct: 0 };
+    map[cat].total += 1;
+    if (ans.correct) map[cat].correct += 1;
+  });
+  const rows = Object.entries(map).map(([category, stat]) => ({
+    category,
+    total: stat.total,
+    correct: stat.correct,
+    pct: stat.total ? Math.round((stat.correct / stat.total) * 100) : 0
+  })).sort((a, b) => b.pct - a.pct);
+  return {
+    rows,
+    strengths: rows.filter(r => r.pct >= 80).map(r => r.category).slice(0, 3),
+    focus: rows.filter(r => r.pct < 70).map(r => r.category).slice(0, 3)
+  };
+}
+
+async function saveQuizAttemptRecord(attempt, quiz, analytics) {
+  if (state.isDemo || !state.user) return;
+  try {
+    await db.collection('quiz_attempts').add({
+      userUid: state.user.uid,
+      employeeCode: state.accountProfile?.employeeCode || employeeCodeFromEmail(state.user.email),
+      userName: state.accountProfile?.displayName || state.user.displayName || '',
+      score: attempt.correct,
+      total: attempt.total,
+      pct: Math.round(attempt.scorePercent),
+      category: quiz.category || 'All',
+      sourceMode: quiz.sourceMode || 'curated',
+      generatedFromTeamKnowledge: quiz.sourceMode !== 'curated',
+      strengths: analytics.strengths,
+      focusAreas: analytics.focus,
+      categoryBreakdown: analytics.rows,
+      questionIds: quiz.questions.map(q => q.id),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      completedAt: attempt.completedAt
+    });
+  } catch (err) {
+    console.warn('saveQuizAttemptRecord failed', err);
+  }
+}
+
+function quizCategories(sourceMode = 'curated') {
+  const pool = generatedQuizBank(sourceMode);
+  return ['All', ...Array.from(new Set(pool.map(item => item.category))).sort()];
+}
+
+function shuffle(list = []) {
   const arr = list.slice();
-  for (let i = arr.length - 1; i > 0; i--) {
+  for (let i = arr.length - 1; i > 0; i -= 1) {
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr;
 }
 
-function pickRandom(list = [], count = 1, exclude = []) {
-  const ex = new Set(exclude);
-  return shuffleArray(list.filter(item => !ex.has(item))).slice(0, count);
-}
-
-function normalizeTextSnippet(text = '', max = 140) {
-  const clean = String(text || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-  if (!clean) return '';
-  return clean.length > max ? clean.slice(0, max - 1).trim() + '…' : clean;
-}
-
-function buildQuizBank() {
-  const questions = [];
-  const pushQ = q => {
-    if (!q || !q.prompt || !Array.isArray(q.options) || q.options.length < 2) return;
-    if (q.correctIndex < 0 || q.correctIndex >= q.options.length) return;
-    questions.push({ id: q.id || `q-${questions.length + 1}`, scope: q.scope || 'all', category: q.category || 'General', ...q });
-  };
-
-  Object.entries(ENGLISH_DATA || {}).forEach(([tab, pack]) => {
-    const items = Array.isArray(pack.items) ? pack.items : [];
-    items.forEach((item, idx) => {
-      const wrong = pickRandom(items.map(x => x.meaning), 3, [item.meaning]);
-      const options = shuffleArray([item.meaning, ...wrong]).slice(0, 4);
-      pushQ({
-        id: `eng-${tab}-${idx}`,
-        scope: 'english',
-        category: 'English',
-        prompt: `คำศัพท์ "${item.term}" แปลว่าอะไร`,
-        options,
-        correctIndex: options.indexOf(item.meaning),
-        explanation: `${item.term} อ่านว่า ${item.reading} แปลว่า ${item.meaning}`
-      });
-    });
-  });
-
-  const lessonCandidates = allLessons().filter(lesson => lesson.id !== 'english-fnb' && lesson.id !== 'wine-basic');
-  const lessonTitles = lessonCandidates.map(l => l.title);
-  lessonCandidates.forEach(lesson => {
-    (lesson.sections || []).forEach((section, sIdx) => {
-      const pool = [];
-      if (Array.isArray(section.items)) pool.push(...section.items);
-      if (section.content) pool.push(...splitLines(section.content));
-      pool.filter(Boolean).slice(0, 4).forEach((fact, fIdx) => {
-        const wrong = pickRandom(lessonTitles, 3, [lesson.title]);
-        const options = shuffleArray([lesson.title, ...wrong]).slice(0, 4);
-        pushQ({
-          id: `lesson-${lesson.id}-${sIdx}-${fIdx}`,
-          scope: 'lessons',
-          category: lesson.category || 'Lesson',
-          prompt: `ข้อมูลนี้อยู่ในหัวข้อใด
-
-“${normalizeTextSnippet(fact, 120)}”`,
-          options,
-          correctIndex: options.indexOf(lesson.title),
-          explanation: `ข้อนี้มาจากบท ${lesson.title} → ${section.title || 'หัวข้อย่อย'}`
-        });
-      });
-    });
-    if (lesson.summary) {
-      const wrong = pickRandom(lessonTitles, 3, [lesson.title]);
-      const options = shuffleArray([lesson.title, ...wrong]).slice(0, 4);
-      pushQ({
-        id: `lesson-summary-${lesson.id}`,
-        scope: 'lessons',
-        category: lesson.category || 'Lesson',
-        prompt: `คำอธิบายนี้หมายถึงบทเรียนใด
-
-“${normalizeTextSnippet(lesson.summary, 140)}”`,
-        options,
-        correctIndex: options.indexOf(lesson.title),
-        explanation: `คำอธิบายนี้เป็น summary ของบท ${lesson.title}`
-      });
-    }
-  });
-
-  const wines = currentWineList();
-  wines.forEach((wine, idx) => {
-    const otherNames = wines.filter(w => w.id !== wine.id).map(w => w.name);
-    if (wine.grape && wine.grape !== '-') {
-      const options = shuffleArray([wine.grape, ...pickRandom(wines.map(w => w.grape).filter(Boolean), 3, [wine.grape])]).slice(0, 4);
-      pushQ({
-        id: `wine-grape-${idx}`,
-        scope: 'wine',
-        category: 'Wine',
-        prompt: `ไวน์ ${wine.name} ใช้องุ่นอะไร`,
-        options,
-        correctIndex: options.indexOf(wine.grape),
-        explanation: `${wine.name} ใช้องุ่น ${wine.grape}`
-      });
-    }
-    if (wine.category && wine.category !== '-') {
-      const cats = Array.from(new Set(wines.map(w => w.category).filter(Boolean)));
-      const options = shuffleArray([wine.category, ...pickRandom(cats, 3, [wine.category])]).slice(0, 4);
-      pushQ({
-        id: `wine-cat-${idx}`,
-        scope: 'wine',
-        category: 'Wine',
-        prompt: `${wine.name} เป็นไวน์ประเภทใด`,
-        options,
-        correctIndex: options.indexOf(wine.category),
-        explanation: `${wine.name} จัดอยู่ในกลุ่ม ${wine.category}`
-      });
-    }
-    if (wine.pair && wine.pair !== '-') {
-      const options = shuffleArray([wine.name, ...pickRandom(otherNames, 3, [wine.name])]).slice(0, 4);
-      pushQ({
-        id: `wine-pair-${idx}`,
-        scope: 'wine',
-        category: 'Wine',
-        prompt: `ไวน์ตัวใดเหมาะจับคู่กับอาหารลักษณะนี้
-
-“${normalizeTextSnippet(wine.pair, 120)}”`,
-        options,
-        correctIndex: options.indexOf(wine.name),
-        explanation: `${wine.name} เหมาะจับคู่กับ ${wine.pair}`
-      });
-    }
-  });
-
-  state.quizBank = questions;
-  return questions;
-}
-
-function quizScopedBank(scope = 'all') {
-  const bank = state.quizBank.length ? state.quizBank : buildQuizBank();
-  if (scope === 'all') return bank;
-  return bank.filter(q => q.scope === scope);
-}
-
-function quizHistoryHTML() {
-  const attempts = state.userData?.quiz?.attempts || [];
-  if (!attempts.length) return '<div class="empty-box">ยังไม่มีประวัติการทำ Quiz</div>';
-  return attempts.slice().reverse().slice(0, 5).map(item => `
-    <div class="quiz-history-item">
-      <strong>${item.score}/${item.total} (${item.pct}%)</strong>
-      <span>${safeHTML(item.scopeLabel || 'ทุกหัวข้อ')} · ${safeHTML(formatDate(item.attemptedAt) || '')}</span>
-    </div>`).join('');
-}
-
 function openQuizModal() {
-  if (!state.quizEnabled && !isAdminLike()) {
-    alert('แอดมินปิดการสอบชั่วคราว');
-    return;
-  }
-  buildQuizBank();
-  el('quizBankCount').textContent = `พร้อมใช้ ${state.quizBank.length} คำถาม`;
-  el('quizHistoryBox').innerHTML = quizHistoryHTML();
-  el('quizHome').classList.remove('hidden');
-  el('quizRunner').classList.add('hidden');
+  renderQuizLauncher();
   quizModal.classList.remove('hidden');
 }
 
 function closeQuizModal() {
-  state.quizSession = null;
+  state.currentQuiz = null;
   quizModal.classList.add('hidden');
 }
 
-function startQuizSession() {
-  const count = Number(el('quizCountSelect').value || 10);
-  const scope = el('quizScopeSelect').value || 'all';
-  const bank = quizScopedBank(scope);
-  if (bank.length < 2) {
-    alert('คำถามยังไม่พอสำหรับหมวดนี้');
+function quizStatRow(label, value) {
+  return `<div class="quiz-stat"><span>${safeHTML(label)}</span><strong>${safeHTML(String(value))}</strong></div>`;
+}
+
+function renderQuizLauncher() {
+  const body = el('quizBody');
+  const attempts = state.userData.quizSummary?.attempts || 0;
+  const bestScore = Math.round(state.userData.quizSummary?.bestScore || 0);
+  const lastScore = Math.round(state.userData.quizSummary?.lastScore || 0);
+  const defaultSource = 'smart';
+  const cats = quizCategories(defaultSource);
+  body.innerHTML = `
+    <div class="quiz-launcher">
+      <div class="quiz-stats-grid">
+        ${quizStatRow('ทำไปแล้ว', `${attempts} ครั้ง`)}
+        ${quizStatRow('คะแนนสูงสุด', `${bestScore}%`)}
+        ${quizStatRow('คะแนนล่าสุด', `${lastScore}%`)}
+      </div>
+      <div class="analysis-note">Smart Analysis Edition จะสร้างคำถามจากบทเรียนทีม, บทเรียนหลัก, English และ Wine เพื่อวัดจุดแข็งรายหมวด</div>
+      <div class="quiz-setup-grid">
+        <label>แหล่งคำถาม
+          <select id="quizSourceSelect">
+            ${quizSourceOptions().map(opt => `<option value="${safeHTML(opt.value)}" ${opt.value === defaultSource ? 'selected' : ''}>${safeHTML(opt.label)}</option>`).join('')}
+          </select>
+        </label>
+        <label>หมวดคำถาม
+          <select id="quizCategorySelect">
+            ${cats.map(cat => `<option value="${safeHTML(cat)}">${safeHTML(cat === 'All' ? 'สุ่มทุกหมวด' : cat)}</option>`).join('')}
+          </select>
+        </label>
+        <label>จำนวนข้อ
+          <select id="quizCountSelect">
+            <option value="5">5 ข้อ</option>
+            <option value="10" selected>10 ข้อ</option>
+            <option value="15">15 ข้อ</option>
+            <option value="20">20 ข้อ</option>
+          </select>
+        </label>
+      </div>
+      <div class="quiz-launch-actions">
+        <button id="startQuizBtn" class="primary-btn">Generate & Start Quiz</button>
+      </div>
+      <div class="quiz-history-box">
+        <h4>ประวัติล่าสุด</h4>
+        ${(state.userData.quizHistory || []).length ? `
+          <div class="quiz-history-list">
+            ${(state.userData.quizHistory || []).slice(0, 8).map(item => `
+              <div class="quiz-history-item">
+                <div>
+                  <strong>${safeHTML(item.category || 'All')}</strong>
+                  <div class="mini-meta">${safeHTML(formatDate(item.completedAt) || '-')}</div>
+                </div>
+                <div class="quiz-history-score">${Math.round(item.scorePercent || 0)}%</div>
+              </div>
+            `).join('')}
+          </div>` : `<div class="empty-box">ยังไม่มีประวัติการทำแบบทดสอบ</div>`}
+      </div>
+    </div>
+  `;
+  const sourceSelect = el('quizSourceSelect');
+  const categorySelect = el('quizCategorySelect');
+  sourceSelect.addEventListener('change', () => {
+    const sourceCats = quizCategories(sourceSelect.value);
+    categorySelect.innerHTML = sourceCats.map(cat => `<option value="${safeHTML(cat)}">${safeHTML(cat === 'All' ? 'สุ่มทุกหมวด' : cat)}</option>`).join('');
+  });
+  el('startQuizBtn').addEventListener('click', () => {
+    startQuiz(categorySelect.value, Number(el('quizCountSelect').value || 10), sourceSelect.value);
+  });
+}
+
+function startQuiz(category = 'All', count = 10, sourceMode = 'curated') {
+  const bank = generatedQuizBank(sourceMode);
+  const pool = category === 'All' ? bank : bank.filter(item => item.category === category);
+  const selected = shuffle(pool).slice(0, Math.min(count, pool.length));
+  if (!selected.length) {
+    el('quizBody').innerHTML = `<div class="empty-box">ยังไม่มีคำถามในหมวดนี้</div>`;
     return;
   }
-  state.quizSession = {
-    scope,
-    scopeLabel: el('quizScopeSelect').selectedOptions[0]?.textContent || 'ทุกหัวข้อ',
-    questions: shuffleArray(bank).slice(0, Math.min(count, bank.length)),
-    current: 0,
+  state.currentQuiz = {
+    category,
+    sourceMode,
+    questions: selected,
+    index: 0,
     answers: []
   };
   renderQuizQuestion();
 }
 
 function renderQuizQuestion() {
-  const session = state.quizSession;
-  if (!session) return;
-  if (session.current >= session.questions.length) {
-    renderQuizResult();
-    return;
-  }
-  const q = session.questions[session.current];
-  el('quizHome').classList.add('hidden');
-  const wrap = el('quizRunner');
-  wrap.classList.remove('hidden');
-  wrap.dataset.answered = '0';
-  wrap.innerHTML = `
-    <div class="quiz-progress-row">
-      <div class="tag-row"><span class="tag">${safeHTML(q.category)}</span><span class="tag">ข้อ ${session.current + 1}/${session.questions.length}</span></div>
-      <div class="mini-meta">${safeHTML(session.scopeLabel)}</div>
-    </div>
-    <div class="section-box">
-      <h3 class="quiz-prompt">${safeHTML(q.prompt).replace(/\n/g, '<br>')}</h3>
-      <div class="quiz-options">
-        ${q.options.map((opt, index) => `<button class="quiz-option" data-opt="${index}" type="button">${safeHTML(opt)}</button>`).join('')}
+  const quiz = state.currentQuiz;
+  if (!quiz) return renderQuizLauncher();
+  const q = quiz.questions[quiz.index];
+  const body = el('quizBody');
+  const progressPct = Math.round(((quiz.index + 1) / quiz.questions.length) * 100);
+  body.innerHTML = `
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-head">
+        <span>ข้อ ${quiz.index + 1} / ${quiz.questions.length}</span>
+        <span>${safeHTML(q.category || 'General')}</span>
       </div>
-      <div id="quizFeedback" class="hidden"></div>
+      <div class="quiz-progress-bar"><span style="width:${progressPct}%"></span></div>
     </div>
-    <div class="editor-actions">
-      <button id="cancelQuizRunBtn" class="ghost-btn" type="button">ยกเลิก Quiz</button>
-      <div class="editor-actions-right"><button id="nextQuizBtn" class="primary-btn hidden" type="button">ข้อต่อไป</button></div>
+    <div class="quiz-question-card">
+      <div class="eyebrow">${safeHTML(q.lessonId || 'quiz')}</div>
+      <h3>${safeHTML(q.prompt)}</h3>
+      <div class="quiz-choice-list">
+        ${q.choices.map((choice, idx) => `<button class="quiz-choice-btn" data-choice="${idx}">${String.fromCharCode(65 + idx)}. ${safeHTML(choice)}</button>`).join('')}
+      </div>
     </div>
   `;
-  wrap.querySelectorAll('[data-opt]').forEach(btn => btn.addEventListener('click', () => {
-    if (wrap.dataset.answered === '1') return;
-    wrap.dataset.answered = '1';
-    const chosen = Number(btn.dataset.opt);
-    const correct = chosen === q.correctIndex;
-    session.answers.push({ questionId: q.id, category: q.category, correct, chosenIndex: chosen, correctIndex: q.correctIndex });
-    wrap.querySelectorAll('[data-opt]').forEach(node => {
-      const idx = Number(node.dataset.opt);
-      node.disabled = true;
-      node.classList.toggle('correct', idx === q.correctIndex);
-      node.classList.toggle('wrong', idx === chosen && idx !== q.correctIndex);
-    });
-    const feedback = el('quizFeedback');
-    feedback.classList.remove('hidden');
-    feedback.className = `quiz-feedback ${correct ? 'ok' : 'bad'}`;
-    feedback.innerHTML = `<strong>${correct ? 'ตอบถูก' : 'ยังไม่ถูก'}</strong><div>${safeHTML(q.explanation || '')}</div>`;
-    el('nextQuizBtn').classList.remove('hidden');
+  body.querySelectorAll('[data-choice]').forEach(btn => btn.addEventListener('click', () => {
+    submitQuizAnswer(Number(btn.dataset.choice));
   }));
-  el('nextQuizBtn').onclick = () => { session.current += 1; renderQuizQuestion(); };
-  el('cancelQuizRunBtn').onclick = closeQuizModal;
 }
 
-async function saveQuizAttempt(result) {
-  state.userData.quiz ||= { attempts: [], bestScore: 0, lastScore: 0, lastAttemptAt: '' };
-  state.userData.quiz.attempts = [...state.userData.quiz.attempts.slice(-9), result];
-  state.userData.quiz.lastScore = result.pct;
-  state.userData.quiz.bestScore = Math.max(Number(state.userData.quiz.bestScore || 0), result.pct);
-  state.userData.quiz.lastAttemptAt = result.attemptedAt;
-  await saveUserData(true);
-  if (state.isDemo || !state.user) return;
-  await db.collection('quiz_attempts').add({
-    userUid: state.user.uid,
-    userName: userLabel(),
-    userEmail: state.user.email || '',
-    employeeCode: state.userProfile?.employeeCode || '',
-    role: userRole(),
-    scope: result.scope,
-    scopeLabel: result.scopeLabel,
-    score: result.score,
-    total: result.total,
-    pct: result.pct,
-    categoryStats: result.categoryStats,
-    strengths: result.strengths,
-    weaknesses: result.weaknesses,
-    answers: result.answers,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+function submitQuizAnswer(choiceIndex) {
+  const quiz = state.currentQuiz;
+  if (!quiz) return;
+  const q = quiz.questions[quiz.index];
+  const correct = choiceIndex === q.answer;
+  quiz.answers.push({ questionId: q.id, choiceIndex, correct, category: q.category });
+  const body = el('quizBody');
+  body.innerHTML = `
+    <div class="quiz-feedback-card ${correct ? 'correct' : 'wrong'}">
+      <div class="quiz-feedback-badge">${correct ? 'ตอบถูก' : 'ยังไม่ถูก'}</div>
+      <h3>${safeHTML(q.prompt)}</h3>
+      <div class="quiz-answer-line"><strong>คำตอบที่ถูก:</strong> ${safeHTML(q.choices[q.answer])}</div>
+      <p>${safeHTML(q.explanation || '')}</p>
+      <div class="quiz-launch-actions">
+        <button id="nextQuizBtn" class="primary-btn">${quiz.index === quiz.questions.length - 1 ? 'ดูผลคะแนน' : 'ข้อต่อไป'}</button>
+      </div>
+    </div>
+  `;
+  el('nextQuizBtn').addEventListener('click', async () => {
+    quiz.index += 1;
+    if (quiz.index >= quiz.questions.length) {
+      await finishQuiz();
+    } else {
+      renderQuizQuestion();
+    }
   });
 }
 
-async function renderQuizResult() {
-  const session = state.quizSession;
-  const total = session.questions.length;
-  const score = session.answers.filter(a => a.correct).length;
-  const pct = Math.round((score / Math.max(total, 1)) * 100);
-  const grouped = {};
-  session.answers.forEach(a => {
-    grouped[a.category] ||= { correct: 0, total: 0 };
-    grouped[a.category].total += 1;
-    if (a.correct) grouped[a.category].correct += 1;
-  });
-  const categoryStats = Object.fromEntries(Object.entries(grouped).map(([k,v]) => [k, { ...v, pct: Math.round((v.correct / Math.max(v.total,1))*100) }]));
-  const sortedCats = Object.entries(categoryStats).sort((a,b)=> b[1].pct - a[1].pct);
-  const result = {
-    scope: session.scope,
-    scopeLabel: session.scopeLabel,
-    score,
+async function finishQuiz() {
+  const quiz = state.currentQuiz;
+  if (!quiz) return;
+  const total = quiz.questions.length;
+  const correct = quiz.answers.filter(item => item.correct).length;
+  const scorePercent = total ? (correct / total) * 100 : 0;
+  const completedAt = new Date().toISOString();
+  const analytics = buildCategoryAnalytics(quiz);
+  const attempt = {
+    id: `${Date.now()}`,
+    category: quiz.category,
+    sourceMode: quiz.sourceMode || 'curated',
     total,
-    pct,
-    answers: session.answers,
-    categoryStats,
-    strengths: sortedCats.slice(0,2).map(([k]) => k),
-    weaknesses: sortedCats.slice(-2).map(([k]) => k),
-    attemptedAt: new Date().toISOString()
+    correct,
+    scorePercent,
+    strengths: analytics.strengths,
+    focusAreas: analytics.focus,
+    categoryBreakdown: analytics.rows,
+    completedAt
   };
-  try {
-    await saveQuizAttempt(result);
-  } catch (err) {
-    console.error('saveQuizAttempt failed', err);
-  }
-  const wrap = el('quizRunner');
-  wrap.innerHTML = `
-    <div class="section-box">
-      <h3>สรุปผล Quiz</h3>
-      <div class="quiz-result-score">${score}/${total} <span>${pct}%</span></div>
-      <div class="admin-summary-grid">
-        ${Object.entries(categoryStats).map(([cat, stat]) => `<div class="stat-card"><span>${safeHTML(cat)}</span><strong>${stat.correct}/${stat.total}</strong><div class="mini-meta">${stat.pct}%</div></div>`).join('')}
+  state.userData.quizHistory = [attempt, ...(state.userData.quizHistory || [])].slice(0, 20);
+  const summary = state.userData.quizSummary || { attempts: 0, bestScore: 0, lastScore: 0, byCategory: {} };
+  summary.attempts = (summary.attempts || 0) + 1;
+  summary.bestScore = Math.max(summary.bestScore || 0, scorePercent);
+  summary.lastScore = scorePercent;
+  summary.byCategory ||= {};
+  const key = quiz.category || 'All';
+  const cat = summary.byCategory[key] || { attempts: 0, bestScore: 0, lastScore: 0 };
+  cat.attempts += 1;
+  cat.bestScore = Math.max(cat.bestScore || 0, scorePercent);
+  cat.lastScore = scorePercent;
+  summary.byCategory[key] = cat;
+  state.userData.quizSummary = summary;
+  await saveUserData(true);
+  await saveQuizAttemptRecord(attempt, quiz, analytics);
+
+  const body = el('quizBody');
+  body.innerHTML = `
+    <div class="quiz-result-card">
+      <div class="quiz-score-circle ${scorePercent >= 80 ? 'good' : scorePercent >= 60 ? 'mid' : 'low'}">${Math.round(scorePercent)}%</div>
+      <h3>สรุปผลแบบทดสอบ</h3>
+      <p>ตอบถูก ${correct} จาก ${total} ข้อ · แหล่งคำถาม: ${safeHTML((quizSourceOptions().find(item => item.value === (quiz.sourceMode || 'curated')) || {}).label || 'คลังข้อสอบหลัก')}</p>
+      <div class="analysis-summary">
+        <div><strong>จุดแข็ง:</strong> ${analytics.strengths.length ? analytics.strengths.map(safeHTML).join(', ') : 'ยังไม่มีหมวดที่เด่นชัด'}</div>
+        <div><strong>ควรพัฒนา:</strong> ${analytics.focus.length ? analytics.focus.map(safeHTML).join(', ') : 'ทำได้สมดุลดี'}</div>
       </div>
-      <div class="quiz-info-box"><strong>จุดเด่น:</strong> ${safeHTML(result.strengths.join(', ') || '-')}<br><strong>ควรพัฒนาเพิ่ม:</strong> ${safeHTML(result.weaknesses.join(', ') || '-')}</div>
-    </div>
-    <div class="editor-actions">
-      <button id="quizBackHomeBtn" class="ghost-btn" type="button">กลับหน้า Quiz</button>
-      <div class="editor-actions-right"><button id="quizRetryBtn" class="primary-btn" type="button">สุ่มใหม่อีกครั้ง</button></div>
+      <div class="category-breakdown">
+        ${analytics.rows.map(row => `<div class="category-pill"><span>${safeHTML(row.category)}</span><strong>${row.correct}/${row.total} · ${row.pct}%</strong></div>`).join('')}
+      </div>
+      <div class="quiz-result-actions">
+        <button id="retryQuizBtn" class="primary-btn">สุ่มชุดใหม่อีกครั้ง</button>
+        <button id="backQuizHomeBtn" class="ghost-btn">กลับหน้าหลัก Quiz</button>
+      </div>
+      <div class="quiz-review-list">
+        ${quiz.questions.map((q, idx) => {
+          const ans = quiz.answers[idx];
+          return `<div class="quiz-review-item ${ans.correct ? 'correct' : 'wrong'}"><strong>ข้อ ${idx + 1}:</strong> ${safeHTML(q.prompt)}<br><span>${ans.correct ? '✓ ถูก' : '✗ ผิด'} · คำตอบที่ถูก: ${safeHTML(q.choices[q.answer])}</span></div>`;
+        }).join('')}
+      </div>
     </div>
   `;
-  el('quizBackHomeBtn').onclick = openQuizModal;
-  el('quizRetryBtn').onclick = startQuizSession;
+  el('retryQuizBtn').addEventListener('click', () => startQuiz(quiz.category, total));
+  el('backQuizHomeBtn').addEventListener('click', renderQuizLauncher);
   updateHeader();
-}
-
-async function loadAdminQuizDashboard() {
-  if (!isAdminLike()) return;
-  el('adminQuizMeta').textContent = 'กำลังโหลดข้อมูล...';
-  if (state.isDemo) {
-    const quizRaw = localStorage.getItem('laya_demo_quiz_settings');
-    let demoOpen = true;
-    if (quizRaw) {
-      try { demoOpen = JSON.parse(quizRaw)?.isOpen !== false; } catch (err) {}
-    }
-    state.quizEnabled = demoOpen;
-    el('adminQuizControlStatus').textContent = demoOpen ? 'เปิดสอบอยู่' : 'ปิดสอบอยู่';
-    el('toggleQuizStatusBtn').textContent = demoOpen ? 'ปิดการสอบ' : 'เปิดการสอบ';
-    el('adminQuizMeta').textContent = 'Demo mode ไม่มีข้อมูลทีมใน Firebase';
-    el('adminQuizSummary').innerHTML = '<div class="stat-card"><span>โหมด</span><strong>Demo</strong></div>';
-    el('adminAllAccounts').innerHTML = '<div class="empty-box">Demo mode ไม่มีรายชื่อพนักงานทั้งหมด</div>';
-    el('adminQuizUsers').innerHTML = '<div class="empty-box">Demo mode ไม่มีรายงานการอ่านทีม</div>';
-    el('adminQuizAttempts').innerHTML = '<div class="empty-box">Demo mode ไม่มีข้อมูลคะแนนทีม</div>';
-    return;
-  }
-
-  const [attemptSnap, userSnap, settingSnap] = await Promise.all([
-    db.collection('quiz_attempts').orderBy('createdAt', 'desc').limit(300).get().catch(() => ({ docs: [] })),
-    db.collection('users').orderBy('employeeCodeNorm').limit(500).get().catch(() => ({ docs: [] })),
-    db.collection('app_settings').doc('quiz_controls').get().catch(() => ({ exists: false, data: () => ({}) }))
-  ]);
-
-  state.adminQuizData = (attemptSnap.docs || []).map(doc => ({ id: doc.id, ...(doc.data() || {}) }));
-  state.adminUsersData = (userSnap.docs || []).map(doc => ({ id: doc.id, ...(doc.data() || {}) }));
-  const settings = settingSnap.exists ? (settingSnap.data() || {}) : {};
-  state.quizEnabled = settings.isOpen !== false;
-
-  el('adminQuizControlStatus').textContent = state.quizEnabled ? 'เปิดสอบอยู่' : 'ปิดสอบอยู่';
-  el('toggleQuizStatusBtn').textContent = state.quizEnabled ? 'ปิดการสอบ' : 'เปิดการสอบ';
-
-  const attempts = state.adminQuizData;
-  const users = state.adminUsersData;
-  el('adminQuizMeta').textContent = `บัญชี ${users.length} คน · ข้อมูลสอบ ${attempts.length} รายการ`;
-
-  const avg = attempts.length ? Math.round(attempts.reduce((s,a)=>s+Number(a.pct||0),0)/attempts.length) : 0;
-  const completedReaders = users.filter(u => Array.isArray(u.done) && u.done.length).length;
-  const activeReaders = users.filter(u => Object.keys(u.progress || {}).length || Object.keys(u.englishProgress || {}).length).length;
-  el('adminQuizSummary').innerHTML = `
-    <div class="stat-card"><span>บัญชีทั้งหมด</span><strong>${users.length}</strong></div>
-    <div class="stat-card"><span>ผู้ทำแบบทดสอบ</span><strong>${new Set(attempts.map(a => a.userUid || a.employeeCode || a.userName)).size}</strong></div>
-    <div class="stat-card"><span>คะแนนเฉลี่ยทีม</span><strong>${avg}%</strong></div>
-    <div class="stat-card"><span>ผู้มีความคืบหน้าการอ่าน</span><strong>${activeReaders}</strong></div>
-    <div class="stat-card"><span>อ่านจบอย่างน้อย 1 บท</span><strong>${completedReaders}</strong></div>
-  `;
-
-  const userMap = {};
-  users.forEach(u => {
-    const key = u.id;
-    const lessonProgress = u.progress || {};
-    const englishProgress = u.englishProgress || {};
-    const lessonOpened = Object.values(lessonProgress).reduce((sum, item) => sum + Number(item?.openedCount || 0), 0);
-    const englishOpened = Object.values(englishProgress).reduce((sum, item) => sum + Number(item?.openedCount || 0), 0);
-    const allDates = [];
-    Object.values(lessonProgress).forEach(item => { if (item?.lastOpenedAt) allDates.push(item.lastOpenedAt); if (item?.completedAt) allDates.push(item.completedAt); });
-    Object.values(englishProgress).forEach(item => { if (item?.lastOpenedAt) allDates.push(item.lastOpenedAt); if (item?.completedAt) allDates.push(item.completedAt); });
-    if (u.quiz?.lastAttemptAt) allDates.push(u.quiz.lastAttemptAt);
-    const categoryBuckets = {};
-    userMap[key] = {
-      uid: key,
-      employeeCode: u.employeeCode || '-',
-      displayName: u.displayName || '',
-      role: u.role || 'staff',
-      doneCount: Array.isArray(u.done) ? u.done.length : 0,
-      favoriteCount: Array.isArray(u.favorites) ? u.favorites.length : 0,
-      lessonOpened,
-      englishOpened,
-      totalOpened: lessonOpened + englishOpened,
-      best: Number(u.quiz?.bestScore || 0),
-      latest: Number(u.quiz?.lastScore || 0),
-      attempts: Array.isArray(u.quiz?.attempts) ? u.quiz.attempts.length : 0,
-      lastActivity: allDates.length ? allDates.sort().slice(-1)[0] : '',
-      categories: categoryBuckets
-    };
-  });
-
-  attempts.forEach(a => {
-    const key = a.userUid || '';
-    if (!userMap[key]) {
-      userMap[key] = {
-        uid: key,
-        employeeCode: a.employeeCode || '-',
-        displayName: a.userName || '',
-        role: a.role || 'staff',
-        doneCount: 0,
-        favoriteCount: 0,
-        lessonOpened: 0,
-        englishOpened: 0,
-        totalOpened: 0,
-        best: 0, latest: 0, attempts: 0, lastActivity: '', categories: {}
-      };
-    }
-    userMap[key].best = Math.max(userMap[key].best, Number(a.pct || 0));
-    userMap[key].latest = Math.max(userMap[key].latest, Number(a.pct || 0));
-    userMap[key].attempts += 1;
-    userMap[key].lastActivity = a.createdAt || userMap[key].lastActivity;
-    Object.entries(a.categoryStats || {}).forEach(([cat, stat]) => {
-      userMap[key].categories[cat] ||= { correct: 0, total: 0 };
-      userMap[key].categories[cat].correct += Number(stat.correct || 0);
-      userMap[key].categories[cat].total += Number(stat.total || 0);
-    });
-  });
-
-  const userList = Object.values(userMap).map(u => {
-    const ranking = Object.entries(u.categories).map(([cat, stat]) => ({ cat, pct: Math.round((stat.correct / Math.max(stat.total,1))*100) })).sort((a,b)=>b.pct-a.pct);
-    return {
-      ...u,
-      strengths: ranking.slice(0,2).map(x=>`${x.cat} ${x.pct}%`),
-      needs: ranking.slice(-2).map(x=>`${x.cat} ${x.pct}%`)
-    };
-  }).sort((a,b)=> (b.best || 0) - (a.best || 0) || String(a.employeeCode).localeCompare(String(b.employeeCode)));
-
-  el('adminAllAccounts').innerHTML = userList.length ? userList.map(u => `
-    <div class="admin-user-card">
-      <div><strong>${safeHTML(u.employeeCode || '-')}</strong><div class="mini-meta">${safeHTML(u.displayName || 'ไม่มีชื่อ')} · ${safeHTML(String(u.role || 'staff'))}</div></div>
-      <div class="admin-user-skills"><span><strong>UID:</strong> ${safeHTML(u.uid || '-')}</span><span><strong>สถานะสอบ:</strong> ${u.attempts ? 'เคยสอบ' : 'ยังไม่เคยสอบ'}</span></div>
-    </div>`).join('') : '<div class="empty-box">ยังไม่มีรายชื่อพนักงาน</div>';
-
-  el('adminQuizUsers').innerHTML = userList.length ? userList.map(u => `
-    <div class="admin-user-card">
-      <div><strong>${safeHTML(u.employeeCode || '-')} · ${safeHTML(u.displayName || 'ไม่มีชื่อ')}</strong><div class="mini-meta">บทอ่านจบ ${u.doneCount} · โปรด ${u.favoriteCount} · เปิดอ่าน ${u.totalOpened} ครั้ง · ล่าสุด ${safeHTML(formatDate(u.lastActivity) || '-')}</div></div>
-      <div class="admin-user-skills">
-        <span><strong>เด่น:</strong> ${safeHTML(u.strengths.join(', ') || '-')}</span>
-        <span><strong>ควรพัฒนา:</strong> ${safeHTML(u.needs.join(', ') || '-')}</span>
-        <span><strong>Quiz:</strong> ล่าสุด ${u.latest || 0}% · สูงสุด ${u.best || 0}% · ${u.attempts} ครั้ง</span>
-      </div>
-    </div>`).join('') : '<div class="empty-box">ยังไม่มีรายงานการอ่านทีม</div>';
-
-  el('adminQuizAttempts').innerHTML = attempts.length ? attempts.slice(0,50).map(a => `
-    <div class="admin-attempt-card">
-      <strong>${safeHTML(a.employeeCode || a.userName || a.userEmail || 'Unknown')}</strong>
-      <span>${a.score}/${a.total} (${a.pct}%) · ${safeHTML(a.scopeLabel || 'ทุกหัวข้อ')} · ${safeHTML(formatDate(a.createdAt) || '')}</span>
-    </div>`).join('') : '<div class="empty-box">ยังไม่มีประวัติการทำ Quiz</div>';
-}
-
-async function toggleQuizAvailability() {
-  if (!isAdminLike()) return;
-  const next = !state.quizEnabled;
-  if (state.isDemo) {
-    state.quizEnabled = next;
-    localStorage.setItem('laya_demo_quiz_settings', JSON.stringify({ isOpen: next, updatedAt: new Date().toISOString() }));
-    updateHeader();
-    await loadAdminQuizDashboard();
-    return;
-  }
-  await db.collection('app_settings').doc('quiz_controls').set({
-    isOpen: next,
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-    updatedByUid: state.user?.uid || '',
-    updatedByCode: state.userProfile?.employeeCode || ''
-  }, { merge: true });
-}
-
-function openAdminQuizModal() {
-  if (!isAdminLike()) return;
-  adminQuizModal.classList.remove('hidden');
-  loadAdminQuizDashboard().catch(err => {
-    console.error(err);
-    el('adminQuizMeta').textContent = 'โหลดข้อมูลไม่สำเร็จ';
-  });
-}
-
-function closeAdminQuizModal() {
-  adminQuizModal.classList.add('hidden');
 }
 
 function renderChips() {
@@ -1491,7 +1384,6 @@ function lessonSortValue(lesson) {
 }
 
 function renderLessons() {
-  buildQuizBank();
   updateHeader();
   renderChips();
   const visibleLessons = allLessons()
@@ -2138,29 +2030,9 @@ async function handleWineSave() {
 
 backBtn.addEventListener('click', closeLesson);
 el('searchInput').addEventListener('input', e => { state.search = e.target.value; renderLessons(); });
+el('quizBtn').addEventListener('click', openQuizModal);
 addLessonBtn.addEventListener('click', openEditor);
-
 openEditorSecondaryBtn.addEventListener('click', openEditor);
-el('openQuizBtn').addEventListener('click', openQuizModal);
-el('closeQuizBtn').addEventListener('click', closeQuizModal);
-quizModal.querySelectorAll('[data-close-quiz="true"]').forEach(node => node.addEventListener('click', closeQuizModal));
-el('startQuizBtn').addEventListener('click', startQuizSession);
-el('openAdminQuizBtn').addEventListener('click', openAdminQuizModal);
-el('openAdminDashboardBtn')?.addEventListener('click', () => window.open('admin.html', '_blank'));
-el('closeAdminQuizBtn').addEventListener('click', closeAdminQuizModal);
-adminQuizModal.querySelectorAll('[data-close-admin-quiz="true"]').forEach(node => node.addEventListener('click', closeAdminQuizModal));
-el('refreshAdminQuizBtn').addEventListener('click', () => loadAdminQuizDashboard());
-el('toggleQuizStatusBtn').addEventListener('click', () => toggleQuizAvailability().catch(err => alert(err.message || 'เปลี่ยนสถานะสอบไม่สำเร็จ')));
-el('exportAdminQuizBtn').addEventListener('click', () => {
-  const data = JSON.stringify(state.adminQuizData || [], null, 2);
-  const blob = new Blob([data], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `quiz-attempts-${new Date().toISOString().slice(0, 10)}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-});
 el('closeEditorBtn').addEventListener('click', closeEditor);
 el('cancelEditorBtn').addEventListener('click', closeEditor);
 el('deleteLessonBtn').addEventListener('click', async () => {
@@ -2178,6 +2050,8 @@ editorModal.querySelectorAll('[data-close-editor="true"]').forEach(node => node.
 el('closeWineBtn').addEventListener('click', closeWineEditor);
 el('cancelWineBtn').addEventListener('click', closeWineEditor);
 wineModal.querySelectorAll('[data-close-wine="true"]').forEach(node => node.addEventListener('click', closeWineEditor));
+el('closeQuizBtn').addEventListener('click', closeQuizModal);
+quizModal.querySelectorAll('[data-close-quiz="true"]').forEach(node => node.addEventListener('click', closeQuizModal));
 el('resetWineBtn').addEventListener('click', () => {
   const wine = currentWine();
   if (wine) fillWineEditor(wine);
@@ -2224,12 +2098,11 @@ el('lessonEditorForm').addEventListener('submit', async e => {
 el('demoBtn').addEventListener('click', async () => {
   state.isDemo = true;
   state.user = { uid: 'demo-user', displayName: 'Demo User', email: 'demo@local' };
-  state.userProfile = { displayName: 'Demo User', employeeCode: 'DEMO', role: 'admin' };
+  state.accountProfile = { employeeCode: 'DEMO', displayName: 'Demo User', role: 'admin' };
   await loadUserData();
   subscribeCommunityLessons();
   subscribeWineCatalog();
   subscribeWineReference();
-  subscribeQuizSettings();
   authView.classList.add('hidden');
   mainView.classList.remove('hidden');
   closeLesson();
@@ -2264,17 +2137,19 @@ el('authForm').addEventListener('submit', async e => {
   }
 });
 
+el('adminDashBtn')?.addEventListener('click', () => {
+  window.location.href = 'admin.html';
+});
+
 el('logoutBtn').addEventListener('click', async () => {
   stopCommunitySubscription();
   stopWineSubscription();
   stopWineCatalogSubscription();
-  stopSettingsSubscription();
   if (state.isDemo) {
     state.isDemo = false;
     state.user = null;
-    state.userProfile = null;
+    state.accountProfile = null;
     state.communityLessons = [];
-    state.quizBank = [];
     state.wineCatalogSource = 'local';
     setWineBaseCatalog(BASE_WINE_MEDIA, 'local');
     mergeWineCatalog({});
@@ -2291,26 +2166,20 @@ auth.onAuthStateChanged(async user => {
   stopCommunitySubscription();
   stopWineSubscription();
   stopWineCatalogSubscription();
-  stopSettingsSubscription();
   if (user) {
     state.isDemo = false;
     state.user = user;
     await loadUserData();
-    await ensureUserDocument();
-    await loadUserData();
-    buildQuizBank();
     subscribeCommunityLessons();
     subscribeWineCatalog();
     subscribeWineReference();
-    subscribeQuizSettings();
     authView.classList.add('hidden');
     mainView.classList.remove('hidden');
     closeLesson();
   } else if (!state.isDemo) {
     state.user = null;
-    state.userProfile = null;
+    state.accountProfile = null;
     state.communityLessons = [];
-    state.quizBank = [];
     state.wineCatalogSource = 'local';
     setWineBaseCatalog(BASE_WINE_MEDIA, 'local');
     mergeWineCatalog({});

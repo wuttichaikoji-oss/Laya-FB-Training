@@ -1,4 +1,4 @@
-Laya F&B Academy v3.0 Lite - Firebase Ready
+Laya F&B Academy - Employee Code Login + Team Knowledge
 
 ไฟล์นี้ฝังค่า Firebase ของโปรเจกต์ laya-training ไว้แล้ว
 จึงสามารถเปิดใช้งานได้ทันทีหลังจากเปิดใช้บริการต่อไปนี้ใน Firebase Console:
@@ -10,8 +10,29 @@ Laya F&B Academy v3.0 Lite - Firebase Ready
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if isOwner(userId);
+      match /{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // คลังบทเรียนที่ทุกคนในทีมช่วยกันเพิ่มได้
+    match /community_lessons/{lessonId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid;
+      allow update, delete: if signedIn()
+        && resource.data.ownerUid == request.auth.uid;
     }
   }
 }
@@ -22,42 +43,41 @@ service cloud.firestore {
 - โน้ตส่วนตัว
 - โปรไฟล์เบื้องต้น
 
+และในเวอร์ชันนี้
+- ทุกคนที่ล็อกอินแล้วกด “+ เพิ่มบทเรียน” ได้
+- บทเรียนที่สร้างจะขึ้นในคลังความรู้ของทีม
+- เจ้าของบทเรียนแก้ไขและลบบทเรียนของตัวเองได้
+
 ถ้ายังไม่พร้อมใช้ Firebase สามารถกด Local Demo ได้
 
+ล็อกอินเวอร์ชันนี้ใช้ “รหัสพนักงาน + รหัสผ่าน”
+โดยแอปจะสร้างอีเมลภายในระบบให้อัตโนมัติบน Firebase Authentication เช่น
+FB001 -> emp.fb001@laya-training.local
 
-QUIZ ATTEMPTS RULES
-เพิ่ม collection นี้ใน Firestore Rules เพื่อเก็บคะแนน Quiz และให้ supervisor/admin ดูคะแนนทีมได้
+
+Quiz Mode
+- พนักงานที่ล็อกอินสามารถกดปุ่ม Quiz เพื่อสุ่มคำถาม 5 / 10 / 15 ข้อ
+- คะแนนและประวัติล่าสุดจะบันทึกไว้ใน users/{uid}.quizHistory และ quizSummary
+
+
+==============================
+v3.1 Generate Quiz from Team Knowledge – Smart Analysis Edition
+==============================
+สิ่งที่เพิ่ม:
+- Quiz เลือกแหล่งคำถามได้ 3 แบบ
+  1) คลังข้อสอบหลัก
+  2) สร้างจากบทเรียนทีม
+  3) Smart Mix ทุกความรู้ (บทเรียนหลัก + ทีม + English + Wine)
+- เมื่อทำแบบทดสอบเสร็จ จะบันทึกผลลง collection quiz_attempts
+- มี admin.html สำหรับดูสรุปจุดแข็ง/จุดพัฒนารายคนจากผลสอบ
+
+Firestore Rules ที่ต้องมีเพิ่ม:
 match /quiz_attempts/{attemptId} {
-  allow create: if request.auth != null;
-  allow read: if request.auth != null && (
-    resource.data.userUid == request.auth.uid ||
-    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin']
-  );
-  allow update, delete: if request.auth != null &&
-    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin'];
+  allow read: if isSupervisorOrAdmin()
+    || (signedIn() && resource.data.userUid == request.auth.uid);
+  allow create: if signedIn()
+    && request.resource.data.userUid == request.auth.uid;
+  allow update: if isSupervisorOrAdmin()
+    || (signedIn() && resource.data.userUid == request.auth.uid);
+  allow delete: if isSupervisorOrAdmin();
 }
-
-
-ADMIN / QUIZ CONTROL RULES
-เพิ่มส่วนนี้ใน Firestore Rules เพื่อให้ admin/supervisor เปิดหรือปิดการสอบได้ และดูข้อมูลทีมได้
-
-match /app_settings/{docId} {
-  allow read: if request.auth != null;
-  allow create, update, delete: if request.auth != null &&
-    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin'];
-}
-
-match /quiz_attempts/{attemptId} {
-  allow create: if request.auth != null;
-  allow read: if request.auth != null && (
-    resource.data.userUid == request.auth.uid ||
-    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin']
-  );
-  allow update, delete: if request.auth != null &&
-    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['supervisor', 'admin'];
-}
-
-และใน users/{uid} ควรมี role เช่น
-- staff
-- supervisor
-- admin
