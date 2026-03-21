@@ -166,7 +166,7 @@ function renderAccounts() {
     });
 
   if (!tbody.children.length) {
-    tbody.innerHTML = `<tr><td colspan="8" class="mini-meta">ยังไม่มีข้อมูลผู้ใช้</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" class="mini-meta">ยังไม่มีข้อมูลผู้ใช้ใน Firestore</td></tr>`;
   }
 }
 

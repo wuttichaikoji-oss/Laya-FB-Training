@@ -807,6 +807,25 @@ async function loadUserData() {
   state.userData = mergeUserData(raw);
 }
 
+
+async function ensureUserDocument() {
+  if (state.isDemo || !state.user) return;
+  const employeeCode = (state.userProfile?.employeeCode || employeeCodeFromEmail(state.user.email) || '').toUpperCase();
+  const payload = {
+    email: state.user.email || '',
+    employeeCode,
+    employeeCodeNorm: employeeCode,
+    displayName: state.userProfile?.displayName || state.user.displayName || employeeCode || '',
+    role: state.userProfile?.role || 'staff',
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  if (!state.userProfile?.createdAt) {
+    payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+  }
+  await db.collection('users').doc(state.user.uid).set(payload, { merge: true });
+  state.userProfile = { ...(state.userProfile || {}), ...payload };
+}
+
 function userRole() {
   return String(state.userProfile?.role || 'staff').toLowerCase();
 }
@@ -2276,6 +2295,8 @@ auth.onAuthStateChanged(async user => {
   if (user) {
     state.isDemo = false;
     state.user = user;
+    await loadUserData();
+    await ensureUserDocument();
     await loadUserData();
     buildQuizBank();
     subscribeCommunityLessons();
