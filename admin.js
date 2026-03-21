@@ -245,29 +245,48 @@ function renderAttempts() {
   }
 }
 
-async function loadAll() {
-  const [settingsSnap, usersSnap, attemptsSnap] = await Promise.all([
-    db.collection('app_settings').doc('quiz_controls').get(),
+async function loadQuizStatusQuick() {
+  $('quizToggleStatus').textContent = 'กำลังโหลดสถานะ...';
+  $('toggleQuizBtn').textContent = 'กำลังโหลด...';
+  $('toggleQuizBtn').disabled = true;
+  try {
+    const settingsSnap = await db.collection('app_settings').doc('quiz_controls').get();
+    const settings = settingsSnap.exists ? settingsSnap.data() || {} : {};
+    state.quizOpen = settings.isOpen !== false;
+    $('quizToggleStatus').textContent = state.quizOpen ? 'การสอบเปิดอยู่' : 'การสอบปิดอยู่';
+    $('toggleQuizBtn').textContent = state.quizOpen ? 'ปิดการสอบชั่วคราว' : 'เปิดการสอบ';
+    $('toggleQuizBtn').classList.toggle('danger-btn', state.quizOpen);
+    $('metricQuizStatus').textContent = state.quizOpen ? 'เปิดอยู่' : 'ปิดอยู่';
+  } catch (err) {
+    console.error('load quiz status failed', err);
+    state.quizOpen = true;
+    $('quizToggleStatus').textContent = 'โหลดสถานะไม่สำเร็จ';
+    $('toggleQuizBtn').textContent = 'ลองใหม่';
+  } finally {
+    $('toggleQuizBtn').disabled = false;
+  }
+}
+
+async function loadHeavyAdminData() {
+  const [usersSnap, attemptsSnap] = await Promise.all([
     db.collection('users').get(),
     db.collection('quiz_attempts').orderBy('createdAt', 'desc').limit(500).get().catch(async () => {
       return db.collection('quiz_attempts').get();
     })
   ]);
 
-  const settings = settingsSnap.exists ? settingsSnap.data() || {} : {};
-  state.quizOpen = settings.isOpen !== false;
-
   state.users = usersSnap.docs.map(doc => ({ uid: doc.id, ...(doc.data() || {}) }));
   state.attempts = attemptsSnap.docs.map(doc => ({ id: doc.id, ...(doc.data() || {}) }));
-
-  $('quizToggleStatus').textContent = state.quizOpen ? 'การสอบเปิดอยู่' : 'การสอบปิดอยู่';
-  $('toggleQuizBtn').textContent = state.quizOpen ? 'ปิดการสอบชั่วคราว' : 'เปิดการสอบ';
-  $('toggleQuizBtn').classList.toggle('danger-btn', state.quizOpen);
 
   updateMetrics();
   renderAccounts();
   renderTalentCards();
   renderAttempts();
+}
+
+async function loadAll() {
+  await loadQuizStatusQuick();
+  await loadHeavyAdminData();
 }
 
 async function toggleQuiz() {
@@ -328,5 +347,9 @@ auth.onAuthStateChanged(async user => {
   }
   $('adminAuthState').classList.add('hidden');
   $('adminDashboardView').classList.remove('hidden');
-  await loadAll();
+  await loadQuizStatusQuick();
+  loadHeavyAdminData().catch(err => {
+    console.error(err);
+    $('adminAuthMsg').textContent = 'โหลดข้อมูลรายงานไม่สำเร็จ';
+  });
 });
