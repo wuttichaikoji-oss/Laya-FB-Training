@@ -88,3 +88,9 @@ Quiz Bank Importer:
 - ล็อกอินด้วยบัญชี admin/supervisor
 - เลือกไฟล์ laya_quiz_bank_300.json
 - กดตรวจไฟล์ แล้วกดเริ่ม Import
+
+
+Quiz update:
+- ถ้ามี collection quiz_bank ใน Firebase ระบบจะใช้คำถามจาก Firebase ก่อน
+- รองรับการเลือกข้อสอบ 10 / 20 / 30 / 50 ข้อ
+- ระบบจะสุ่มตัวเลือกใหม่ทุกครั้ง เพื่อไม่ให้คำตอบถูกล็อกอยู่ข้อ A

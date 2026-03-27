@@ -185,7 +185,9 @@ const state = {
   currentQuiz: null,
   smartGeneratedQuiz: [],
   quizOpen: true,
-  quizSettingUnsub: null
+  quizSettingUnsub: null,
+  remoteQuizBank: [],
+  quizBankSource: 'local'
 };
 
 const el = id => document.getElementById(id);
@@ -975,6 +977,8 @@ function subscribeQuizSettings() {
   stopQuizSettingSubscription();
   if (state.isDemo || !state.user) {
     state.quizOpen = true;
+    state.remoteQuizBank = [];
+    state.quizBankSource = 'local';
     renderQuizButtonState();
     return;
   }
@@ -986,6 +990,8 @@ function subscribeQuizSettings() {
   }, err => {
     console.warn('quiz settings unavailable', err);
     state.quizOpen = true;
+    state.remoteQuizBank = [];
+    state.quizBankSource = 'local';
     renderQuizButtonState();
   });
 }
@@ -1136,17 +1142,87 @@ function buildWineQuestions() {
   return questions;
 }
 
+
+function normalizeQuizPrompt(item = {}) {
+  const th = String(item.question_th || item.prompt || '').trim();
+  const en = String(item.question_en || '').trim();
+  if (th && en && en !== th) return `${th}\n${en}`;
+  return th || en;
+}
+
+function normalizeQuizQuestion(item = {}, fallbackId = '') {
+  const prompt = normalizeQuizPrompt(item);
+  const rawChoices = Array.isArray(item.choices) ? item.choices : (Array.isArray(item.options) ? item.options : []);
+  const choices = rawChoices.map(choice => String(choice || '').trim()).filter(Boolean);
+  if (!prompt || choices.length < 2) return null;
+
+  let answerIndex = Number.isInteger(item.answer) ? item.answer : null;
+  if (answerIndex === null && Number.isInteger(item.answerIndex)) answerIndex = item.answerIndex;
+  if (answerIndex === null && typeof item.answer === 'string') {
+    answerIndex = choices.findIndex(choice => choice === String(item.answer).trim());
+  }
+  if (!Number.isInteger(answerIndex) || answerIndex < 0 || answerIndex >= choices.length) return null;
+
+  return {
+    id: String(item.id || fallbackId || prompt).trim(),
+    category: String(item.category || 'General').trim() || 'General',
+    lessonId: String(item.lessonId || item.sourceLessonId || 'quiz-bank').trim(),
+    prompt,
+    choices,
+    answer: answerIndex,
+    explanation: String(item.explanation || item.question_th || '').trim(),
+    difficulty: String(item.difficulty || 'medium').trim(),
+    source: String(item.source || 'curated').trim() || 'curated'
+  };
+}
+
+async function refreshQuizBankFromFirebase() {
+  if (state.isDemo || !state.user) {
+    state.remoteQuizBank = [];
+    state.quizBankSource = 'local';
+    return;
+  }
+  try {
+    const snapshot = await db.collection('quiz_bank').get();
+    const remote = snapshot.docs
+      .map((doc, index) => normalizeQuizQuestion({ id: doc.id, ...(doc.data() || {}) }, `remote-${index + 1}`))
+      .filter(Boolean);
+    state.remoteQuizBank = remote;
+    state.quizBankSource = remote.length ? 'firebase' : 'local';
+  } catch (err) {
+    console.warn('refreshQuizBankFromFirebase failed', err);
+    state.remoteQuizBank = [];
+    state.quizBankSource = 'local';
+  }
+}
+
+function randomizeQuestionChoices(question = {}) {
+  const cloned = {
+    ...question,
+    choices: Array.isArray(question.choices) ? question.choices.slice() : []
+  };
+  const correctText = cloned.choices[cloned.answer];
+  const shuffledChoices = shuffle(cloned.choices);
+  cloned.choices = shuffledChoices;
+  cloned.answer = shuffledChoices.findIndex(choice => choice === correctText);
+  return cloned;
+}
+
 function generatedQuizBank(sourceMode = 'curated') {
   try {
-    const curated = Array.isArray(QUIZ_BANK) ? QUIZ_BANK.slice() : [];
-    const normalized = curated.filter(item => item && item.id && item.prompt && Array.isArray(item.choices) && item.choices.length >= 2 && Number.isInteger(item.answer));
+    const preferred = Array.isArray(state.remoteQuizBank) && state.remoteQuizBank.length
+      ? state.remoteQuizBank
+      : (Array.isArray(QUIZ_BANK) ? QUIZ_BANK : []);
+    const normalized = preferred
+      .map((item, index) => normalizeQuizQuestion(item, `quiz-${index + 1}`))
+      .filter(Boolean);
     const deduped = [];
     const seen = new Set();
     normalized.forEach(item => {
       const key = String(item.id || item.prompt || '').trim().toLowerCase();
       if (!key || seen.has(key)) return;
       seen.add(key);
-      deduped.push({ ...item, source: 'curated' });
+      deduped.push({ ...item, source: state.remoteQuizBank.length ? 'firebase' : 'curated' });
     });
     return deduped;
   } catch (err) {
@@ -1293,9 +1369,9 @@ function renderQuizLauncher() {
         ${quizStatRow('คะแนนสูงสุด', `${bestScore}%`)}
         ${quizStatRow('คะแนนล่าสุด', `${lastScore}%`)}
       </div>
-      <div class="analysis-note">Smart Analysis Edition จะสร้างคำถามจากบทเรียนทีม, บทเรียนหลัก, English และ Wine เพื่อวัดจุดแข็งรายหมวด</div>
+      <div class="analysis-note">ระบบจะสุ่มข้อสอบจากคลังข้อสอบหลักแบบไม่ซ้ำในรอบเดียว และถ้ามี Quiz Bank ใน Firebase จะใช้ชุดนั้นก่อน</div>
       <div class="quiz-setup-grid">
-        <div class="analysis-note">ระบบใช้คลังข้อสอบหลักแบบคงที่ เพื่อให้ข้อสอบครบจำนวนและไม่ซ้ำในรอบเดียว</div>
+        <div class="analysis-note">แหล่งคำถามปัจจุบัน: ${safeHTML(state.quizBankSource === 'firebase' ? 'Firebase Quiz Bank' : 'คลังข้อสอบในแอป')} • เลือกได้สูงสุด 50 ข้อ</div>
         <label>แหล่งคำถาม
           <select id="quizSourceSelect">
             ${quizSourceOptions().map(opt => `<option value="${safeHTML(opt.value)}" ${opt.value === defaultSource ? 'selected' : ''}>${safeHTML(opt.label)}</option>`).join('')}
@@ -1311,7 +1387,7 @@ function renderQuizLauncher() {
             <option value="5">5 ข้อ</option>
             <option value="10" selected>10 ข้อ</option>
             <option value="15">15 ข้อ</option>
-            <option value="20">20 ข้อ</option>
+            <option value="20">20 ข้อ</option>\n            <option value="30">30 ข้อ</option>\n            <option value="50">50 ข้อ</option>
           </select>
         </label>
       </div>
@@ -1374,9 +1450,9 @@ function startQuiz(category = 'All', count = 10, sourceMode = 'curated') {
     seen.add(key);
     uniquePool.push(item);
   });
-  const requestedCount = Number(count || 10);
+  const requestedCount = Math.min(Number(count || 10), 50);
   const actualCount = Math.min(requestedCount, uniquePool.length);
-  const selected = shuffle(uniquePool).slice(0, actualCount);
+  const selected = shuffle(uniquePool).slice(0, actualCount).map(randomizeQuestionChoices);
   const body = getQuizBody();
   if (!selected.length) {
     if (body) body.innerHTML = `<div class="empty-box">ยังไม่มีข้อสอบพร้อมใช้ในคลังข้อสอบหลัก</div>`;
@@ -2324,6 +2400,8 @@ el('logoutBtn').addEventListener('click', async () => {
     setWineBaseCatalog(BASE_WINE_MEDIA, 'local');
     mergeWineCatalog({});
     state.quizOpen = true;
+    state.remoteQuizBank = [];
+    state.quizBankSource = 'local';
     renderQuizButtonState();
     authView.classList.remove('hidden');
     mainView.classList.add('hidden');
@@ -2343,6 +2421,7 @@ auth.onAuthStateChanged(async user => {
     state.isDemo = false;
     state.user = user;
     await loadUserData();
+    await refreshQuizBankFromFirebase();
     subscribeCommunityLessons();
     subscribeWineCatalog();
     subscribeWineReference();
@@ -2358,6 +2437,8 @@ auth.onAuthStateChanged(async user => {
     setWineBaseCatalog(BASE_WINE_MEDIA, 'local');
     mergeWineCatalog({});
     state.quizOpen = true;
+    state.remoteQuizBank = [];
+    state.quizBankSource = 'local';
     renderQuizButtonState();
     authView.classList.remove('hidden');
     mainView.classList.add('hidden');
