@@ -1,0 +1,1922 @@
+[
+  {
+    "id": "pro_001",
+    "question_th": "แขกสั่งแซลมอนย่าง ไวน์สไตล์ไหนเป็นตัวเลือกที่ปลอดภัยที่สุด?",
+    "question_en": "A guest orders grilled salmon. Which wine style is the safest recommendation?",
+    "options": [
+      "Sauvignon Blanc",
+      "Cabernet Sauvignon",
+      "Shiraz",
+      "Port"
+    ],
+    "answer": "Sauvignon Blanc",
+    "category": "Wine",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "แขกสั่งแซลมอนย่าง ไวน์สไตล์ไหนเป็นตัวเลือกที่ปลอดภัยที่สุด?"
+  },
+  {
+    "id": "pro_002",
+    "question_th": "ไวน์ชนิดใดโดยปกติควรเสิร์ฟแบบแช่เย็น?",
+    "question_en": "Which wine should usually be served chilled?",
+    "options": [
+      "White wine",
+      "Red wine",
+      "Fortified wine",
+      "Mulled wine"
+    ],
+    "answer": "White wine",
+    "category": "Wine",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "ไวน์ชนิดใดโดยปกติควรเสิร์ฟแบบแช่เย็น?"
+  },
+  {
+    "id": "pro_003",
+    "question_th": "ก่อนเปิดไวน์ควรแสดงอะไรให้แขกดูก่อน?",
+    "question_en": "What should you show the guest before opening a bottle of wine?",
+    "options": [
+      "The label",
+      "The cork only",
+      "The price tag",
+      "The bottle base"
+    ],
+    "answer": "The label",
+    "category": "Wine",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "ก่อนเปิดไวน์ควรแสดงอะไรให้แขกดูก่อน?"
+  },
+  {
+    "id": "pro_004",
+    "question_th": "แขกบอกว่าไวน์มีกลิ่นอับและทึบ สิ่งที่ควรทำต่อดีที่สุดคืออะไร?",
+    "question_en": "A guest says the wine smells musty and dull. What is the best next step?",
+    "options": [
+      "Apologize and replace or verify the bottle",
+      "Tell the guest this is normal",
+      "Add ice to reduce the smell",
+      "Pour a larger glass"
+    ],
+    "answer": "Apologize and replace or verify the bottle",
+    "category": "Wine",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกบอกว่าไวน์มีกลิ่นอับและทึบ สิ่งที่ควรทำต่อดีที่สุดคืออะไร?"
+  },
+  {
+    "id": "pro_005",
+    "question_th": "คำอธิบายแบบไหนเหมาะกับ Pinot Grigio ในภาษาที่แขกเข้าใจง่าย?",
+    "question_en": "Which description best fits Pinot Grigio in guest-friendly language?",
+    "options": [
+      "Light, crisp, and refreshing",
+      "Very heavy and tannic",
+      "Sweet like dessert wine",
+      "Rich and smoky like whisky"
+    ],
+    "answer": "Light, crisp, and refreshing",
+    "category": "Wine",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "คำอธิบายแบบไหนเหมาะกับ Pinot Grigio ในภาษาที่แขกเข้าใจง่าย?"
+  },
+  {
+    "id": "pro_006",
+    "question_th": "ถ้าแขกอยากได้โรเซ่สำหรับอากาศร้อน จุดขายไหนเหมาะที่สุด?",
+    "question_en": "If a guest wants a rosé for hot weather, which selling point is best?",
+    "options": [
+      "Fresh, light, and easy to drink",
+      "Powerful tannin and oak",
+      "Best served warm",
+      "Pairs only with beef"
+    ],
+    "answer": "Fresh, light, and easy to drink",
+    "category": "Wine",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ถ้าแขกอยากได้โรเซ่สำหรับอากาศร้อน จุดขายไหนเหมาะที่สุด?"
+  },
+  {
+    "id": "pro_007",
+    "question_th": "สไตล์อุณหภูมิการเสิร์ฟที่เหมาะที่สุดสำหรับ sparkling wine คือแบบใด?",
+    "question_en": "What is the most appropriate serving temperature style for sparkling wine?",
+    "options": [
+      "Well chilled",
+      "Room temperature",
+      "Warm",
+      "Hot"
+    ],
+    "answer": "Well chilled",
+    "category": "Wine",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "สไตล์อุณหภูมิการเสิร์ฟที่เหมาะที่สุดสำหรับ sparkling wine คือแบบใด?"
+  },
+  {
+    "id": "pro_008",
+    "question_th": "แขกสั่งอาหารทะเลรสจัดแบบไทยและอยากได้ไวน์สดชื่น คำแนะนำไหนเหมาะที่สุด?",
+    "question_en": "A guest orders spicy Thai seafood and asks for a refreshing wine. Which recommendation is strongest?",
+    "options": [
+      "A crisp Sauvignon Blanc or dry Riesling",
+      "A heavy Cabernet Sauvignon",
+      "An oaky Shiraz",
+      "A warm dessert wine"
+    ],
+    "answer": "A crisp Sauvignon Blanc or dry Riesling",
+    "category": "Wine",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกสั่งอาหารทะเลรสจัดแบบไทยและอยากได้ไวน์สดชื่น คำแนะนำไหนเหมาะที่สุด?"
+  },
+  {
+    "id": "pro_009",
+    "question_th": "พนักงานเปิดไวน์ผิดขวดแต่ยังไม่ได้ริน ควรทำอย่างไร?",
+    "question_en": "A host opened the wrong bottle but has not poured it yet. What should the server do?",
+    "options": [
+      "Inform the supervisor and correct it before service",
+      "Serve it anyway to avoid waste",
+      "Hide the bottle and continue",
+      "Mix it with the correct bottle"
+    ],
+    "answer": "Inform the supervisor and correct it before service",
+    "category": "Wine",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "พนักงานเปิดไวน์ผิดขวดแต่ยังไม่ได้ริน ควรทำอย่างไร?"
+  },
+  {
+    "id": "pro_010",
+    "question_th": "ประโยคไหนเป็นมืออาชีพที่สุดเวลาแนะนำไวน์ให้แขกที่ยังลังเล?",
+    "question_en": "Which statement is most professional when recommending wine to a hesitant guest?",
+    "options": [
+      "May I suggest something lighter and refreshing that pairs well with your dish?",
+      "This is the most expensive one, so it must be best.",
+      "You should take red wine; everyone does.",
+      "I cannot help unless you know grape names."
+    ],
+    "answer": "May I suggest something lighter and refreshing that pairs well with your dish?",
+    "category": "Wine",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ประโยคไหนเป็นมืออาชีพที่สุดเวลาแนะนำไวน์ให้แขกที่ยังลังเล?"
+  },
+  {
+    "id": "pro_011",
+    "question_th": "'Would you like anything else?' หมายถึงอะไรในการบริการร้านอาหาร?",
+    "question_en": "What does 'Would you like anything else?' mean in restaurant service?",
+    "options": [
+      "ต้องการอะไรเพิ่มเติมไหม",
+      "ขอเช็กบิลเลยไหม",
+      "โต๊ะนี้ว่างไหม",
+      "รับเครื่องดื่มไม่ได้"
+    ],
+    "answer": "ต้องการอะไรเพิ่มเติมไหม",
+    "category": "English",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "'Would you like anything else?' หมายถึงอะไรในการบริการร้านอาหาร?"
+  },
+  {
+    "id": "pro_012",
+    "question_th": "ประโยคใดเหมาะที่สุดสำหรับเช็กว่าแขกพร้อมสั่งหรือยัง?",
+    "question_en": "Which phrase is best for checking if a guest is ready to order?",
+    "options": [
+      "Are you ready to order?",
+      "You must order now.",
+      "Kitchen is closing now.",
+      "Give me your menu."
+    ],
+    "answer": "Are you ready to order?",
+    "category": "English",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "ประโยคใดเหมาะที่สุดสำหรับเช็กว่าแขกพร้อมสั่งหรือยัง?"
+  },
+  {
+    "id": "pro_013",
+    "question_th": "คำว่า 'sold out' แปลว่าอะไรดีที่สุด?",
+    "question_en": "What is the best translation of 'sold out'?",
+    "options": [
+      "หมดแล้ว",
+      "รสจัด",
+      "ใหม่ล่าสุด",
+      "ฟรี"
+    ],
+    "answer": "หมดแล้ว",
+    "category": "English",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "คำว่า 'sold out' แปลว่าอะไรดีที่สุด?"
+  },
+  {
+    "id": "pro_014",
+    "question_th": "แขกพูดว่า 'I have a dairy allergy.' ควรตอบอย่างไรเป็นอันดับแรก?",
+    "question_en": "A guest says, 'I have a dairy allergy.' What is the best first reply?",
+    "options": [
+      "Thank you for letting me know. Let me check the menu and confirm with the kitchen.",
+      "That should be fine for most dishes.",
+      "Please decide quickly.",
+      "Only desserts contain dairy."
+    ],
+    "answer": "Thank you for letting me know. Let me check the menu and confirm with the kitchen.",
+    "category": "English",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกพูดว่า 'I have a dairy allergy.' ควรตอบอย่างไรเป็นอันดับแรก?"
+  },
+  {
+    "id": "pro_015",
+    "question_th": "ประโยคใดฟังเป็นมืออาชีพที่สุดเมื่ออาหารล่าช้า?",
+    "question_en": "Which sentence sounds most professional when a dish is delayed?",
+    "options": [
+      "I apologize for the delay. I am checking with the kitchen now.",
+      "You need to wait.",
+      "The kitchen is busy, so nothing can be done.",
+      "Maybe another table caused the delay."
+    ],
+    "answer": "I apologize for the delay. I am checking with the kitchen now.",
+    "category": "English",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ประโยคใดฟังเป็นมืออาชีพที่สุดเมื่ออาหารล่าช้า?"
+  },
+  {
+    "id": "pro_016",
+    "question_th": "แขกขอน้ำ sparkling water คำถามต่อข้อใดมีประโยชน์?",
+    "question_en": "A guest asks for sparkling water. Which follow-up question is useful?",
+    "options": [
+      "Would you like a small or large bottle?",
+      "Do you want red or white?",
+      "Hot or cold coffee?",
+      "Still or spicy?"
+    ],
+    "answer": "Would you like a small or large bottle?",
+    "category": "English",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกขอน้ำ sparkling water คำถามต่อข้อใดมีประโยชน์?"
+  },
+  {
+    "id": "pro_017",
+    "question_th": "ประโยคใดเหมาะที่สุดสำหรับการ upsell แบบสุภาพ?",
+    "question_en": "Which phrase is best for upselling politely?",
+    "options": [
+      "May I recommend our signature dish? It pairs very well with your selection.",
+      "You should order more because this portion is small.",
+      "Take this one; it is expensive.",
+      "This is better than what you chose."
+    ],
+    "answer": "May I recommend our signature dish? It pairs very well with your selection.",
+    "category": "English",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ประโยคใดเหมาะที่สุดสำหรับการ upsell แบบสุภาพ?"
+  },
+  {
+    "id": "pro_018",
+    "question_th": "แขกบอกว่า 'This is not what I ordered.' การตอบแบบมืออาชีพที่สุดคืออะไร?",
+    "question_en": "A guest says, 'This is not what I ordered.' What is the most professional response?",
+    "options": [
+      "I am sorry about that. Let me fix it for you right away.",
+      "No, this is correct.",
+      "Please keep it for now.",
+      "You must have forgotten your order."
+    ],
+    "answer": "I am sorry about that. Let me fix it for you right away.",
+    "category": "English",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกบอกว่า 'This is not what I ordered.' การตอบแบบมืออาชีพที่สุดคืออะไร?"
+  },
+  {
+    "id": "pro_019",
+    "question_th": "ประโยคใดเหมาะที่สุดสำหรับยืนยันออเดอร์แพ้อาหารก่อนเสิร์ฟ?",
+    "question_en": "Which phrase best confirms an allergy order before service?",
+    "options": [
+      "To confirm, this dish is prepared for your allergy request.",
+      "Please remember your own allergy.",
+      "This should be okay, I think.",
+      "The kitchen tried its best."
+    ],
+    "answer": "To confirm, this dish is prepared for your allergy request.",
+    "category": "English",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ประโยคใดเหมาะที่สุดสำหรับยืนยันออเดอร์แพ้อาหารก่อนเสิร์ฟ?"
+  },
+  {
+    "id": "pro_020",
+    "question_th": "ประโยคใดดีที่สุดเมื่อคุณต้องขอเวลาเพื่อตรวจสอบข้อมูล?",
+    "question_en": "Which sentence is best when you need a moment to verify information?",
+    "options": [
+      "Allow me a moment to confirm that for you.",
+      "I don't know.",
+      "Ask someone else.",
+      "Please wait over there."
+    ],
+    "answer": "Allow me a moment to confirm that for you.",
+    "category": "English",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ประโยคใดดีที่สุดเมื่อคุณต้องขอเวลาเพื่อตรวจสอบข้อมูล?"
+  },
+  {
+    "id": "pro_021",
+    "question_th": "อุณหภูมิอาหารร้อนที่นิยมใช้เป็นเกณฑ์ขั้นต่ำในงานบริการอาหารคือเท่าใด?",
+    "question_en": "What is the minimum hot holding target commonly used in food service?",
+    "options": [
+      "Above 60°C",
+      "Below 5°C",
+      "20°C",
+      "35°C"
+    ],
+    "answer": "Above 60°C",
+    "category": "Hygiene",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "อุณหภูมิอาหารร้อนที่นิยมใช้เป็นเกณฑ์ขั้นต่ำในงานบริการอาหารคือเท่าใด?"
+  },
+  {
+    "id": "pro_022",
+    "question_th": "พนักงานควรล้างมือเมื่อใดระหว่างการบริการ?",
+    "question_en": "When should staff wash hands during service?",
+    "options": [
+      "Before handling food and after contamination risks",
+      "Only at the end of the shift",
+      "Only after touching plates",
+      "Only when a manager is watching"
+    ],
+    "answer": "Before handling food and after contamination risks",
+    "category": "Hygiene",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "พนักงานควรล้างมือเมื่อใดระหว่างการบริการ?"
+  },
+  {
+    "id": "pro_023",
+    "question_th": "FIFO ในการจัดเก็บหมายถึงอะไร?",
+    "question_en": "What does FIFO mean in storage practice?",
+    "options": [
+      "First In, First Out",
+      "Fast In, Fast Out",
+      "Food In, Food Out",
+      "First Item, Final Order"
+    ],
+    "answer": "First In, First Out",
+    "category": "Hygiene",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "FIFO ในการจัดเก็บหมายถึงอะไร?"
+  },
+  {
+    "id": "pro_024",
+    "question_th": "ทำไม sanitizer จึงไม่เหมือนกับ cleaning?",
+    "question_en": "Why is sanitizer not the same as cleaning?",
+    "options": [
+      "Cleaning removes dirt; sanitizing reduces microorganisms",
+      "Sanitizer replaces washing",
+      "Cleaning is only for glassware",
+      "There is no difference"
+    ],
+    "answer": "Cleaning removes dirt; sanitizing reduces microorganisms",
+    "category": "Hygiene",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ทำไม sanitizer จึงไม่เหมือนกับ cleaning?"
+  },
+  {
+    "id": "pro_025",
+    "question_th": "พ่อครัวจับไก่ดิบแล้วเอื้อมไปจับ garnish ความเสี่ยงหลักคืออะไร?",
+    "question_en": "A cook touches raw chicken and then reaches for garnish. What is the key risk?",
+    "options": [
+      "Cross-contamination",
+      "Undercooking only",
+      "Over-seasoning",
+      "Broken glass"
+    ],
+    "answer": "Cross-contamination",
+    "category": "Hygiene",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "พ่อครัวจับไก่ดิบแล้วเอื้อมไปจับ garnish ความเสี่ยงหลักคืออะไร?"
+  },
+  {
+    "id": "pro_026",
+    "question_th": "สิ่งใดไม่ควรสวมขณะเตรียมอาหาร?",
+    "question_en": "Which item should not be worn while preparing food?",
+    "options": [
+      "Jewelry",
+      "Hairnet",
+      "Clean apron",
+      "Non-slip shoes"
+    ],
+    "answer": "Jewelry",
+    "category": "Hygiene",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "สิ่งใดไม่ควรสวมขณะเตรียมอาหาร?"
+  },
+  {
+    "id": "pro_027",
+    "question_th": "พื้นที่เตรียมอาหารดูสะอาดแต่เพิ่งใช้กับอาหารทะเลดิบ ก่อนเริ่มทำสลัดต้องทำอะไร?",
+    "question_en": "A prep area looks clean, but it was just used for raw seafood. What must happen before salad prep begins?",
+    "options": [
+      "Clean and sanitize the area and tools properly",
+      "Wipe it once with a dry cloth",
+      "Start immediately if it looks clean",
+      "Only change the cutting board"
+    ],
+    "answer": "Clean and sanitize the area and tools properly",
+    "category": "Hygiene",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "พื้นที่เตรียมอาหารดูสะอาดแต่เพิ่งใช้กับอาหารทะเลดิบ ก่อนเริ่มทำสลัดต้องทำอะไร?"
+  },
+  {
+    "id": "pro_028",
+    "question_th": "แนวปฏิบัติที่ดีที่สุดคืออะไรหากพนักงานมีอาการอาเจียนหรือท้องเสีย?",
+    "question_en": "Which practice is best if a staff member has vomiting or diarrhea?",
+    "options": [
+      "Do not allow food handling and report immediately",
+      "Let them work with gloves",
+      "Move them to bar service only",
+      "Let them finish the shift in the kitchen"
+    ],
+    "answer": "Do not allow food handling and report immediately",
+    "category": "Hygiene",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แนวปฏิบัติที่ดีที่สุดคืออะไรหากพนักงานมีอาการอาเจียนหรือท้องเสีย?"
+  },
+  {
+    "id": "pro_029",
+    "question_th": "พนักงานจับเงินแล้วจะนำช้อนส้อมไปเสิร์ฟที่โต๊ะ ก่อนหน้านั้นควรทำอะไร?",
+    "question_en": "A server handles cash and then brings cutlery to a table. What should have happened first?",
+    "options": [
+      "Wash hands before handling clean service items",
+      "Only use hand sanitizer if nearby",
+      "Nothing if the cash looked clean",
+      "Wear two rings to avoid contact"
+    ],
+    "answer": "Wash hands before handling clean service items",
+    "category": "Hygiene",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "พนักงานจับเงินแล้วจะนำช้อนส้อมไปเสิร์ฟที่โต๊ะ ก่อนหน้านั้นควรทำอะไร?"
+  },
+  {
+    "id": "pro_030",
+    "question_th": "เหตุผลที่ดีที่สุดที่ควรปิดฝาถังขยะคืออะไร?",
+    "question_en": "What is the best reason to keep waste bins covered?",
+    "options": [
+      "To reduce pests and contamination risks",
+      "To make the kitchen quieter",
+      "To save plastic bags",
+      "To cool the room"
+    ],
+    "answer": "To reduce pests and contamination risks",
+    "category": "Hygiene",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "เหตุผลที่ดีที่สุดที่ควรปิดฝาถังขยะคืออะไร?"
+  },
+  {
+    "id": "pro_031",
+    "question_th": "Cross-contact ในการจัดการแพ้อาหารคืออะไร?",
+    "question_en": "What is cross-contact in allergy management?",
+    "options": [
+      "Allergen transfer to another food",
+      "Food cooling too quickly",
+      "Cooking food twice",
+      "A guest changing their mind"
+    ],
+    "answer": "Allergen transfer to another food",
+    "category": "Allergy",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "Cross-contact ในการจัดการแพ้อาหารคืออะไร?"
+  },
+  {
+    "id": "pro_032",
+    "question_th": "ข้อใดเป็นสารก่อภูมิแพ้หลักที่พบบ่อย?",
+    "question_en": "Which is a common major allergen?",
+    "options": [
+      "Peanuts",
+      "Salt",
+      "Pepper",
+      "Sugar"
+    ],
+    "answer": "Peanuts",
+    "category": "Allergy",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "ข้อใดเป็นสารก่อภูมิแพ้หลักที่พบบ่อย?"
+  },
+  {
+    "id": "pro_033",
+    "question_th": "ถ้าไม่แน่ใจว่าอาหารมีถั่วหรือไม่ ควรทำอย่างไร?",
+    "question_en": "If you are unsure whether a dish contains nuts, what should you do?",
+    "options": [
+      "Check with the kitchen before answering",
+      "Guess based on appearance",
+      "Tell the guest it is probably fine",
+      "Avoid responding"
+    ],
+    "answer": "Check with the kitchen before answering",
+    "category": "Allergy",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "ถ้าไม่แน่ใจว่าอาหารมีถั่วหรือไม่ ควรทำอย่างไร?"
+  },
+  {
+    "id": "pro_034",
+    "question_th": "แขกแจ้งว่าแพ้อาหารทะเลเปลือกแข็งหลังสั่งพาสต้าอาหารทะเล สิ่งแรกที่ต้องทำคืออะไร?",
+    "question_en": "A guest reports a shellfish allergy after ordering seafood pasta. What is the first action?",
+    "options": [
+      "Stop the order and inform the kitchen immediately",
+      "Serve bread first",
+      "Wait to see if the guest changes their mind",
+      "Just remove visible shellfish"
+    ],
+    "answer": "Stop the order and inform the kitchen immediately",
+    "category": "Allergy",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกแจ้งว่าแพ้อาหารทะเลเปลือกแข็งหลังสั่งพาสต้าอาหารทะเล สิ่งแรกที่ต้องทำคืออะไร?"
+  },
+  {
+    "id": "pro_035",
+    "question_th": "ทำไมการใช้น้ำมันทอดร่วมกันจึงเสี่ยงกับออเดอร์แพ้อาหาร?",
+    "question_en": "Why is using the same fryer oil risky for allergy orders?",
+    "options": [
+      "Allergens may remain in the oil",
+      "The oil gets hotter",
+      "It changes the menu price",
+      "It makes food salty"
+    ],
+    "answer": "Allergens may remain in the oil",
+    "category": "Allergy",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ทำไมการใช้น้ำมันทอดร่วมกันจึงเสี่ยงกับออเดอร์แพ้อาหาร?"
+  },
+  {
+    "id": "pro_036",
+    "question_th": "ข้อความใดเกี่ยวกับสารก่อภูมิแพ้และความร้อนถูกต้อง?",
+    "question_en": "Which statement about allergens and heat is correct?",
+    "options": [
+      "Heat does not reliably remove allergen risk",
+      "Heat always destroys allergens",
+      "Only nuts survive heat",
+      "Only milk is affected by heat"
+    ],
+    "answer": "Heat does not reliably remove allergen risk",
+    "category": "Allergy",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ข้อความใดเกี่ยวกับสารก่อภูมิแพ้และความร้อนถูกต้อง?"
+  },
+  {
+    "id": "pro_037",
+    "question_th": "แขกเริ่มมีอาการริมฝีปากบวมและหายใจลำบากหลังรับประทานอาหาร สิ่งสำคัญที่สุดที่ต้องทำคืออะไร?",
+    "question_en": "A guest begins to show lip swelling and breathing difficulty after eating. What is the priority response?",
+    "options": [
+      "Call emergency support and alert the manager immediately",
+      "Offer dessert to calm the guest",
+      "Bring the bill quickly",
+      "Move the guest without telling anyone"
+    ],
+    "answer": "Call emergency support and alert the manager immediately",
+    "category": "Allergy",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกเริ่มมีอาการริมฝีปากบวมและหายใจลำบากหลังรับประทานอาหาร สิ่งสำคัญที่สุดที่ต้องทำคืออะไร?"
+  },
+  {
+    "id": "pro_038",
+    "question_th": "วิธีที่เป็นมืออาชีพที่สุดในการรับมือคำขอเกี่ยวกับอาการแพ้อาหารที่โต๊ะคืออะไร?",
+    "question_en": "What is the most professional way to handle an allergy request at the table?",
+    "options": [
+      "Clarify the allergy, note it clearly, and communicate to the kitchen",
+      "Promise the dish is safe without checking",
+      "Only tell another server later",
+      "Ask the guest to take the risk"
+    ],
+    "answer": "Clarify the allergy, note it clearly, and communicate to the kitchen",
+    "category": "Allergy",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "วิธีที่เป็นมืออาชีพที่สุดในการรับมือคำขอเกี่ยวกับอาการแพ้อาหารที่โต๊ะคืออะไร?"
+  },
+  {
+    "id": "pro_039",
+    "question_th": "การกระทำใดไม่ปลอดภัยสำหรับอาหารของผู้แพ้อาหาร?",
+    "question_en": "Which action is unsafe for an allergy meal?",
+    "options": [
+      "Using the same knife after cutting allergen food",
+      "Using cleaned dedicated tools",
+      "Confirming ingredients with the chef",
+      "Marking the ticket clearly"
+    ],
+    "answer": "Using the same knife after cutting allergen food",
+    "category": "Allergy",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "การกระทำใดไม่ปลอดภัยสำหรับอาหารของผู้แพ้อาหาร?"
+  },
+  {
+    "id": "pro_040",
+    "question_th": "ก่อนเสิร์ฟอาหารที่ดัดแปลงตามอาการแพ้ พนักงานควรทำอะไร?",
+    "question_en": "What should a server do before delivering an allergy-modified dish?",
+    "options": [
+      "Verify the dish carefully and deliver it to the correct guest",
+      "Place it anywhere on the table",
+      "Ask another table to confirm it",
+      "Serve all allergy dishes last without checking"
+    ],
+    "answer": "Verify the dish carefully and deliver it to the correct guest",
+    "category": "Allergy",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ก่อนเสิร์ฟอาหารที่ดัดแปลงตามอาการแพ้ พนักงานควรทำอะไร?"
+  },
+  {
+    "id": "pro_041",
+    "question_th": "เวลาไหนเหมาะที่สุดในการถามเรื่องอาการแพ้อาหารของแขก?",
+    "question_en": "When is the right time to ask whether guests have allergies?",
+    "options": [
+      "Before or during order taking",
+      "After dessert",
+      "When printing the bill",
+      "After they leave"
+    ],
+    "answer": "Before or during order taking",
+    "category": "Service",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "เวลาไหนเหมาะที่สุดในการถามเรื่องอาการแพ้อาหารของแขก?"
+  },
+  {
+    "id": "pro_042",
+    "question_th": "การตอบแรกที่ดีที่สุดเมื่อแขกบอกว่าได้อาหารผิดคืออะไร?",
+    "question_en": "What is the best first response to a wrong dish complaint?",
+    "options": [
+      "Apologize and correct it promptly",
+      "Say the kitchen is busy",
+      "Ask the guest to keep it",
+      "Blame the POS system"
+    ],
+    "answer": "Apologize and correct it promptly",
+    "category": "Service",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "การตอบแรกที่ดีที่สุดเมื่อแขกบอกว่าได้อาหารผิดคืออะไร?"
+  },
+  {
+    "id": "pro_043",
+    "question_th": "ทำไมการทวนออเดอร์ให้แขกฟังจึงมีประโยชน์?",
+    "question_en": "Why is repeating an order back to the guest useful?",
+    "options": [
+      "It reduces ordering errors",
+      "It makes service slower",
+      "It replaces kitchen tickets",
+      "It is only for VIPs"
+    ],
+    "answer": "It reduces ordering errors",
+    "category": "Service",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "ทำไมการทวนออเดอร์ให้แขกฟังจึงมีประโยชน์?"
+  },
+  {
+    "id": "pro_044",
+    "question_th": "แขกรอนานเกินไป พนักงานควรทำอะไรก่อนที่แขกจะต้องถามซ้ำ?",
+    "question_en": "A guest is waiting too long for food. What should a server do before the guest asks again?",
+    "options": [
+      "Proactively check with the kitchen and update the guest",
+      "Avoid the table",
+      "Wait for the manager only",
+      "Send the bill first"
+    ],
+    "answer": "Proactively check with the kitchen and update the guest",
+    "category": "Service",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกรอนานเกินไป พนักงานควรทำอะไรก่อนที่แขกจะต้องถามซ้ำ?"
+  },
+  {
+    "id": "pro_045",
+    "question_th": "วิธีที่ดีที่สุดในการแนะนำเมนูให้แขกที่ยังลังเลคืออะไร?",
+    "question_en": "What is the best way to recommend an item to a hesitant guest?",
+    "options": [
+      "Use simple taste and pairing descriptions",
+      "Push the highest price item",
+      "Say every dish is the same",
+      "Recommend randomly"
+    ],
+    "answer": "Use simple taste and pairing descriptions",
+    "category": "Service",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "วิธีที่ดีที่สุดในการแนะนำเมนูให้แขกที่ยังลังเลคืออะไร?"
+  },
+  {
+    "id": "pro_046",
+    "question_th": "แขกขอแยกบิลตอนท้าย พนักงานควรทำอย่างไร?",
+    "question_en": "A guest asks to split the bill at the end. What should the server do?",
+    "options": [
+      "Acknowledge the request and follow outlet procedure carefully",
+      "Refuse immediately",
+      "Ask them to sort it out themselves",
+      "Ignore and print one bill"
+    ],
+    "answer": "Acknowledge the request and follow outlet procedure carefully",
+    "category": "Service",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกขอแยกบิลตอนท้าย พนักงานควรทำอย่างไร?"
+  },
+  {
+    "id": "pro_047",
+    "question_th": "โต๊ะ VIP มาถึงก่อนเวลาและโต๊ะยังไม่พร้อม ขั้นตอนชดเชยบริการที่ดีที่สุดคืออะไร?",
+    "question_en": "A VIP table arrives early and the table is not ready. What is the strongest service recovery step?",
+    "options": [
+      "Acknowledge, apologize, and offer a comfortable temporary solution while preparing the table",
+      "Tell them to wait at the entrance silently",
+      "Seat them at a dirty table",
+      "Ask them to come back later"
+    ],
+    "answer": "Acknowledge, apologize, and offer a comfortable temporary solution while preparing the table",
+    "category": "Service",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "โต๊ะ VIP มาถึงก่อนเวลาและโต๊ะยังไม่พร้อม ขั้นตอนชดเชยบริการที่ดีที่สุดคืออะไร?"
+  },
+  {
+    "id": "pro_048",
+    "question_th": "แขกบอกว่าอาหารเย็น การตอบแบบใดดีที่สุด?",
+    "question_en": "A guest says their food is cold. Which response is best?",
+    "options": [
+      "Apologize, remove the dish if appropriate, and replace it promptly",
+      "Tell the guest it was served quickly",
+      "Add sauce and return it",
+      "Say the kitchen disagrees"
+    ],
+    "answer": "Apologize, remove the dish if appropriate, and replace it promptly",
+    "category": "Service",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกบอกว่าอาหารเย็น การตอบแบบใดดีที่สุด?"
+  },
+  {
+    "id": "pro_049",
+    "question_th": "แนวทางที่เป็นมืออาชีพที่สุดเมื่อคุณไม่รู้คำตอบคำถามของแขกคืออะไร?",
+    "question_en": "What is the most professional approach when you do not know an answer to a guest question?",
+    "options": [
+      "Acknowledge it honestly and confirm the correct information quickly",
+      "Make up an answer with confidence",
+      "Avoid the table",
+      "Change the subject"
+    ],
+    "answer": "Acknowledge it honestly and confirm the correct information quickly",
+    "category": "Service",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แนวทางที่เป็นมืออาชีพที่สุดเมื่อคุณไม่รู้คำตอบคำถามของแขกคืออะไร?"
+  },
+  {
+    "id": "pro_050",
+    "question_th": "ทำไมการสื่อสารระหว่างพนักงานบริการและครัวจึงสำคัญมากในช่วงที่ยุ่ง?",
+    "question_en": "Why is communication between service and kitchen critical during busy periods?",
+    "options": [
+      "It reduces errors, delays, and guest complaints",
+      "It only helps with billing",
+      "It is useful only for wine orders",
+      "It replaces the need for training"
+    ],
+    "answer": "It reduces errors, delays, and guest complaints",
+    "category": "Service",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ทำไมการสื่อสารระหว่างพนักงานบริการและครัวจึงสำคัญมากในช่วงที่ยุ่ง?"
+  },
+  {
+    "id": "pro_051",
+    "question_th": "ABV บนรายการเครื่องดื่มย่อมาจากอะไร?",
+    "question_en": "What does ABV stand for on a beverage list?",
+    "options": [
+      "Alcohol By Volume",
+      "Average Bottle Value",
+      "Added Beverage Volume",
+      "Alcohol Barrel Vintage"
+    ],
+    "answer": "Alcohol By Volume",
+    "category": "Beverage",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "ABV บนรายการเครื่องดื่มย่อมาจากอะไร?"
+  },
+  {
+    "id": "pro_052",
+    "question_th": "สุรากลั่นชนิดใดมี juniper เป็นพฤกษชาติสำคัญ?",
+    "question_en": "Which spirit is known for juniper as a defining botanical?",
+    "options": [
+      "Gin",
+      "Rum",
+      "Tequila",
+      "Brandy"
+    ],
+    "answer": "Gin",
+    "category": "Beverage",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "สุรากลั่นชนิดใดมี juniper เป็นพฤกษชาติสำคัญ?"
+  },
+  {
+    "id": "pro_053",
+    "question_th": "ถ้าแขกต้องการเครื่องดื่มเบาและสดชื่น สไตล์ค็อกเทลแบบใดมักเหมาะ?",
+    "question_en": "If a guest wants something light and refreshing, which cocktail style is usually suitable?",
+    "options": [
+      "A refreshing highball or spritz style",
+      "A heavy dessert cocktail only",
+      "A neat double whisky",
+      "Any warm drink"
+    ],
+    "answer": "A refreshing highball or spritz style",
+    "category": "Beverage",
+    "difficulty": "easy",
+    "source": "professional_curated",
+    "explanation": "ถ้าแขกต้องการเครื่องดื่มเบาและสดชื่น สไตล์ค็อกเทลแบบใดมักเหมาะ?"
+  },
+  {
+    "id": "pro_054",
+    "question_th": "ขั้นตอนแรกที่ดีที่สุดก่อนเสิร์ฟเครื่องดื่มบรรจุขวดที่โต๊ะคืออะไร?",
+    "question_en": "What is the best first step before serving a bottled beverage at the table?",
+    "options": [
+      "Confirm the order and present the correct item",
+      "Open every bottle in advance",
+      "Serve without checking",
+      "Ask the guest to open it"
+    ],
+    "answer": "Confirm the order and present the correct item",
+    "category": "Beverage",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ขั้นตอนแรกที่ดีที่สุดก่อนเสิร์ฟเครื่องดื่มบรรจุขวดที่โต๊ะคืออะไร?"
+  },
+  {
+    "id": "pro_055",
+    "question_th": "แขกขอคำแนะนำเครื่องดื่มที่ไม่หวานมาก ควรทำอย่างไร?",
+    "question_en": "A guest asks for a recommendation that is not too sweet. What should you do?",
+    "options": [
+      "Recommend a drier style based on the menu",
+      "Say everything is sweet",
+      "Offer only beer",
+      "Serve water instead"
+    ],
+    "answer": "Recommend a drier style based on the menu",
+    "category": "Beverage",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกขอคำแนะนำเครื่องดื่มที่ไม่หวานมาก ควรทำอย่างไร?"
+  },
+  {
+    "id": "pro_056",
+    "question_th": "ทำไมการเลือกแก้วจึงสำคัญในการบริการเครื่องดื่ม?",
+    "question_en": "Why is glassware choice important in beverage service?",
+    "options": [
+      "It affects presentation and service quality",
+      "It only affects cost",
+      "It never matters to guests",
+      "It changes ABV"
+    ],
+    "answer": "It affects presentation and service quality",
+    "category": "Beverage",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ทำไมการเลือกแก้วจึงสำคัญในการบริการเครื่องดื่ม?"
+  },
+  {
+    "id": "pro_057",
+    "question_th": "แขกบอกว่าค็อกเทลแรงเกินไป การตอบที่เป็นมืออาชีพที่สุดคืออะไร?",
+    "question_en": "A guest says their cocktail is too strong. What is the best professional response?",
+    "options": [
+      "Acknowledge the feedback and offer an appropriate solution based on outlet policy",
+      "Tell them that is the standard and walk away",
+      "Add random juice without asking",
+      "Ignore the complaint"
+    ],
+    "answer": "Acknowledge the feedback and offer an appropriate solution based on outlet policy",
+    "category": "Beverage",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกบอกว่าค็อกเทลแรงเกินไป การตอบที่เป็นมืออาชีพที่สุดคืออะไร?"
+  },
+  {
+    "id": "pro_058",
+    "question_th": "พนักงานไม่แน่ใจว่าสุราที่แขกต้องการมีหรือไม่ ควรทำอย่างไรต่อ?",
+    "question_en": "A server is unsure whether a requested spirit is available. What should happen next?",
+    "options": [
+      "Confirm stock before promising the item",
+      "Say yes and check later",
+      "Offer the most expensive bottle instead",
+      "Avoid returning to the table"
+    ],
+    "answer": "Confirm stock before promising the item",
+    "category": "Beverage",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "พนักงานไม่แน่ใจว่าสุราที่แขกต้องการมีหรือไม่ ควรทำอย่างไรต่อ?"
+  },
+  {
+    "id": "pro_059",
+    "question_th": "ทำไมการแนะนำเครื่องดื่มจึงควรยึดความชอบของแขก ไม่ใช่แค่ราคา?",
+    "question_en": "Why should beverage recommendations be matched to guest preference, not only price?",
+    "options": [
+      "Guest satisfaction and trust are more important than pushing price alone",
+      "Expensive always means correct",
+      "Price is the only selling point",
+      "Guests never remember recommendations"
+    ],
+    "answer": "Guest satisfaction and trust are more important than pushing price alone",
+    "category": "Beverage",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ทำไมการแนะนำเครื่องดื่มจึงควรยึดความชอบของแขก ไม่ใช่แค่ราคา?"
+  },
+  {
+    "id": "pro_060",
+    "question_th": "แขกขอเครื่องดื่มทางเลือกแทนไวน์เพราะไม่ดื่มไวน์ แนวทางบริการที่ดีที่สุดคืออะไร?",
+    "question_en": "A guest asks for a wine alternative because they do not drink wine. What is the best service approach?",
+    "options": [
+      "Offer suitable non-wine options based on taste and dish pairing",
+      "Tell them wine is required",
+      "Serve any random soft drink",
+      "Avoid recommending anything"
+    ],
+    "answer": "Offer suitable non-wine options based on taste and dish pairing",
+    "category": "Beverage",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกขอเครื่องดื่มทางเลือกแทนไวน์เพราะไม่ดื่มไวน์ แนวทางบริการที่ดีที่สุดคืออะไร?"
+  },
+  {
+    "id": "pro_001_v",
+    "question_th": "แขกสั่งแซลมอนย่าง ไวน์สไตล์ไหนเป็นตัวเลือกที่ปลอดภัยที่สุด? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest orders grilled salmon. Which wine style is the safest recommendation? (additional service scenario)",
+    "options": [
+      "Sauvignon Blanc",
+      "Cabernet Sauvignon",
+      "Shiraz",
+      "Port"
+    ],
+    "answer": "Sauvignon Blanc",
+    "category": "Wine",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกสั่งแซลมอนย่าง ไวน์สไตล์ไหนเป็นตัวเลือกที่ปลอดภัยที่สุด?"
+  },
+  {
+    "id": "pro_002_v",
+    "question_th": "ไวน์ชนิดใดโดยปกติควรเสิร์ฟแบบแช่เย็น? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which wine should usually be served chilled? (additional service scenario)",
+    "options": [
+      "White wine",
+      "Red wine",
+      "Fortified wine",
+      "Mulled wine"
+    ],
+    "answer": "White wine",
+    "category": "Wine",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ไวน์ชนิดใดโดยปกติควรเสิร์ฟแบบแช่เย็น?"
+  },
+  {
+    "id": "pro_003_v",
+    "question_th": "ก่อนเปิดไวน์ควรแสดงอะไรให้แขกดูก่อน? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What should you show the guest before opening a bottle of wine? (additional service scenario)",
+    "options": [
+      "The label",
+      "The cork only",
+      "The price tag",
+      "The bottle base"
+    ],
+    "answer": "The label",
+    "category": "Wine",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ก่อนเปิดไวน์ควรแสดงอะไรให้แขกดูก่อน?"
+  },
+  {
+    "id": "pro_004_v",
+    "question_th": "แขกบอกว่าไวน์มีกลิ่นอับและทึบ สิ่งที่ควรทำต่อดีที่สุดคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest says the wine smells musty and dull. What is the best next step? (additional service scenario)",
+    "options": [
+      "Apologize and replace or verify the bottle",
+      "Tell the guest this is normal",
+      "Add ice to reduce the smell",
+      "Pour a larger glass"
+    ],
+    "answer": "Apologize and replace or verify the bottle",
+    "category": "Wine",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกบอกว่าไวน์มีกลิ่นอับและทึบ สิ่งที่ควรทำต่อดีที่สุดคืออะไร?"
+  },
+  {
+    "id": "pro_005_v",
+    "question_th": "คำอธิบายแบบไหนเหมาะกับ Pinot Grigio ในภาษาที่แขกเข้าใจง่าย? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which description best fits Pinot Grigio in guest-friendly language? (additional service scenario)",
+    "options": [
+      "Light, crisp, and refreshing",
+      "Very heavy and tannic",
+      "Sweet like dessert wine",
+      "Rich and smoky like whisky"
+    ],
+    "answer": "Light, crisp, and refreshing",
+    "category": "Wine",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "คำอธิบายแบบไหนเหมาะกับ Pinot Grigio ในภาษาที่แขกเข้าใจง่าย?"
+  },
+  {
+    "id": "pro_006_v",
+    "question_th": "ถ้าแขกอยากได้โรเซ่สำหรับอากาศร้อน จุดขายไหนเหมาะที่สุด? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "If a guest wants a rosé for hot weather, which selling point is best? (additional service scenario)",
+    "options": [
+      "Fresh, light, and easy to drink",
+      "Powerful tannin and oak",
+      "Best served warm",
+      "Pairs only with beef"
+    ],
+    "answer": "Fresh, light, and easy to drink",
+    "category": "Wine",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ถ้าแขกอยากได้โรเซ่สำหรับอากาศร้อน จุดขายไหนเหมาะที่สุด?"
+  },
+  {
+    "id": "pro_007_v",
+    "question_th": "สไตล์อุณหภูมิการเสิร์ฟที่เหมาะที่สุดสำหรับ sparkling wine คือแบบใด? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What is the most appropriate serving temperature style for sparkling wine? (additional service scenario)",
+    "options": [
+      "Well chilled",
+      "Room temperature",
+      "Warm",
+      "Hot"
+    ],
+    "answer": "Well chilled",
+    "category": "Wine",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "สไตล์อุณหภูมิการเสิร์ฟที่เหมาะที่สุดสำหรับ sparkling wine คือแบบใด?"
+  },
+  {
+    "id": "pro_008_v",
+    "question_th": "แขกสั่งอาหารทะเลรสจัดแบบไทยและอยากได้ไวน์สดชื่น คำแนะนำไหนเหมาะที่สุด? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest orders spicy Thai seafood and asks for a refreshing wine. Which recommendation is strongest? (additional service scenario)",
+    "options": [
+      "A crisp Sauvignon Blanc or dry Riesling",
+      "A heavy Cabernet Sauvignon",
+      "An oaky Shiraz",
+      "A warm dessert wine"
+    ],
+    "answer": "A crisp Sauvignon Blanc or dry Riesling",
+    "category": "Wine",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกสั่งอาหารทะเลรสจัดแบบไทยและอยากได้ไวน์สดชื่น คำแนะนำไหนเหมาะที่สุด?"
+  },
+  {
+    "id": "pro_009_v",
+    "question_th": "พนักงานเปิดไวน์ผิดขวดแต่ยังไม่ได้ริน ควรทำอย่างไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A host opened the wrong bottle but has not poured it yet. What should the server do? (additional service scenario)",
+    "options": [
+      "Inform the supervisor and correct it before service",
+      "Serve it anyway to avoid waste",
+      "Hide the bottle and continue",
+      "Mix it with the correct bottle"
+    ],
+    "answer": "Inform the supervisor and correct it before service",
+    "category": "Wine",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "พนักงานเปิดไวน์ผิดขวดแต่ยังไม่ได้ริน ควรทำอย่างไร?"
+  },
+  {
+    "id": "pro_010_v",
+    "question_th": "ประโยคไหนเป็นมืออาชีพที่สุดเวลาแนะนำไวน์ให้แขกที่ยังลังเล? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which statement is most professional when recommending wine to a hesitant guest? (additional service scenario)",
+    "options": [
+      "May I suggest something lighter and refreshing that pairs well with your dish?",
+      "This is the most expensive one, so it must be best.",
+      "You should take red wine; everyone does.",
+      "I cannot help unless you know grape names."
+    ],
+    "answer": "May I suggest something lighter and refreshing that pairs well with your dish?",
+    "category": "Wine",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ประโยคไหนเป็นมืออาชีพที่สุดเวลาแนะนำไวน์ให้แขกที่ยังลังเล?"
+  },
+  {
+    "id": "pro_011_v",
+    "question_th": "'Would you like anything else?' หมายถึงอะไรในการบริการร้านอาหาร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What does 'Would you like anything else?' mean in restaurant service? (additional service scenario)",
+    "options": [
+      "ต้องการอะไรเพิ่มเติมไหม",
+      "ขอเช็กบิลเลยไหม",
+      "โต๊ะนี้ว่างไหม",
+      "รับเครื่องดื่มไม่ได้"
+    ],
+    "answer": "ต้องการอะไรเพิ่มเติมไหม",
+    "category": "English",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "'Would you like anything else?' หมายถึงอะไรในการบริการร้านอาหาร?"
+  },
+  {
+    "id": "pro_012_v",
+    "question_th": "ประโยคใดเหมาะที่สุดสำหรับเช็กว่าแขกพร้อมสั่งหรือยัง? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which phrase is best for checking if a guest is ready to order? (additional service scenario)",
+    "options": [
+      "Are you ready to order?",
+      "You must order now.",
+      "Kitchen is closing now.",
+      "Give me your menu."
+    ],
+    "answer": "Are you ready to order?",
+    "category": "English",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ประโยคใดเหมาะที่สุดสำหรับเช็กว่าแขกพร้อมสั่งหรือยัง?"
+  },
+  {
+    "id": "pro_013_v",
+    "question_th": "คำว่า 'sold out' แปลว่าอะไรดีที่สุด? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What is the best translation of 'sold out'? (additional service scenario)",
+    "options": [
+      "หมดแล้ว",
+      "รสจัด",
+      "ใหม่ล่าสุด",
+      "ฟรี"
+    ],
+    "answer": "หมดแล้ว",
+    "category": "English",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "คำว่า 'sold out' แปลว่าอะไรดีที่สุด?"
+  },
+  {
+    "id": "pro_014_v",
+    "question_th": "แขกพูดว่า 'I have a dairy allergy.' ควรตอบอย่างไรเป็นอันดับแรก? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest says, 'I have a dairy allergy.' What is the best first reply? (additional service scenario)",
+    "options": [
+      "Thank you for letting me know. Let me check the menu and confirm with the kitchen.",
+      "That should be fine for most dishes.",
+      "Please decide quickly.",
+      "Only desserts contain dairy."
+    ],
+    "answer": "Thank you for letting me know. Let me check the menu and confirm with the kitchen.",
+    "category": "English",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกพูดว่า 'I have a dairy allergy.' ควรตอบอย่างไรเป็นอันดับแรก?"
+  },
+  {
+    "id": "pro_015_v",
+    "question_th": "ประโยคใดฟังเป็นมืออาชีพที่สุดเมื่ออาหารล่าช้า? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which sentence sounds most professional when a dish is delayed? (additional service scenario)",
+    "options": [
+      "I apologize for the delay. I am checking with the kitchen now.",
+      "You need to wait.",
+      "The kitchen is busy, so nothing can be done.",
+      "Maybe another table caused the delay."
+    ],
+    "answer": "I apologize for the delay. I am checking with the kitchen now.",
+    "category": "English",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ประโยคใดฟังเป็นมืออาชีพที่สุดเมื่ออาหารล่าช้า?"
+  },
+  {
+    "id": "pro_016_v",
+    "question_th": "แขกขอน้ำ sparkling water คำถามต่อข้อใดมีประโยชน์? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest asks for sparkling water. Which follow-up question is useful? (additional service scenario)",
+    "options": [
+      "Would you like a small or large bottle?",
+      "Do you want red or white?",
+      "Hot or cold coffee?",
+      "Still or spicy?"
+    ],
+    "answer": "Would you like a small or large bottle?",
+    "category": "English",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกขอน้ำ sparkling water คำถามต่อข้อใดมีประโยชน์?"
+  },
+  {
+    "id": "pro_017_v",
+    "question_th": "ประโยคใดเหมาะที่สุดสำหรับการ upsell แบบสุภาพ? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which phrase is best for upselling politely? (additional service scenario)",
+    "options": [
+      "May I recommend our signature dish? It pairs very well with your selection.",
+      "You should order more because this portion is small.",
+      "Take this one; it is expensive.",
+      "This is better than what you chose."
+    ],
+    "answer": "May I recommend our signature dish? It pairs very well with your selection.",
+    "category": "English",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ประโยคใดเหมาะที่สุดสำหรับการ upsell แบบสุภาพ?"
+  },
+  {
+    "id": "pro_018_v",
+    "question_th": "แขกบอกว่า 'This is not what I ordered.' การตอบแบบมืออาชีพที่สุดคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest says, 'This is not what I ordered.' What is the most professional response? (additional service scenario)",
+    "options": [
+      "I am sorry about that. Let me fix it for you right away.",
+      "No, this is correct.",
+      "Please keep it for now.",
+      "You must have forgotten your order."
+    ],
+    "answer": "I am sorry about that. Let me fix it for you right away.",
+    "category": "English",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกบอกว่า 'This is not what I ordered.' การตอบแบบมืออาชีพที่สุดคืออะไร?"
+  },
+  {
+    "id": "pro_019_v",
+    "question_th": "ประโยคใดเหมาะที่สุดสำหรับยืนยันออเดอร์แพ้อาหารก่อนเสิร์ฟ? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which phrase best confirms an allergy order before service? (additional service scenario)",
+    "options": [
+      "To confirm, this dish is prepared for your allergy request.",
+      "Please remember your own allergy.",
+      "This should be okay, I think.",
+      "The kitchen tried its best."
+    ],
+    "answer": "To confirm, this dish is prepared for your allergy request.",
+    "category": "English",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ประโยคใดเหมาะที่สุดสำหรับยืนยันออเดอร์แพ้อาหารก่อนเสิร์ฟ?"
+  },
+  {
+    "id": "pro_020_v",
+    "question_th": "ประโยคใดดีที่สุดเมื่อคุณต้องขอเวลาเพื่อตรวจสอบข้อมูล? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which sentence is best when you need a moment to verify information? (additional service scenario)",
+    "options": [
+      "Allow me a moment to confirm that for you.",
+      "I don't know.",
+      "Ask someone else.",
+      "Please wait over there."
+    ],
+    "answer": "Allow me a moment to confirm that for you.",
+    "category": "English",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ประโยคใดดีที่สุดเมื่อคุณต้องขอเวลาเพื่อตรวจสอบข้อมูล?"
+  },
+  {
+    "id": "pro_021_v",
+    "question_th": "อุณหภูมิอาหารร้อนที่นิยมใช้เป็นเกณฑ์ขั้นต่ำในงานบริการอาหารคือเท่าใด? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What is the minimum hot holding target commonly used in food service? (additional service scenario)",
+    "options": [
+      "Above 60°C",
+      "Below 5°C",
+      "20°C",
+      "35°C"
+    ],
+    "answer": "Above 60°C",
+    "category": "Hygiene",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "อุณหภูมิอาหารร้อนที่นิยมใช้เป็นเกณฑ์ขั้นต่ำในงานบริการอาหารคือเท่าใด?"
+  },
+  {
+    "id": "pro_022_v",
+    "question_th": "พนักงานควรล้างมือเมื่อใดระหว่างการบริการ? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "When should staff wash hands during service? (additional service scenario)",
+    "options": [
+      "Before handling food and after contamination risks",
+      "Only at the end of the shift",
+      "Only after touching plates",
+      "Only when a manager is watching"
+    ],
+    "answer": "Before handling food and after contamination risks",
+    "category": "Hygiene",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "พนักงานควรล้างมือเมื่อใดระหว่างการบริการ?"
+  },
+  {
+    "id": "pro_023_v",
+    "question_th": "FIFO ในการจัดเก็บหมายถึงอะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What does FIFO mean in storage practice? (additional service scenario)",
+    "options": [
+      "First In, First Out",
+      "Fast In, Fast Out",
+      "Food In, Food Out",
+      "First Item, Final Order"
+    ],
+    "answer": "First In, First Out",
+    "category": "Hygiene",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "FIFO ในการจัดเก็บหมายถึงอะไร?"
+  },
+  {
+    "id": "pro_024_v",
+    "question_th": "ทำไม sanitizer จึงไม่เหมือนกับ cleaning? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Why is sanitizer not the same as cleaning? (additional service scenario)",
+    "options": [
+      "Cleaning removes dirt; sanitizing reduces microorganisms",
+      "Sanitizer replaces washing",
+      "Cleaning is only for glassware",
+      "There is no difference"
+    ],
+    "answer": "Cleaning removes dirt; sanitizing reduces microorganisms",
+    "category": "Hygiene",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ทำไม sanitizer จึงไม่เหมือนกับ cleaning?"
+  },
+  {
+    "id": "pro_025_v",
+    "question_th": "พ่อครัวจับไก่ดิบแล้วเอื้อมไปจับ garnish ความเสี่ยงหลักคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A cook touches raw chicken and then reaches for garnish. What is the key risk? (additional service scenario)",
+    "options": [
+      "Cross-contamination",
+      "Undercooking only",
+      "Over-seasoning",
+      "Broken glass"
+    ],
+    "answer": "Cross-contamination",
+    "category": "Hygiene",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "พ่อครัวจับไก่ดิบแล้วเอื้อมไปจับ garnish ความเสี่ยงหลักคืออะไร?"
+  },
+  {
+    "id": "pro_026_v",
+    "question_th": "สิ่งใดไม่ควรสวมขณะเตรียมอาหาร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which item should not be worn while preparing food? (additional service scenario)",
+    "options": [
+      "Jewelry",
+      "Hairnet",
+      "Clean apron",
+      "Non-slip shoes"
+    ],
+    "answer": "Jewelry",
+    "category": "Hygiene",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "สิ่งใดไม่ควรสวมขณะเตรียมอาหาร?"
+  },
+  {
+    "id": "pro_027_v",
+    "question_th": "พื้นที่เตรียมอาหารดูสะอาดแต่เพิ่งใช้กับอาหารทะเลดิบ ก่อนเริ่มทำสลัดต้องทำอะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A prep area looks clean, but it was just used for raw seafood. What must happen before salad prep begins? (additional service scenario)",
+    "options": [
+      "Clean and sanitize the area and tools properly",
+      "Wipe it once with a dry cloth",
+      "Start immediately if it looks clean",
+      "Only change the cutting board"
+    ],
+    "answer": "Clean and sanitize the area and tools properly",
+    "category": "Hygiene",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "พื้นที่เตรียมอาหารดูสะอาดแต่เพิ่งใช้กับอาหารทะเลดิบ ก่อนเริ่มทำสลัดต้องทำอะไร?"
+  },
+  {
+    "id": "pro_028_v",
+    "question_th": "แนวปฏิบัติที่ดีที่สุดคืออะไรหากพนักงานมีอาการอาเจียนหรือท้องเสีย? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which practice is best if a staff member has vomiting or diarrhea? (additional service scenario)",
+    "options": [
+      "Do not allow food handling and report immediately",
+      "Let them work with gloves",
+      "Move them to bar service only",
+      "Let them finish the shift in the kitchen"
+    ],
+    "answer": "Do not allow food handling and report immediately",
+    "category": "Hygiene",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แนวปฏิบัติที่ดีที่สุดคืออะไรหากพนักงานมีอาการอาเจียนหรือท้องเสีย?"
+  },
+  {
+    "id": "pro_029_v",
+    "question_th": "พนักงานจับเงินแล้วจะนำช้อนส้อมไปเสิร์ฟที่โต๊ะ ก่อนหน้านั้นควรทำอะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A server handles cash and then brings cutlery to a table. What should have happened first? (additional service scenario)",
+    "options": [
+      "Wash hands before handling clean service items",
+      "Only use hand sanitizer if nearby",
+      "Nothing if the cash looked clean",
+      "Wear two rings to avoid contact"
+    ],
+    "answer": "Wash hands before handling clean service items",
+    "category": "Hygiene",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "พนักงานจับเงินแล้วจะนำช้อนส้อมไปเสิร์ฟที่โต๊ะ ก่อนหน้านั้นควรทำอะไร?"
+  },
+  {
+    "id": "pro_030_v",
+    "question_th": "เหตุผลที่ดีที่สุดที่ควรปิดฝาถังขยะคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What is the best reason to keep waste bins covered? (additional service scenario)",
+    "options": [
+      "To reduce pests and contamination risks",
+      "To make the kitchen quieter",
+      "To save plastic bags",
+      "To cool the room"
+    ],
+    "answer": "To reduce pests and contamination risks",
+    "category": "Hygiene",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "เหตุผลที่ดีที่สุดที่ควรปิดฝาถังขยะคืออะไร?"
+  },
+  {
+    "id": "pro_031_v",
+    "question_th": "Cross-contact ในการจัดการแพ้อาหารคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What is cross-contact in allergy management? (additional service scenario)",
+    "options": [
+      "Allergen transfer to another food",
+      "Food cooling too quickly",
+      "Cooking food twice",
+      "A guest changing their mind"
+    ],
+    "answer": "Allergen transfer to another food",
+    "category": "Allergy",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "Cross-contact ในการจัดการแพ้อาหารคืออะไร?"
+  },
+  {
+    "id": "pro_032_v",
+    "question_th": "ข้อใดเป็นสารก่อภูมิแพ้หลักที่พบบ่อย? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which is a common major allergen? (additional service scenario)",
+    "options": [
+      "Peanuts",
+      "Salt",
+      "Pepper",
+      "Sugar"
+    ],
+    "answer": "Peanuts",
+    "category": "Allergy",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ข้อใดเป็นสารก่อภูมิแพ้หลักที่พบบ่อย?"
+  },
+  {
+    "id": "pro_033_v",
+    "question_th": "ถ้าไม่แน่ใจว่าอาหารมีถั่วหรือไม่ ควรทำอย่างไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "If you are unsure whether a dish contains nuts, what should you do? (additional service scenario)",
+    "options": [
+      "Check with the kitchen before answering",
+      "Guess based on appearance",
+      "Tell the guest it is probably fine",
+      "Avoid responding"
+    ],
+    "answer": "Check with the kitchen before answering",
+    "category": "Allergy",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ถ้าไม่แน่ใจว่าอาหารมีถั่วหรือไม่ ควรทำอย่างไร?"
+  },
+  {
+    "id": "pro_034_v",
+    "question_th": "แขกแจ้งว่าแพ้อาหารทะเลเปลือกแข็งหลังสั่งพาสต้าอาหารทะเล สิ่งแรกที่ต้องทำคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest reports a shellfish allergy after ordering seafood pasta. What is the first action? (additional service scenario)",
+    "options": [
+      "Stop the order and inform the kitchen immediately",
+      "Serve bread first",
+      "Wait to see if the guest changes their mind",
+      "Just remove visible shellfish"
+    ],
+    "answer": "Stop the order and inform the kitchen immediately",
+    "category": "Allergy",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกแจ้งว่าแพ้อาหารทะเลเปลือกแข็งหลังสั่งพาสต้าอาหารทะเล สิ่งแรกที่ต้องทำคืออะไร?"
+  },
+  {
+    "id": "pro_035_v",
+    "question_th": "ทำไมการใช้น้ำมันทอดร่วมกันจึงเสี่ยงกับออเดอร์แพ้อาหาร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Why is using the same fryer oil risky for allergy orders? (additional service scenario)",
+    "options": [
+      "Allergens may remain in the oil",
+      "The oil gets hotter",
+      "It changes the menu price",
+      "It makes food salty"
+    ],
+    "answer": "Allergens may remain in the oil",
+    "category": "Allergy",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ทำไมการใช้น้ำมันทอดร่วมกันจึงเสี่ยงกับออเดอร์แพ้อาหาร?"
+  },
+  {
+    "id": "pro_036_v",
+    "question_th": "ข้อความใดเกี่ยวกับสารก่อภูมิแพ้และความร้อนถูกต้อง? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which statement about allergens and heat is correct? (additional service scenario)",
+    "options": [
+      "Heat does not reliably remove allergen risk",
+      "Heat always destroys allergens",
+      "Only nuts survive heat",
+      "Only milk is affected by heat"
+    ],
+    "answer": "Heat does not reliably remove allergen risk",
+    "category": "Allergy",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ข้อความใดเกี่ยวกับสารก่อภูมิแพ้และความร้อนถูกต้อง?"
+  },
+  {
+    "id": "pro_037_v",
+    "question_th": "แขกเริ่มมีอาการริมฝีปากบวมและหายใจลำบากหลังรับประทานอาหาร สิ่งสำคัญที่สุดที่ต้องทำคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest begins to show lip swelling and breathing difficulty after eating. What is the priority response? (additional service scenario)",
+    "options": [
+      "Call emergency support and alert the manager immediately",
+      "Offer dessert to calm the guest",
+      "Bring the bill quickly",
+      "Move the guest without telling anyone"
+    ],
+    "answer": "Call emergency support and alert the manager immediately",
+    "category": "Allergy",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกเริ่มมีอาการริมฝีปากบวมและหายใจลำบากหลังรับประทานอาหาร สิ่งสำคัญที่สุดที่ต้องทำคืออะไร?"
+  },
+  {
+    "id": "pro_038_v",
+    "question_th": "วิธีที่เป็นมืออาชีพที่สุดในการรับมือคำขอเกี่ยวกับอาการแพ้อาหารที่โต๊ะคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What is the most professional way to handle an allergy request at the table? (additional service scenario)",
+    "options": [
+      "Clarify the allergy, note it clearly, and communicate to the kitchen",
+      "Promise the dish is safe without checking",
+      "Only tell another server later",
+      "Ask the guest to take the risk"
+    ],
+    "answer": "Clarify the allergy, note it clearly, and communicate to the kitchen",
+    "category": "Allergy",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "วิธีที่เป็นมืออาชีพที่สุดในการรับมือคำขอเกี่ยวกับอาการแพ้อาหารที่โต๊ะคืออะไร?"
+  },
+  {
+    "id": "pro_039_v",
+    "question_th": "การกระทำใดไม่ปลอดภัยสำหรับอาหารของผู้แพ้อาหาร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which action is unsafe for an allergy meal? (additional service scenario)",
+    "options": [
+      "Using the same knife after cutting allergen food",
+      "Using cleaned dedicated tools",
+      "Confirming ingredients with the chef",
+      "Marking the ticket clearly"
+    ],
+    "answer": "Using the same knife after cutting allergen food",
+    "category": "Allergy",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "การกระทำใดไม่ปลอดภัยสำหรับอาหารของผู้แพ้อาหาร?"
+  },
+  {
+    "id": "pro_040_v",
+    "question_th": "ก่อนเสิร์ฟอาหารที่ดัดแปลงตามอาการแพ้ พนักงานควรทำอะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What should a server do before delivering an allergy-modified dish? (additional service scenario)",
+    "options": [
+      "Verify the dish carefully and deliver it to the correct guest",
+      "Place it anywhere on the table",
+      "Ask another table to confirm it",
+      "Serve all allergy dishes last without checking"
+    ],
+    "answer": "Verify the dish carefully and deliver it to the correct guest",
+    "category": "Allergy",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ก่อนเสิร์ฟอาหารที่ดัดแปลงตามอาการแพ้ พนักงานควรทำอะไร?"
+  },
+  {
+    "id": "pro_041_v",
+    "question_th": "เวลาไหนเหมาะที่สุดในการถามเรื่องอาการแพ้อาหารของแขก? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "When is the right time to ask whether guests have allergies? (additional service scenario)",
+    "options": [
+      "Before or during order taking",
+      "After dessert",
+      "When printing the bill",
+      "After they leave"
+    ],
+    "answer": "Before or during order taking",
+    "category": "Service",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "เวลาไหนเหมาะที่สุดในการถามเรื่องอาการแพ้อาหารของแขก?"
+  },
+  {
+    "id": "pro_042_v",
+    "question_th": "การตอบแรกที่ดีที่สุดเมื่อแขกบอกว่าได้อาหารผิดคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What is the best first response to a wrong dish complaint? (additional service scenario)",
+    "options": [
+      "Apologize and correct it promptly",
+      "Say the kitchen is busy",
+      "Ask the guest to keep it",
+      "Blame the POS system"
+    ],
+    "answer": "Apologize and correct it promptly",
+    "category": "Service",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "การตอบแรกที่ดีที่สุดเมื่อแขกบอกว่าได้อาหารผิดคืออะไร?"
+  },
+  {
+    "id": "pro_043_v",
+    "question_th": "ทำไมการทวนออเดอร์ให้แขกฟังจึงมีประโยชน์? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Why is repeating an order back to the guest useful? (additional service scenario)",
+    "options": [
+      "It reduces ordering errors",
+      "It makes service slower",
+      "It replaces kitchen tickets",
+      "It is only for VIPs"
+    ],
+    "answer": "It reduces ordering errors",
+    "category": "Service",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ทำไมการทวนออเดอร์ให้แขกฟังจึงมีประโยชน์?"
+  },
+  {
+    "id": "pro_044_v",
+    "question_th": "แขกรอนานเกินไป พนักงานควรทำอะไรก่อนที่แขกจะต้องถามซ้ำ? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest is waiting too long for food. What should a server do before the guest asks again? (additional service scenario)",
+    "options": [
+      "Proactively check with the kitchen and update the guest",
+      "Avoid the table",
+      "Wait for the manager only",
+      "Send the bill first"
+    ],
+    "answer": "Proactively check with the kitchen and update the guest",
+    "category": "Service",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกรอนานเกินไป พนักงานควรทำอะไรก่อนที่แขกจะต้องถามซ้ำ?"
+  },
+  {
+    "id": "pro_045_v",
+    "question_th": "วิธีที่ดีที่สุดในการแนะนำเมนูให้แขกที่ยังลังเลคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What is the best way to recommend an item to a hesitant guest? (additional service scenario)",
+    "options": [
+      "Use simple taste and pairing descriptions",
+      "Push the highest price item",
+      "Say every dish is the same",
+      "Recommend randomly"
+    ],
+    "answer": "Use simple taste and pairing descriptions",
+    "category": "Service",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "วิธีที่ดีที่สุดในการแนะนำเมนูให้แขกที่ยังลังเลคืออะไร?"
+  },
+  {
+    "id": "pro_046_v",
+    "question_th": "แขกขอแยกบิลตอนท้าย พนักงานควรทำอย่างไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest asks to split the bill at the end. What should the server do? (additional service scenario)",
+    "options": [
+      "Acknowledge the request and follow outlet procedure carefully",
+      "Refuse immediately",
+      "Ask them to sort it out themselves",
+      "Ignore and print one bill"
+    ],
+    "answer": "Acknowledge the request and follow outlet procedure carefully",
+    "category": "Service",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกขอแยกบิลตอนท้าย พนักงานควรทำอย่างไร?"
+  },
+  {
+    "id": "pro_047_v",
+    "question_th": "โต๊ะ VIP มาถึงก่อนเวลาและโต๊ะยังไม่พร้อม ขั้นตอนชดเชยบริการที่ดีที่สุดคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A VIP table arrives early and the table is not ready. What is the strongest service recovery step? (additional service scenario)",
+    "options": [
+      "Acknowledge, apologize, and offer a comfortable temporary solution while preparing the table",
+      "Tell them to wait at the entrance silently",
+      "Seat them at a dirty table",
+      "Ask them to come back later"
+    ],
+    "answer": "Acknowledge, apologize, and offer a comfortable temporary solution while preparing the table",
+    "category": "Service",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "โต๊ะ VIP มาถึงก่อนเวลาและโต๊ะยังไม่พร้อม ขั้นตอนชดเชยบริการที่ดีที่สุดคืออะไร?"
+  },
+  {
+    "id": "pro_048_v",
+    "question_th": "แขกบอกว่าอาหารเย็น การตอบแบบใดดีที่สุด? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest says their food is cold. Which response is best? (additional service scenario)",
+    "options": [
+      "Apologize, remove the dish if appropriate, and replace it promptly",
+      "Tell the guest it was served quickly",
+      "Add sauce and return it",
+      "Say the kitchen disagrees"
+    ],
+    "answer": "Apologize, remove the dish if appropriate, and replace it promptly",
+    "category": "Service",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกบอกว่าอาหารเย็น การตอบแบบใดดีที่สุด?"
+  },
+  {
+    "id": "pro_049_v",
+    "question_th": "แนวทางที่เป็นมืออาชีพที่สุดเมื่อคุณไม่รู้คำตอบคำถามของแขกคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What is the most professional approach when you do not know an answer to a guest question? (additional service scenario)",
+    "options": [
+      "Acknowledge it honestly and confirm the correct information quickly",
+      "Make up an answer with confidence",
+      "Avoid the table",
+      "Change the subject"
+    ],
+    "answer": "Acknowledge it honestly and confirm the correct information quickly",
+    "category": "Service",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แนวทางที่เป็นมืออาชีพที่สุดเมื่อคุณไม่รู้คำตอบคำถามของแขกคืออะไร?"
+  },
+  {
+    "id": "pro_050_v",
+    "question_th": "ทำไมการสื่อสารระหว่างพนักงานบริการและครัวจึงสำคัญมากในช่วงที่ยุ่ง? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Why is communication between service and kitchen critical during busy periods? (additional service scenario)",
+    "options": [
+      "It reduces errors, delays, and guest complaints",
+      "It only helps with billing",
+      "It is useful only for wine orders",
+      "It replaces the need for training"
+    ],
+    "answer": "It reduces errors, delays, and guest complaints",
+    "category": "Service",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ทำไมการสื่อสารระหว่างพนักงานบริการและครัวจึงสำคัญมากในช่วงที่ยุ่ง?"
+  },
+  {
+    "id": "pro_051_v",
+    "question_th": "ABV บนรายการเครื่องดื่มย่อมาจากอะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What does ABV stand for on a beverage list? (additional service scenario)",
+    "options": [
+      "Alcohol By Volume",
+      "Average Bottle Value",
+      "Added Beverage Volume",
+      "Alcohol Barrel Vintage"
+    ],
+    "answer": "Alcohol By Volume",
+    "category": "Beverage",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ABV บนรายการเครื่องดื่มย่อมาจากอะไร?"
+  },
+  {
+    "id": "pro_052_v",
+    "question_th": "สุรากลั่นชนิดใดมี juniper เป็นพฤกษชาติสำคัญ? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Which spirit is known for juniper as a defining botanical? (additional service scenario)",
+    "options": [
+      "Gin",
+      "Rum",
+      "Tequila",
+      "Brandy"
+    ],
+    "answer": "Gin",
+    "category": "Beverage",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "สุรากลั่นชนิดใดมี juniper เป็นพฤกษชาติสำคัญ?"
+  },
+  {
+    "id": "pro_053_v",
+    "question_th": "ถ้าแขกต้องการเครื่องดื่มเบาและสดชื่น สไตล์ค็อกเทลแบบใดมักเหมาะ? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "If a guest wants something light and refreshing, which cocktail style is usually suitable? (additional service scenario)",
+    "options": [
+      "A refreshing highball or spritz style",
+      "A heavy dessert cocktail only",
+      "A neat double whisky",
+      "Any warm drink"
+    ],
+    "answer": "A refreshing highball or spritz style",
+    "category": "Beverage",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ถ้าแขกต้องการเครื่องดื่มเบาและสดชื่น สไตล์ค็อกเทลแบบใดมักเหมาะ?"
+  },
+  {
+    "id": "pro_054_v",
+    "question_th": "ขั้นตอนแรกที่ดีที่สุดก่อนเสิร์ฟเครื่องดื่มบรรจุขวดที่โต๊ะคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "What is the best first step before serving a bottled beverage at the table? (additional service scenario)",
+    "options": [
+      "Confirm the order and present the correct item",
+      "Open every bottle in advance",
+      "Serve without checking",
+      "Ask the guest to open it"
+    ],
+    "answer": "Confirm the order and present the correct item",
+    "category": "Beverage",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ขั้นตอนแรกที่ดีที่สุดก่อนเสิร์ฟเครื่องดื่มบรรจุขวดที่โต๊ะคืออะไร?"
+  },
+  {
+    "id": "pro_055_v",
+    "question_th": "แขกขอคำแนะนำเครื่องดื่มที่ไม่หวานมาก ควรทำอย่างไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest asks for a recommendation that is not too sweet. What should you do? (additional service scenario)",
+    "options": [
+      "Recommend a drier style based on the menu",
+      "Say everything is sweet",
+      "Offer only beer",
+      "Serve water instead"
+    ],
+    "answer": "Recommend a drier style based on the menu",
+    "category": "Beverage",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "แขกขอคำแนะนำเครื่องดื่มที่ไม่หวานมาก ควรทำอย่างไร?"
+  },
+  {
+    "id": "pro_056_v",
+    "question_th": "ทำไมการเลือกแก้วจึงสำคัญในการบริการเครื่องดื่ม? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Why is glassware choice important in beverage service? (additional service scenario)",
+    "options": [
+      "It affects presentation and service quality",
+      "It only affects cost",
+      "It never matters to guests",
+      "It changes ABV"
+    ],
+    "answer": "It affects presentation and service quality",
+    "category": "Beverage",
+    "difficulty": "hard",
+    "source": "professional_curated",
+    "explanation": "ทำไมการเลือกแก้วจึงสำคัญในการบริการเครื่องดื่ม?"
+  },
+  {
+    "id": "pro_057_v",
+    "question_th": "แขกบอกว่าค็อกเทลแรงเกินไป การตอบที่เป็นมืออาชีพที่สุดคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest says their cocktail is too strong. What is the best professional response? (additional service scenario)",
+    "options": [
+      "Acknowledge the feedback and offer an appropriate solution based on outlet policy",
+      "Tell them that is the standard and walk away",
+      "Add random juice without asking",
+      "Ignore the complaint"
+    ],
+    "answer": "Acknowledge the feedback and offer an appropriate solution based on outlet policy",
+    "category": "Beverage",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกบอกว่าค็อกเทลแรงเกินไป การตอบที่เป็นมืออาชีพที่สุดคืออะไร?"
+  },
+  {
+    "id": "pro_058_v",
+    "question_th": "พนักงานไม่แน่ใจว่าสุราที่แขกต้องการมีหรือไม่ ควรทำอย่างไรต่อ? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A server is unsure whether a requested spirit is available. What should happen next? (additional service scenario)",
+    "options": [
+      "Confirm stock before promising the item",
+      "Say yes and check later",
+      "Offer the most expensive bottle instead",
+      "Avoid returning to the table"
+    ],
+    "answer": "Confirm stock before promising the item",
+    "category": "Beverage",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "พนักงานไม่แน่ใจว่าสุราที่แขกต้องการมีหรือไม่ ควรทำอย่างไรต่อ?"
+  },
+  {
+    "id": "pro_059_v",
+    "question_th": "ทำไมการแนะนำเครื่องดื่มจึงควรยึดความชอบของแขก ไม่ใช่แค่ราคา? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "Why should beverage recommendations be matched to guest preference, not only price? (additional service scenario)",
+    "options": [
+      "Guest satisfaction and trust are more important than pushing price alone",
+      "Expensive always means correct",
+      "Price is the only selling point",
+      "Guests never remember recommendations"
+    ],
+    "answer": "Guest satisfaction and trust are more important than pushing price alone",
+    "category": "Beverage",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "ทำไมการแนะนำเครื่องดื่มจึงควรยึดความชอบของแขก ไม่ใช่แค่ราคา?"
+  },
+  {
+    "id": "pro_060_v",
+    "question_th": "แขกขอเครื่องดื่มทางเลือกแทนไวน์เพราะไม่ดื่มไวน์ แนวทางบริการที่ดีที่สุดคืออะไร? (เวอร์ชันสถานการณ์เพิ่มเติม)",
+    "question_en": "A guest asks for a wine alternative because they do not drink wine. What is the best service approach? (additional service scenario)",
+    "options": [
+      "Offer suitable non-wine options based on taste and dish pairing",
+      "Tell them wine is required",
+      "Serve any random soft drink",
+      "Avoid recommending anything"
+    ],
+    "answer": "Offer suitable non-wine options based on taste and dish pairing",
+    "category": "Beverage",
+    "difficulty": "medium",
+    "source": "professional_curated",
+    "explanation": "แขกขอเครื่องดื่มทางเลือกแทนไวน์เพราะไม่ดื่มไวน์ แนวทางบริการที่ดีที่สุดคืออะไร?"
+  }
+]
